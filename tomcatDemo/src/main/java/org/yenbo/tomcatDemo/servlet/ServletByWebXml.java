@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.tomcatDemo.response.DemoResponse;
+import org.yenbo.commonDemo.response.DemoResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

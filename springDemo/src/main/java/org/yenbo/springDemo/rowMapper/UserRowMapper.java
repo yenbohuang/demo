@@ -6,7 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import org.springframework.jdbc.core.RowMapper;
-import org.yenbo.springDemo.response.User;
+import org.yenbo.commonDemo.response.User;
 
 public class UserRowMapper implements RowMapper<User> {
 

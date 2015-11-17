@@ -12,8 +12,8 @@ import org.springframework.jndi.JndiTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.yenbo.commonDemo.response.User;
 import org.yenbo.springDemo.dao.UsersDao;
-import org.yenbo.springDemo.response.User;
 
 @RestController
 @RequestMapping("/jndiDemo")

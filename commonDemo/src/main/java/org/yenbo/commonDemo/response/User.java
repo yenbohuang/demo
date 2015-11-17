@@ -1,4 +1,4 @@
-package org.yenbo.springDemo.response;
+package org.yenbo.commonDemo.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

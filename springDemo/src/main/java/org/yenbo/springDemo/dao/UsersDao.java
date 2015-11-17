@@ -3,7 +3,7 @@ package org.yenbo.springDemo.dao;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.yenbo.springDemo.response.User;
+import org.yenbo.commonDemo.response.User;
 import org.yenbo.springDemo.rowMapper.UserRowMapper;
 
 public class UsersDao {

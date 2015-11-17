@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.tomcatDemo.response.User;
+import org.yenbo.commonDemo.response.User;
 
 import com.google.gson.Gson;
 

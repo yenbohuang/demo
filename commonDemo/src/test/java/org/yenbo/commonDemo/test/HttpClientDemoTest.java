@@ -30,7 +30,7 @@ public class HttpClientDemoTest {
 					.build();
 			
 			HttpGet httpGet = new HttpGet(uri);
-			CloseableHttpResponse httpResponse = client.execute(httpGet);
+			CloseableHttpResponse httpResponse = client.execute(httpGet, false);
 			
 			log.info(EntityUtils.toString(httpResponse.getEntity()));
 			

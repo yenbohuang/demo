@@ -13,8 +13,10 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -23,13 +25,26 @@ import org.slf4j.LoggerFactory;
 public class HttpClientDemo {
 
 	private static final Logger log = LoggerFactory.getLogger(HttpClientDemo.class);	
+	private static final int LOG_OUTPUT_LIMIT = 20;
 	
 	public HttpClientDemo() {
 	}
 
-	private static final int LOG_OUTPUT_LIMIT = 20;
+	private CloseableHttpClient createHttpCliept(boolean sslPeerUnverified) {
+		
+		if (sslPeerUnverified) {
+		
+			return HttpClientBuilder.create()
+					.setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+					.build();
+			
+		} else {
+			return HttpClients.createDefault();
+		}
+	}
 
-	public CloseableHttpResponse execute(HttpRequestBase httpRequestBase) {
+	public CloseableHttpResponse execute(HttpRequestBase httpRequestBase,
+			boolean sslPeerUnverified) {
 		
 		if (httpRequestBase == null) {
 			throw new IllegalArgumentException("httpRequestBase is null");
@@ -93,7 +108,10 @@ public class HttpClientDemo {
 					}
 				}
 				
-				if (binary.length < LOG_OUTPUT_LIMIT) {
+				if (binary == null) {
+					log.info("Response body: null");
+				} else if (binary.length < LOG_OUTPUT_LIMIT || body.contains("errCode") ||
+						body.contains("Tomcat")) {
 					log.info("Response body as string: " + body);
 					log.info("Response body as binary: " + ArrayUtils.toString(binary));
 				} else {
@@ -104,7 +122,7 @@ public class HttpClientDemo {
 			}
 		};
 		
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+		try (CloseableHttpClient httpClient = createHttpCliept(sslPeerUnverified)) {
 			return httpClient.execute(httpRequestBase, responseHandler);
 		} catch (IOException ex) {
 			throw new CommonDemoException(ex);

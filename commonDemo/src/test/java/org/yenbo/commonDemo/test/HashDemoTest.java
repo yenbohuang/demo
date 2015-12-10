@@ -15,11 +15,13 @@ public class HashDemoTest {
 		try {
 			//byte[] binary = "".getBytes("UTF-8");
 			byte[] binary = RandomUtils.nextBytes(20);
+			byte[] key = "secret".getBytes();
 			
 			log.info("SHA-256=" + Hex.encodeHexString(HashDemo.hash(HashDemo.ALGORITHM_SHA256,
 					binary)));
 			log.info("MD5=" + Hex.encodeHexString(HashDemo.hash(HashDemo.ALGORITHM_MD5, binary)));
 			log.info("CRC32=" + HashDemo.getCrc32(binary));
+			log.info("HMAC SHA-1: " + HashDemo.getHmacSha1(binary, key));
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}

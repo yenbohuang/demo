@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 public class HttpClientDemo {
 
 	private static final Logger log = LoggerFactory.getLogger(HttpClientDemo.class);	
-	private static final int LOG_OUTPUT_LIMIT = 20;
 	
 	public HttpClientDemo() {
 	}
@@ -43,39 +42,33 @@ public class HttpClientDemo {
 		}
 	}
 
-	public CloseableHttpResponse execute(HttpRequestBase httpRequestBase,
-			boolean sslPeerUnverified) {
+	public CloseableHttpResponse execute(HttpRequestBase request, boolean sslPeerUnverified) {
 		
-		if (httpRequestBase == null) {
-			throw new IllegalArgumentException("httpRequestBase is null");
+		if (request == null) {
+			throw new IllegalArgumentException("request is null");
 		}
 		
 		// print debug logs
-		log.info("{} {}", httpRequestBase.getMethod(), httpRequestBase.getURI().toString());
+		log.info("{} {}", request.getMethod(), request.getURI().toString());
 		
-		if (httpRequestBase.getAllHeaders() != null) {
-			for (Header header: httpRequestBase.getAllHeaders()) {
+		if (request.getAllHeaders() != null) {
+			for (Header header: request.getAllHeaders()) {
 				log.info("Request header: " + header.toString());
 			}
 		}
 		
-		if (httpRequestBase instanceof HttpEntityEnclosingRequest) {
+		if (request instanceof HttpEntityEnclosingRequest) {
 		
 			HttpEntityEnclosingRequest httpEntityEnclosingRequest =
-					(HttpEntityEnclosingRequest) httpRequestBase;
+					(HttpEntityEnclosingRequest) request;
 			
 			if (httpEntityEnclosingRequest.getEntity() != null) {
 				try {
-					byte[] binary = EntityUtils.toByteArray(httpEntityEnclosingRequest.getEntity());
-					
-					if (binary.length < LOG_OUTPUT_LIMIT) {
-						log.info("Request body as string: " + EntityUtils.toString(
-								httpEntityEnclosingRequest.getEntity()));
-						log.info("Request body as bytes: " + ArrayUtils.toString(binary));
-					} else {
-						log.info("Request body: sending {} bytes", binary.length);
-					}
-					
+					log.info("Request body as string: {}",
+							EntityUtils.toString(httpEntityEnclosingRequest.getEntity()));
+					log.info("Request body as bytes: {}",
+							ArrayUtils.toString(EntityUtils.toByteArray(
+									httpEntityEnclosingRequest.getEntity())));
 				} catch (IOException ex) {
 					log.error(ex.getMessage(), ex);
 				}
@@ -110,12 +103,9 @@ public class HttpClientDemo {
 				
 				if (binary == null) {
 					log.info("Response body: null");
-				} else if (binary.length < LOG_OUTPUT_LIMIT || body.contains("errCode") ||
-						body.contains("Tomcat")) {
+				} else {
 					log.info("Response body as string: " + body);
 					log.info("Response body as binary: " + ArrayUtils.toString(binary));
-				} else {
-					log.info("Response body: receiving {} bytes", binary.length);
 				}
 				
 				return (CloseableHttpResponse) response;
@@ -123,7 +113,7 @@ public class HttpClientDemo {
 		};
 		
 		try (CloseableHttpClient httpClient = createHttpCliept(sslPeerUnverified)) {
-			return httpClient.execute(httpRequestBase, responseHandler);
+			return httpClient.execute(request, responseHandler);
 		} catch (IOException ex) {
 			throw new CommonDemoException(ex);
 		}

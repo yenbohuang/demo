@@ -16,9 +16,16 @@ public class CoapClientTest {
 		try {
 			
 			if (ping()) {
+				
 				discover();
-				getSync();
-				getAsync();
+				
+				log.info("--- Create client ----");
+				CoapClient client = new CoapClient("coap://localhost:5683/coapDemo");
+				log.info("URI: {}", client.getURI());
+				
+				getSync(client);
+				getAsync(client);
+				observe(client);
 			}
 			
 		} catch (Exception ex) {
@@ -32,22 +39,41 @@ public class CoapClientTest {
 		log.info("Payload: {}", response.getResponseText());
 	}
 	
-	public static void getSync() {
+	private static void printWebLink(WebLink link) {
+		
+		log.info("WebLink URI: {}", link.getURI());
+		link.getAttributes().getInterfaceDescriptions();
+		
+		log.info("WebLink Attribute ContentTypes: {}",
+				link.getAttributes().getContentTypes().toString());
+		log.info("WebLink Attribute keys: {}", link.getAttributes().getAttributeKeySet().toString());
+		log.info("WebLink Attribute Count: {}", link.getAttributes().getCount());
+		log.info("WebLink Attribute Interface Descriptions: {}",
+				link.getAttributes().getInterfaceDescriptions().toString());
+		log.info("WebLink Attribute MaximumSizeEstimate: {}",
+				link.getAttributes().getMaximumSizeEstimate());
+		log.info("WebLink Attribute ResourceTypes: {}",
+				link.getAttributes().getResourceTypes().toString());
+		log.info("WebLink Attribute Title: {}", link.getAttributes().getTitle());
+	}
+	
+	private static void sleep1s() throws InterruptedException {
+		log.info("sleep for 1 second");
+		Thread.sleep(1000);
+		log.info("sleep ended");
+	}
+	
+	public static void getSync(CoapClient client) {
 		
 		log.info("--- Synchronous GET ----");
 		
-		CoapClient client = new CoapClient("coap://localhost:5683/coapDemo");
-		log.info("URI: {}", client.getURI());
 		printResponse(client.get());
 	}
 	
-	public static void getAsync() throws InterruptedException {
+	public static void getAsync(CoapClient client) throws InterruptedException {
 		
 		log.info("--- Asynchronous GET ----");
-		
-		CoapClient client = new CoapClient("coap://localhost:5683/coapDemo");
-		log.info("URI: {}", client.getURI());
-		
+				
 		client.get(new CoapHandler() {
 			
 			@Override
@@ -57,14 +83,11 @@ public class CoapClientTest {
 			
 			@Override
 			public void onError() {
-				log.error("Failed");	
+				log.error("Get failed");	
 			}
 		});
 		
-		log.info("sleep for 1 second");
-		Thread.sleep(1000);
-		
-		log.info("sleep ended");
+		sleep1s();
 	}
 	
 	public static void discover() {
@@ -74,24 +97,7 @@ public class CoapClientTest {
 		CoapClient client = new CoapClient("localhost");
 		
 		for (WebLink link: client.discover()) {
-			
-			log.info("WebLink URI: {}", link.getURI());
-			link.getAttributes().getInterfaceDescriptions();
-			
-			log.info("WebLink Attribute ContentTypes: {}",
-					link.getAttributes().getContentTypes().toString());
-			log.info("WebLink Attribute keys: {}",
-					link.getAttributes().getAttributeKeySet().toString());
-			log.info("WebLink Attribute Count: {}",
-					link.getAttributes().getCount());
-			log.info("WebLink Attribute Interface Descriptions: {}",
-					link.getAttributes().getInterfaceDescriptions().toString());
-			log.info("WebLink Attribute MaximumSizeEstimate: {}",
-					link.getAttributes().getMaximumSizeEstimate());
-			log.info("WebLink Attribute ResourceTypes: {}",
-					link.getAttributes().getResourceTypes().toString());
-			log.info("WebLink Attribute Title: {}",
-					link.getAttributes().getTitle());
+			printWebLink(link);
 		}
 	}
 	
@@ -104,5 +110,25 @@ public class CoapClientTest {
 		
 		log.info("Ping: {}", result);
 		return result;
+	}
+	
+	public static void observe(CoapClient client) throws InterruptedException {
+		
+		log.info("--- Observe ----");
+		
+		client.observe(new CoapHandler() {
+			
+			@Override
+			public void onLoad(CoapResponse response) {
+				printResponse(response);
+			}
+			
+			@Override
+			public void onError() {
+				log.error("Observe failed");
+			}
+		});
+		
+		sleep1s();
 	}
 }

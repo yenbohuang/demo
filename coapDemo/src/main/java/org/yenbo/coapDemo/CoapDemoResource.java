@@ -10,13 +10,12 @@ public class CoapDemoResource extends CoapResource {
 
 	public CoapDemoResource(String name) {
 		super(name);
-		
+		setObservable(true);
 		getAttributes().setTitle("CoAP demo resource");
 	}
 
 	@Override
-	public void handleGET(CoapExchange exchange) {
-		
+	public void handleGET(CoapExchange exchange) {	
 		exchange.respond(ZonedDateTime.now(ZoneId.of("UTC")).toString());
 	}
 }

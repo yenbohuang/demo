@@ -6,6 +6,8 @@ import org.yenbo.awssdkdemo.PropertyReader;
 
 import com.amazonaws.services.iot.AWSIotClient;
 import com.amazonaws.services.iot.model.AttachPrincipalPolicyRequest;
+import com.amazonaws.services.iot.model.AttachThingPrincipalRequest;
+import com.amazonaws.services.iot.model.AttachThingPrincipalResult;
 import com.amazonaws.services.iot.model.CreateKeysAndCertificateRequest;
 import com.amazonaws.services.iot.model.CreateKeysAndCertificateResult;
 import com.amazonaws.services.iot.model.CreatePolicyRequest;
@@ -20,6 +22,8 @@ import com.amazonaws.services.iot.model.GetPolicyRequest;
 import com.amazonaws.services.iot.model.GetPolicyResult;
 import com.amazonaws.services.iot.model.ListPrincipalPoliciesRequest;
 import com.amazonaws.services.iot.model.ListPrincipalPoliciesResult;
+import com.amazonaws.services.iot.model.ListThingPrincipalsRequest;
+import com.amazonaws.services.iot.model.ListThingPrincipalsResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -42,6 +46,7 @@ public class AwsIotDemoConsole {
 		console.describeCertificate();
 		console.getPolicy();
 		console.listPrincipalPolicies();
+		console.listThingPrincipals();
 	}
 	
 	public void readProperties() {
@@ -175,6 +180,33 @@ public class AwsIotDemoConsole {
 		request.setPrincipal(PropertyReader.getInstance().getParam("iot.certificateArn"));
 		
 		ListPrincipalPoliciesResult result = client.listPrincipalPolicies(request);
+		
+		log.info(gson.toJson(result));
+		return result;
+	}
+	
+	public AttachThingPrincipalResult attachThingPrincipal() {
+		
+		log.info("---- attachThingPrincipal ----");
+		
+		AttachThingPrincipalRequest request = new AttachThingPrincipalRequest();
+		request.setPrincipal(PropertyReader.getInstance().getParam("iot.certificateArn"));
+		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		
+		AttachThingPrincipalResult result = client.attachThingPrincipal(request);
+		
+		log.info(gson.toJson(result));
+		return result;
+	}
+	
+	public ListThingPrincipalsResult listThingPrincipals() {
+		
+		log.info("---- listThingPrincipals ----");
+		
+		ListThingPrincipalsRequest request = new ListThingPrincipalsRequest();
+		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		
+		ListThingPrincipalsResult result = client.listThingPrincipals(request);
 		
 		log.info(gson.toJson(result));
 		return result;

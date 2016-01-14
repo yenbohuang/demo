@@ -16,6 +16,8 @@ import com.amazonaws.services.iot.model.CreateThingRequest;
 import com.amazonaws.services.iot.model.CreateThingResult;
 import com.amazonaws.services.iot.model.DescribeCertificateRequest;
 import com.amazonaws.services.iot.model.DescribeCertificateResult;
+import com.amazonaws.services.iot.model.DescribeEndpointRequest;
+import com.amazonaws.services.iot.model.DescribeEndpointResult;
 import com.amazonaws.services.iot.model.DescribeThingRequest;
 import com.amazonaws.services.iot.model.DescribeThingResult;
 import com.amazonaws.services.iot.model.GetPolicyRequest;
@@ -47,6 +49,7 @@ public class AwsIotDemoConsole {
 		console.getPolicy();
 		console.listPrincipalPolicies();
 		console.listThingPrincipals();
+		console.describeEndpoint();
 	}
 	
 	public void readProperties() {
@@ -59,6 +62,7 @@ public class AwsIotDemoConsole {
 		PropertyReader.getInstance().getParam("iot.certificateId");
 		PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.name");
 		PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.arn");
+		PropertyReader.getInstance().getParam("iot.endpointAddress");
 	}
 	
 	public CreateThingResult createThing() {
@@ -207,6 +211,18 @@ public class AwsIotDemoConsole {
 		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
 		
 		ListThingPrincipalsResult result = client.listThingPrincipals(request);
+		
+		log.info(gson.toJson(result));
+		return result;
+	}
+	
+	public DescribeEndpointResult describeEndpoint() {
+		
+		log.info("---- describeEndpoint ----");
+		
+		DescribeEndpointRequest request = new DescribeEndpointRequest();
+		
+		DescribeEndpointResult result = client.describeEndpoint(request);
 		
 		log.info(gson.toJson(result));
 		return result;

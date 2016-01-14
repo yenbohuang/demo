@@ -17,6 +17,10 @@ public class PropertyDemo {
 	
 	private HashMap<String, String> paramMap = new HashMap<>();
 	
+	public static void main(String[] args) {
+		log.info(PropertyDemo.getInstance().getParam("key1"));
+	}
+	
 	private PropertyDemo() {
 	}
 

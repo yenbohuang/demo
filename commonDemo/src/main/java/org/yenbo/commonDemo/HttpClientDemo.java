@@ -2,6 +2,7 @@ package org.yenbo.commonDemo;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,7 +13,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -27,6 +30,31 @@ public class HttpClientDemo {
 	private static final Logger log = LoggerFactory.getLogger(HttpClientDemo.class);	
 	
 	public HttpClientDemo() {
+	}
+	
+	public static void main(String[] args) {
+		
+		HttpClientDemo client = new HttpClientDemo();
+		
+		try {
+		
+			// http://localhost:8080/springDemo/restDemo?param=restDemo
+			URI uri = new URIBuilder()
+					.setScheme("http")
+					.setHost("localhost")
+					.setPort(8080)
+					.setPath("/springDemo/restDemo")
+					.addParameter("param", HttpClientDemo.class.getCanonicalName())
+					.build();
+			
+			HttpGet httpGet = new HttpGet(uri);
+			CloseableHttpResponse httpResponse = client.execute(httpGet, false);
+			
+			log.info(EntityUtils.toString(httpResponse.getEntity()));
+			
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
 	}
 
 	private CloseableHttpClient createHttpCliept(boolean sslPeerUnverified) {

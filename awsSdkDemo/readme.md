@@ -10,6 +10,8 @@ This project is for AWS tools testing by free-tier services. Create a free-tier 
     iot.thingArn=
     iot.certificateArn=
     iot.certificateId=
+    iot.policy.PubSubToAnyTopic.name=
+    iot.policy.PubSubToAnyTopic.arn=
 
 # AWS references
 

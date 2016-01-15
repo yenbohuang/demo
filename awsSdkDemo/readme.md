@@ -10,9 +10,19 @@ This project is for AWS tools testing by free-tier services. Create a free-tier 
     iot.thingArn=
     iot.certificateArn=
     iot.certificateId=
+    iot.certificateFilePath=
+    iot.privateKeyFilePath=
     iot.policy.PubSubToAnyTopic.name=
     iot.policy.PubSubToAnyTopic.arn=
     iot.endpointAddress=
+
+# AWS IoT private key
+
+PEM file cannot be read by PKCS8EncodedKeySpec class. You need to convert it by the following command:
+
+    openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
+
+See details on <http://stackoverflow.com/questions/3243018/how-to-load-rsa-private-key-from-file>
 
 # AWS references
 

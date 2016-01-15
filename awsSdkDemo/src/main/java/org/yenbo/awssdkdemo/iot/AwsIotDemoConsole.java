@@ -44,12 +44,22 @@ public class AwsIotDemoConsole {
 		
 		console.readProperties();
 		
-		console.describeThing();
-		console.describeCertificate();
-		console.getPolicy();
-		console.listPrincipalPolicies();
-		console.listThingPrincipals();
 		console.describeEndpoint();
+		
+		// createThing()
+		console.describeThing();
+		
+		// createKeyAndCertificate()
+		console.describeCertificate();
+		
+		// createPolicy()
+		console.getPolicy();
+		
+		// attachPrincipalPolicy()
+		console.listPrincipalPolicies();
+		
+		// attachThingPrincipal()
+		console.listThingPrincipals();
 	}
 	
 	public void readProperties() {
@@ -152,7 +162,7 @@ public class AwsIotDemoConsole {
 	
 	public GetPolicyResult getPolicy() {
 		
-		log.info("---- createPolicy ----");
+		log.info("---- getPolicy ----");
 		
 		GetPolicyRequest request = new GetPolicyRequest();
 		request.setPolicyName(

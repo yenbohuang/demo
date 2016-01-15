@@ -9,6 +9,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
@@ -120,14 +122,51 @@ public class AwsMqttClient {
 			throw new IllegalArgumentException("message is blank");
 		}
 		
+		log.info("Publish: topic={}, message={}", topic, message);
+		
 		MqttMessage testMessage = new MqttMessage(message.getBytes());
 		testMessage.setQos(1);
 		client.publish(topic, testMessage);
 	}
 	
-	public String getTopicForShadowUpdate() {
+	public void subscribe(ArrayList<String> topicFilters) throws MqttException {
 		
-		return String.format("$aws/things/%s/shadow/update",
-				PropertyReader.getInstance().getParam("iot.thingName"));
+		if (topicFilters == null) {
+			throw new IllegalArgumentException("topicFilters is null");
+		}
+		
+		if (topicFilters.size() > 8) {
+			throw new IllegalArgumentException("topicFilters.length > 8: " + topicFilters.size());
+		}
+		
+		int[] qos = new int[topicFilters.size()];
+		Arrays.fill(qos, 0);
+		
+		log.info("Subscribe: " + topicFilters);
+		
+		client.subscribe(topicFilters.toArray(new String[0]), qos);
+	}
+	
+	public void subscribe(String topicFilter) throws MqttException {
+		
+		if (StringUtils.isBlank(topicFilter)) {
+			throw new IllegalArgumentException("topicFilter is blank");
+		}
+		
+		log.info("Subscribe: " + topicFilter);
+		
+		client.subscribe(topicFilter, 0);
+	}
+	
+	private String getTopicForShadow(String pattern) {
+		return String.format(pattern, PropertyReader.getInstance().getParam("iot.thingName"));
+	}
+	
+	public String getTopicForShadowUpdate() {		
+		return getTopicForShadow("$aws/things/%s/shadow/update");
+	}
+	
+	public String getTopicForShadowUpdateAccepted() {
+		return getTopicForShadow("$aws/things/%s/shadow/update/accepted");
 	}
 }

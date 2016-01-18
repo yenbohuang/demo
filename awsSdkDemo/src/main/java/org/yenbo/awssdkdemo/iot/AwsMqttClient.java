@@ -39,8 +39,6 @@ public class AwsMqttClient {
 	private static final Logger log = LoggerFactory.getLogger(AwsMqttClient.class);
 	
 	private String endpoint;
-	private Certificate certificate;
-	private PrivateKey privateKey;
 	private MqttClient client;
 	private MqttConnectOptions connectOptions;
 	private Gson gson = new Gson();
@@ -92,17 +90,17 @@ public class AwsMqttClient {
 		});
 	}
 	
-	private void readCertificate() throws Exception {
+	private Certificate readCertificate() throws Exception {
 		
 		try (FileInputStream fileInputStream = new FileInputStream(
 				PropertyReader.getInstance().getParam("iot.certificateFilePath"))) {
 			
 			CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-			certificate = certificateFactory.generateCertificate(fileInputStream);
+			return certificateFactory.generateCertificate(fileInputStream);
 		}
 	}
 	
-	private void readPrivateKey() throws Exception {
+	private PrivateKey readPrivateKey() throws Exception {
 		
 		// TODO How do we do this without conversion by openssl command?
 		
@@ -110,17 +108,18 @@ public class AwsMqttClient {
 		// openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		
-		privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(
-				Files.readAllBytes(Paths.get(
-						PropertyReader.getInstance().getParam("iot.privateKeyFilePath")))));
+		return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(Paths.get(
+				PropertyReader.getInstance().getParam("iot.privateKeyFilePath")))));
 	}
 	
 	private SocketFactory getSocketFactory() throws Exception {
-				
+		
+		Certificate certificate = readCertificate();
+		
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		keyStore.load(null, null);
 		keyStore.setCertificateEntry("certificate", certificate);
-		keyStore.setKeyEntry("private-key", privateKey, "".toCharArray(),
+		keyStore.setKeyEntry("private-key", readPrivateKey(), "".toCharArray(),
 				new Certificate[] {certificate});
 
 		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(

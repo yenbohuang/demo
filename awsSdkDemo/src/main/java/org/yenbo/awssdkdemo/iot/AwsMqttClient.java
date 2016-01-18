@@ -9,6 +9,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,6 +18,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -28,6 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.awssdkdemo.PropertyReader;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 public class AwsMqttClient {
 
 	private static final Logger log = LoggerFactory.getLogger(AwsMqttClient.class);
@@ -37,6 +43,7 @@ public class AwsMqttClient {
 	private PrivateKey privateKey;
 	private MqttClient client;
 	private MqttConnectOptions connectOptions;
+	private Gson gson = new Gson();
 	
 	public AwsMqttClient() throws Exception {
 		
@@ -61,6 +68,28 @@ public class AwsMqttClient {
 		connectOptions.setCleanSession(true);
 		connectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
 		connectOptions.setSocketFactory(getSocketFactory());
+		
+		// callback
+		client.setCallback(new MqttCallback() {
+			
+			@Override
+			public void messageArrived(String arg0, MqttMessage arg1) throws Exception {
+
+				log.info("Message arrived. topic: {}, QoS: {}, payload: {}", arg0, arg1.getQos(),
+						new String(arg1.getPayload()));
+			}
+			
+			@Override
+			public void deliveryComplete(IMqttDeliveryToken arg0) {
+
+				log.debug("Deliver complete. topics: {}", Arrays.toString(arg0.getTopics()));
+			}
+			
+			@Override
+			public void connectionLost(Throwable arg0) {
+				log.error(arg0.getMessage(), arg0);
+			}
+		});
 	}
 	
 	private void readCertificate() throws Exception {
@@ -112,31 +141,38 @@ public class AwsMqttClient {
 		client.disconnect();
 	}
 	
-	public void publish(String topic, String message) throws MqttPersistenceException, MqttException {
+	public void publish(String topic, String payload) throws MqttPersistenceException, MqttException {
 		
 		if (StringUtils.isBlank(topic)) {
 			throw new IllegalArgumentException("topic is blank");
 		}
 		
-		if (StringUtils.isBlank(message)) {
-			throw new IllegalArgumentException("message is blank");
-		}
+		log.info("Publish: topic={}, payload={}", topic, payload);
 		
-		log.info("Publish: topic={}, message={}", topic, message);
-		
-		MqttMessage testMessage = new MqttMessage(message.getBytes());
-		testMessage.setQos(1);
+		MqttMessage testMessage = (payload != null) ? new MqttMessage(payload.getBytes()) :
+			new MqttMessage();
+		testMessage.setQos(0);
 		client.publish(topic, testMessage);
+	}
+	
+	public String getShadowJson() {
+		
+		JsonObject desired = new JsonObject();
+		desired.addProperty("time", ZonedDateTime.now().toString());
+		
+		JsonObject state = new JsonObject();
+		state.add("desired", desired);
+		
+		JsonObject payload = new JsonObject();
+		payload.add("state", state);
+		
+		return gson.toJson(payload);
 	}
 	
 	public void subscribe(ArrayList<String> topicFilters) throws MqttException {
 		
 		if (topicFilters == null) {
 			throw new IllegalArgumentException("topicFilters is null");
-		}
-		
-		if (topicFilters.size() > 8) {
-			throw new IllegalArgumentException("topicFilters.length > 8: " + topicFilters.size());
 		}
 		
 		int[] qos = new int[topicFilters.size()];
@@ -158,15 +194,48 @@ public class AwsMqttClient {
 		client.subscribe(topicFilter, 0);
 	}
 	
-	private String getTopicForShadow(String pattern) {
-		return String.format(pattern, PropertyReader.getInstance().getParam("iot.thingName"));
+	private static String getTopicForShadow(String pattern) {
+		return String.format("$aws/things/%s/shadow/" + pattern,
+				PropertyReader.getInstance().getParam("iot.thingName"));
 	}
 	
-	public String getTopicForShadowUpdate() {		
-		return getTopicForShadow("$aws/things/%s/shadow/update");
+	public static String getTopicForShadowUpdate() {		
+		return getTopicForShadow("update");
 	}
 	
-	public String getTopicForShadowUpdateAccepted() {
-		return getTopicForShadow("$aws/things/%s/shadow/update/accepted");
+	public static String getTopicForShadowUpdateAccepted() {
+		return getTopicForShadow("update/accepted");
+	}
+	
+	public static String getTopicForShadowUpdateRejected() {
+		return getTopicForShadow("update/rejected");
+	}
+	
+	public static String getTopicForShadowUpdateDelta() {
+		return getTopicForShadow("update/delta");
+	}
+	
+	public static String getTopicForShadowGet() {
+		return getTopicForShadow("get");
+	}
+	
+	public static String getTopicForShadowGetAccepted() {
+		return getTopicForShadow("get/accepted");
+	}
+	
+	public static String getTopicForShadowGetRejected() {
+		return getTopicForShadow("get/rejected");
+	}
+	
+	public static String getTopicForShadowDelete() {
+		return getTopicForShadow("delete");
+	}
+	
+	public static String getTopicForShadowDeleteAccepted() {
+		return getTopicForShadow("delete/accepted");
+	}
+	
+	public static String getTopicForShadowDeleteRejected() {
+		return getTopicForShadow("delete/rejected");
 	}
 }

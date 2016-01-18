@@ -18,20 +18,30 @@ public class MqttPublisherDemo {
 		try {
 			AwsMqttClient client = new AwsMqttClient();
 			client.connect();
+			log.debug("Connected");
 			
 			ArrayList<String> topicFilters = new ArrayList<>();
 			topicFilters.add("topic/test");
-			topicFilters.add(client.getTopicForShadowUpdateAccepted());
+			topicFilters.add(AwsMqttClient.getTopicForShadowUpdateAccepted());
+			topicFilters.add(AwsMqttClient.getTopicForShadowUpdateRejected());
+			topicFilters.add(AwsMqttClient.getTopicForShadowUpdateDelta());
+			topicFilters.add(AwsMqttClient.getTopicForShadowGetAccepted());
+			topicFilters.add(AwsMqttClient.getTopicForShadowGetRejected());
 			
 			client.subscribe(topicFilters);
 			
-			client.publish("topic/test", ZonedDateTime.now().toString());
-			client.publish(client.getTopicForShadowUpdate(), ZonedDateTime.now().toString());
-			
-			// TODO subscribe does not work yet
-			Thread.sleep(10000);
+			for (int i = 0; i < 5; i++) {
+				
+				client.publish("topic/test", ZonedDateTime.now().toString());
+				client.publish(AwsMqttClient.getTopicForShadowGet(), null);
+				client.publish(AwsMqttClient.getTopicForShadowUpdate(), client.getShadowJson());
+				
+				Thread.sleep(2000);
+				log.debug("Sleep complete");
+			}
 			
 			client.disconnect();
+			log.debug("Disconnected");
 			
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);

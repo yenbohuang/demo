@@ -102,9 +102,9 @@ public class AwsMqttClient {
 	
 	private PrivateKey readPrivateKey() throws Exception {
 		
-		// TODO How do we do this without conversion by openssl command?
-		
-		// Run the following command and convert PEM file first.
+		// JDK doesn't provide a means to load PEM key encoded in PKCS#1 without adding the
+		// Bouncy Castle to the classpath. The JDK can only load PEM key encoded in PKCS#8 encoding.
+		// Run the following command and convert PEM file first:
 		// openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		

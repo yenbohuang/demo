@@ -26,6 +26,9 @@ import com.amazonaws.services.iot.model.ListPrincipalPoliciesRequest;
 import com.amazonaws.services.iot.model.ListPrincipalPoliciesResult;
 import com.amazonaws.services.iot.model.ListThingPrincipalsRequest;
 import com.amazonaws.services.iot.model.ListThingPrincipalsResult;
+import com.amazonaws.services.iotdata.AWSIotDataClient;
+import com.amazonaws.services.iotdata.model.GetThingShadowRequest;
+import com.amazonaws.services.iotdata.model.GetThingShadowResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -36,6 +39,7 @@ public class AwsIotDemoConsole {
 	private static final Logger log = LoggerFactory.getLogger(AwsIotDemoConsole.class);
 	
 	private AWSIotClient client = new AWSIotClient();
+	private AWSIotDataClient dataClient = new AWSIotDataClient();
 	private Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 	
 	public static void main(String[] args) {
@@ -60,6 +64,17 @@ public class AwsIotDemoConsole {
 		
 		// attachThingPrincipal()
 		console.listThingPrincipals();
+		
+		// shadow
+		console.getThingShadow();
+		
+		// close
+		console.close();
+	}
+	
+	public void close() {
+		client.shutdown();
+		dataClient.shutdown();
 	}
 	
 	public void readProperties() {
@@ -235,6 +250,20 @@ public class AwsIotDemoConsole {
 		DescribeEndpointResult result = client.describeEndpoint(request);
 		
 		log.info(gson.toJson(result));
+		return result;
+	}
+	
+	public GetThingShadowResult getThingShadow() {
+
+		log.info("---- getThingShadow ----");
+		
+		GetThingShadowRequest request = new GetThingShadowRequest();
+		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		
+		GetThingShadowResult result = dataClient.getThingShadow(request);
+		
+		log.info(gson.toJson(result));
+		log.info("payload: " + new String(result.getPayload().array()));
 		return result;
 	}
 }

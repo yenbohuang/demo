@@ -5,8 +5,13 @@ import org.yenbo.awssdkdemo.PropertyReader;
 public class TopicNames {
 
 	private static String getShadow(String pattern) {
-		return String.format("$aws/things/%s/shadow/" + pattern,
-				PropertyReader.getInstance().getParam("iot.thingName"));
+		
+		return new StringBuilder()
+				.append("$aws/things/")
+				.append(PropertyReader.getInstance().getParam("iot.thingName"))
+				.append("/shadow/")
+				.append(pattern)
+				.toString();
 	}
 	
 	public static String getShadowUpdate() {		

@@ -34,7 +34,7 @@ public class MqttPublisherDemo {
 				
 				client.publish("topic/test", ZonedDateTime.now().toString());
 				client.publish(TopicNames.getShadowGet(), null);
-				client.publish(TopicNames.getShadowUpdate(), client.getShadowJson());
+				client.publish(TopicNames.getShadowUpdate(), ShadowJsonFactory.getShadowJson());
 				
 				Thread.sleep(2000);
 				log.debug("Sleep complete");

@@ -1,6 +1,5 @@
 package org.yenbo.awssdkdemo.iot;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,9 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.awssdkdemo.PropertyReader;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 public class AwsMqttClient {
 
 	private static final Logger log = LoggerFactory.getLogger(AwsMqttClient.class);
@@ -28,7 +24,6 @@ public class AwsMqttClient {
 	private String endpoint;
 	private MqttClient client;
 	private MqttConnectOptions connectOptions;
-	private Gson gson = new Gson();
 	
 	public AwsMqttClient() throws Exception {
 		
@@ -93,20 +88,6 @@ public class AwsMqttClient {
 			new MqttMessage();
 		testMessage.setQos(0);
 		client.publish(topic, testMessage);
-	}
-	
-	public String getShadowJson() {
-		
-		JsonObject desired = new JsonObject();
-		desired.addProperty("time", ZonedDateTime.now().toString());
-		
-		JsonObject state = new JsonObject();
-		state.add("desired", desired);
-		
-		JsonObject payload = new JsonObject();
-		payload.add("state", state);
-		
-		return gson.toJson(payload);
 	}
 	
 	public void subscribe(ArrayList<String> topicFilters) throws MqttException {

@@ -2,7 +2,6 @@ package org.yenbo.awssdkdemo.iot;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -31,7 +30,7 @@ public class AwsIotHttpsClient {
 				.setScheme("https")
 				.setHost(PropertyReader.getInstance().getParam("iot.endpointAddress"))
 				.setPort(8443)
-				.setPath(String.format("/topics/%s", URLEncoder.encode(topic, "UTF-8")))
+				.setPath(String.format("/topics/%s", topic))
 				.setParameter("qos", "1")
 				.build();
 		

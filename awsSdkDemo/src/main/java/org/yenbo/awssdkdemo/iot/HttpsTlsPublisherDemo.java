@@ -23,13 +23,18 @@ public class HttpsTlsPublisherDemo {
 			mqttClient.connect();
 			
 			ArrayList<String> topicFilters = new ArrayList<>();
-			topicFilters.add("test");
+			topicFilters.add("test/topic");
+			topicFilters.add(TopicNames.getShadowUpdateAccepted());
+			topicFilters.add(TopicNames.getShadowUpdateDelta());
+			topicFilters.add(TopicNames.getShadowUpdateRejected());
+			
 			
 			mqttClient.subscribe(topicFilters);
 			
 			for (int i = 0; i < 5; i++) {
 			
-				httpsClient.publish("test", ZonedDateTime.now().toString());
+				httpsClient.publish("test/topic", ZonedDateTime.now().toString());
+				httpsClient.publish(TopicNames.getShadowUpdate(), ShadowJsonFactory.getShadowJson());
 			
 				Thread.sleep(2000);
 				log.debug("Sleep complete");

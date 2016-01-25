@@ -1,21 +1,8 @@
 package org.yenbo.awssdkdemo.iot;
 
-import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.KeyFactory;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -50,10 +37,6 @@ public class AwsMqttClient {
 				PropertyReader.getInstance().getParam("iot.endpointAddress"));
 		log.info(endpoint);
 		
-		// read files
-		readCertificate();
-		readPrivateKey();
-		
 		// create client
 		MemoryPersistence persistence = new MemoryPersistence();
 		
@@ -65,7 +48,7 @@ public class AwsMqttClient {
 		connectOptions = new MqttConnectOptions();
 		connectOptions.setCleanSession(true);
 		connectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connectOptions.setSocketFactory(getSocketFactory());
+		connectOptions.setSocketFactory(KeyReader.getSslContext().getSocketFactory());
 		
 		// callback
 		client.setCallback(new MqttCallback() {
@@ -88,48 +71,6 @@ public class AwsMqttClient {
 				log.error(arg0.getMessage(), arg0);
 			}
 		});
-	}
-	
-	private Certificate readCertificate() throws Exception {
-		
-		try (FileInputStream fileInputStream = new FileInputStream(
-				PropertyReader.getInstance().getParam("iot.certificateFilePath"))) {
-			
-			CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-			return certificateFactory.generateCertificate(fileInputStream);
-		}
-	}
-	
-	private PrivateKey readPrivateKey() throws Exception {
-		
-		// JDK doesn't provide a means to load PEM key encoded in PKCS#1 without adding the
-		// Bouncy Castle to the classpath. The JDK can only load PEM key encoded in PKCS#8 encoding.
-		// Run the following command and convert PEM file first:
-		// openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		
-		return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(Paths.get(
-				PropertyReader.getInstance().getParam("iot.privateKeyFilePath")))));
-	}
-	
-	private SocketFactory getSocketFactory() throws Exception {
-		
-		Certificate certificate = readCertificate();
-		
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keyStore.load(null, null);
-		keyStore.setCertificateEntry("certificate", certificate);
-		keyStore.setKeyEntry("private-key", readPrivateKey(), "".toCharArray(),
-				new Certificate[] {certificate});
-
-		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(
-				KeyManagerFactory.getDefaultAlgorithm());
-		keyManagerFactory.init(keyStore, "".toCharArray());
-		
-		SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-		sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
-		
-		return sslContext.getSocketFactory();
 	}
 
 	public void connect() throws MqttSecurityException, MqttException {
@@ -191,50 +132,5 @@ public class AwsMqttClient {
 		log.info("Subscribe: " + topicFilter);
 		
 		client.subscribe(topicFilter, 0);
-	}
-	
-	private static String getTopicForShadow(String pattern) {
-		return String.format("$aws/things/%s/shadow/" + pattern,
-				PropertyReader.getInstance().getParam("iot.thingName"));
-	}
-	
-	public static String getTopicForShadowUpdate() {		
-		return getTopicForShadow("update");
-	}
-	
-	public static String getTopicForShadowUpdateAccepted() {
-		return getTopicForShadow("update/accepted");
-	}
-	
-	public static String getTopicForShadowUpdateRejected() {
-		return getTopicForShadow("update/rejected");
-	}
-	
-	public static String getTopicForShadowUpdateDelta() {
-		return getTopicForShadow("update/delta");
-	}
-	
-	public static String getTopicForShadowGet() {
-		return getTopicForShadow("get");
-	}
-	
-	public static String getTopicForShadowGetAccepted() {
-		return getTopicForShadow("get/accepted");
-	}
-	
-	public static String getTopicForShadowGetRejected() {
-		return getTopicForShadow("get/rejected");
-	}
-	
-	public static String getTopicForShadowDelete() {
-		return getTopicForShadow("delete");
-	}
-	
-	public static String getTopicForShadowDeleteAccepted() {
-		return getTopicForShadow("delete/accepted");
-	}
-	
-	public static String getTopicForShadowDeleteRejected() {
-		return getTopicForShadow("delete/rejected");
 	}
 }

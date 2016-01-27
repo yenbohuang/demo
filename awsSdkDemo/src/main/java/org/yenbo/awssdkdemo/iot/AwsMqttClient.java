@@ -15,7 +15,8 @@ import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.awssdkdemo.PropertyReader;
+import org.yenbo.awssdkdemo.PropertiesSingleton;
+import org.yenbo.commonDemo.security.KeyReader;
 
 public class AwsMqttClient {
 
@@ -29,21 +30,26 @@ public class AwsMqttClient {
 		
 		// end point
 		endpoint = String.format("ssl://%s:8883",
-				PropertyReader.getInstance().getParam("iot.endpointAddress"));
+				PropertiesSingleton.getInstance().getParam("iot.endpointAddress"));
 		log.info(endpoint);
 		
 		// create client
 		MemoryPersistence persistence = new MemoryPersistence();
 		
 		client = new MqttClient(endpoint,
-				PropertyReader.getInstance().getParam("iot.thingName"),
+				PropertiesSingleton.getInstance().getParam("iot.thingName"),
 				persistence);
+		
+		// key and certificates
+		KeyReader keyReader = new KeyReader(
+				PropertiesSingleton.getInstance().getParam("iot.certificateFilePath"),
+				PropertiesSingleton.getInstance().getParam("iot.privateKeyFilePath"));
 		
 		// create connect options
 		connectOptions = new MqttConnectOptions();
 		connectOptions.setCleanSession(true);
 		connectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connectOptions.setSocketFactory(KeyReader.getSslContext().getSocketFactory());
+		connectOptions.setSocketFactory(keyReader.getSslContext().getSocketFactory());
 		
 		// callback
 		client.setCallback(new MqttCallback() {

@@ -2,7 +2,7 @@ package org.yenbo.awssdkdemo.iot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.awssdkdemo.PropertyReader;
+import org.yenbo.awssdkdemo.PropertiesSingleton;
 
 import com.amazonaws.services.iot.AWSIotClient;
 import com.amazonaws.services.iot.model.AttachPrincipalPolicyRequest;
@@ -81,13 +81,13 @@ public class AwsIotDemoConsole {
 		
 		log.info("---- readProperties ----");
 		
-		PropertyReader.getInstance().getParam("iot.thingName");
-		PropertyReader.getInstance().getParam("iot.thingArn");
-		PropertyReader.getInstance().getParam("iot.certificateArn");
-		PropertyReader.getInstance().getParam("iot.certificateId");
-		PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.name");
-		PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.arn");
-		PropertyReader.getInstance().getParam("iot.endpointAddress");
+		PropertiesSingleton.getInstance().getParam("iot.thingName");
+		PropertiesSingleton.getInstance().getParam("iot.thingArn");
+		PropertiesSingleton.getInstance().getParam("iot.certificateArn");
+		PropertiesSingleton.getInstance().getParam("iot.certificateId");
+		PropertiesSingleton.getInstance().getParam("iot.policy.PubSubToAnyTopic.name");
+		PropertiesSingleton.getInstance().getParam("iot.policy.PubSubToAnyTopic.arn");
+		PropertiesSingleton.getInstance().getParam("iot.endpointAddress");
 	}
 	
 	public CreateThingResult createThing() {
@@ -95,7 +95,7 @@ public class AwsIotDemoConsole {
 		log.info("---- createThing ----");
 		
 		CreateThingRequest request = new CreateThingRequest();
-		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		request.setThingName(PropertiesSingleton.getInstance().getParam("iot.thingName"));
 		
 		CreateThingResult result = client.createThing(request);
 		
@@ -108,7 +108,7 @@ public class AwsIotDemoConsole {
 		log.info("---- describeThing ----");
 		
 		DescribeThingRequest request = new DescribeThingRequest();
-		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		request.setThingName(PropertiesSingleton.getInstance().getParam("iot.thingName"));
 		
 		DescribeThingResult result = client.describeThing(request);
 		
@@ -134,7 +134,7 @@ public class AwsIotDemoConsole {
 		log.info("---- describeCertificate ----");
 		
 		DescribeCertificateRequest request = new DescribeCertificateRequest();
-		request.setCertificateId(PropertyReader.getInstance().getParam("iot.certificateId"));
+		request.setCertificateId(PropertiesSingleton.getInstance().getParam("iot.certificateId"));
 		
 		DescribeCertificateResult result = client.describeCertificate(request);
 		
@@ -166,7 +166,7 @@ public class AwsIotDemoConsole {
 		
 		CreatePolicyRequest request = new CreatePolicyRequest();
 		request.setPolicyName(
-				PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
+				PropertiesSingleton.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
 		request.setPolicyDocument(gson.toJson(policyDocument));
 		
 		CreatePolicyResult result = client.createPolicy(request);
@@ -181,7 +181,7 @@ public class AwsIotDemoConsole {
 		
 		GetPolicyRequest request = new GetPolicyRequest();
 		request.setPolicyName(
-				PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
+				PropertiesSingleton.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
 		
 		GetPolicyResult result = client.getPolicy(request);
 		
@@ -195,8 +195,8 @@ public class AwsIotDemoConsole {
 		
 		AttachPrincipalPolicyRequest request = new AttachPrincipalPolicyRequest();
 		request.setPolicyName(
-				PropertyReader.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
-		request.setPrincipal(PropertyReader.getInstance().getParam("iot.certificateArn"));
+				PropertiesSingleton.getInstance().getParam("iot.policy.PubSubToAnyTopic.name"));
+		request.setPrincipal(PropertiesSingleton.getInstance().getParam("iot.certificateArn"));
 		
 		client.attachPrincipalPolicy(request);
 	}
@@ -206,7 +206,7 @@ public class AwsIotDemoConsole {
 		log.info("---- listPrincipalPolicies ----");
 		
 		ListPrincipalPoliciesRequest request = new ListPrincipalPoliciesRequest();
-		request.setPrincipal(PropertyReader.getInstance().getParam("iot.certificateArn"));
+		request.setPrincipal(PropertiesSingleton.getInstance().getParam("iot.certificateArn"));
 		
 		ListPrincipalPoliciesResult result = client.listPrincipalPolicies(request);
 		
@@ -219,8 +219,8 @@ public class AwsIotDemoConsole {
 		log.info("---- attachThingPrincipal ----");
 		
 		AttachThingPrincipalRequest request = new AttachThingPrincipalRequest();
-		request.setPrincipal(PropertyReader.getInstance().getParam("iot.certificateArn"));
-		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		request.setPrincipal(PropertiesSingleton.getInstance().getParam("iot.certificateArn"));
+		request.setThingName(PropertiesSingleton.getInstance().getParam("iot.thingName"));
 		
 		AttachThingPrincipalResult result = client.attachThingPrincipal(request);
 		
@@ -233,7 +233,7 @@ public class AwsIotDemoConsole {
 		log.info("---- listThingPrincipals ----");
 		
 		ListThingPrincipalsRequest request = new ListThingPrincipalsRequest();
-		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		request.setThingName(PropertiesSingleton.getInstance().getParam("iot.thingName"));
 		
 		ListThingPrincipalsResult result = client.listThingPrincipals(request);
 		
@@ -258,7 +258,7 @@ public class AwsIotDemoConsole {
 		log.info("---- getThingShadow ----");
 		
 		GetThingShadowRequest request = new GetThingShadowRequest();
-		request.setThingName(PropertyReader.getInstance().getParam("iot.thingName"));
+		request.setThingName(PropertiesSingleton.getInstance().getParam("iot.thingName"));
 		
 		GetThingShadowResult result = dataClient.getThingShadow(request);
 		

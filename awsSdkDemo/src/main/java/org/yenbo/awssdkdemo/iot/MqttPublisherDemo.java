@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.awssdkdemo.PropertyReader;
+import org.yenbo.awssdkdemo.PropertiesSingleton;
 
 public class MqttPublisherDemo {
 
@@ -49,9 +49,9 @@ public class MqttPublisherDemo {
 	}
 	
 	private static void readProperties() {
-		PropertyReader.getInstance().getParam("iot.endpointAddress");
-		PropertyReader.getInstance().getParam("iot.certificateFilePath");
-		PropertyReader.getInstance().getParam("iot.thingName");
-		PropertyReader.getInstance().getParam("iot.privateKeyFilePath");
+		PropertiesSingleton.getInstance().getParam("iot.endpointAddress");
+		PropertiesSingleton.getInstance().getParam("iot.certificateFilePath");
+		PropertiesSingleton.getInstance().getParam("iot.thingName");
+		PropertiesSingleton.getInstance().getParam("iot.privateKeyFilePath");
 	}
 }

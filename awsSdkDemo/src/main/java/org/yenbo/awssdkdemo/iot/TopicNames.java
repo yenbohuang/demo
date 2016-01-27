@@ -1,6 +1,6 @@
 package org.yenbo.awssdkdemo.iot;
 
-import org.yenbo.awssdkdemo.PropertyReader;
+import org.yenbo.awssdkdemo.PropertiesSingleton;
 
 public class TopicNames {
 
@@ -8,7 +8,7 @@ public class TopicNames {
 		
 		return new StringBuilder()
 				.append("$aws/things/")
-				.append(PropertyReader.getInstance().getParam("iot.thingName"))
+				.append(PropertiesSingleton.getInstance().getParam("iot.thingName"))
 				.append("/shadow/")
 				.append(pattern)
 				.toString();

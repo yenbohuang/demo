@@ -15,7 +15,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.awssdkdemo.PropertyReader;
+import org.yenbo.awssdkdemo.PropertiesSingleton;
+import org.yenbo.commonDemo.security.KeyReader;
 
 public class AwsIotHttpsClient {
 
@@ -28,7 +29,7 @@ public class AwsIotHttpsClient {
 		
 		URI uri = new URIBuilder()
 				.setScheme("https")
-				.setHost(PropertyReader.getInstance().getParam("iot.endpointAddress"))
+				.setHost(PropertiesSingleton.getInstance().getParam("iot.endpointAddress"))
 				.setPort(8443)
 				.setPath(String.format("/topics/%s", topic))
 				.setParameter("qos", "1")
@@ -56,8 +57,12 @@ public class AwsIotHttpsClient {
 			
 		};
 		
+		KeyReader keyReader = new KeyReader(
+				PropertiesSingleton.getInstance().getParam("iot.certificateFilePath"),
+				PropertiesSingleton.getInstance().getParam("iot.privateKeyFilePath"));
+		
 		HttpClient client = HttpClientBuilder.create()
-				.setSslcontext(KeyReader.getSslContext())
+				.setSSLContext(keyReader.getSslContext())
 				.build();
 		
 		client.execute(httpPost, responseHandler);

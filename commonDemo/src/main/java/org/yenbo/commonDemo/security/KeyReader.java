@@ -1,22 +1,35 @@
 package org.yenbo.commonDemo.security;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.List;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.yenbo.commonDemo.CommonDemoException;
 
 public class KeyReader {
 
+	public enum PrivateKeyType {
+		RSA,
+		EC
+	}
+	
 	public static final char[] KEY_STORE_PASSWORD = "".toCharArray();
 	
 	private String certificateFilePath;
@@ -26,7 +39,9 @@ public class KeyReader {
 	private KeyStore keyStore;
 	private SSLContext sslContext;
 	
-	public KeyReader(String certificateFilePath, String privateKeyFilePath) throws Exception {
+	public KeyReader(String certificateFilePath, String privateKeyFilePath,
+			PrivateKeyType privateKeyType)
+	throws Exception {
 		
 		if (StringUtils.isBlank(certificateFilePath)) {
 			throw new IllegalArgumentException("certificateFilePath is blank");
@@ -40,20 +55,10 @@ public class KeyReader {
 		this.privateKeyFilePath = privateKeyFilePath;
 		
 		// Certificate
-		try (FileInputStream fileInputStream = new FileInputStream(certificateFilePath)) {
-			CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-			certificate = certificateFactory.generateCertificate(fileInputStream);
-		}
+		certificate = readCertificate(certificateFilePath);
 
 		// PrivateKey
-		// JDK doesn't provide a means to load PEM key encoded in PKCS#1 without adding the
-		// Bouncy Castle to the classpath. The JDK can only load PEM key encoded in PKCS#8 encoding.
-		// Run the following command and convert PEM file first:
-		// openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		
-		privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(
-				Paths.get(privateKeyFilePath))));
+		privateKey = readPrivateKey(privateKeyFilePath, privateKeyType);
 
 		// KeyStore
 		keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -93,5 +98,73 @@ public class KeyReader {
 
 	public KeyStore getKeyStore() {
 		return keyStore;
+	}
+	
+	public static Certificate readCertificate(String filepath)
+			throws FileNotFoundException, IOException, CertificateException {
+		
+		if (StringUtils.isBlank(filepath)) {
+			throw new IllegalArgumentException("filepath is blank");
+		}
+		
+		Certificate cert = null;
+		
+		try (FileInputStream fileInputStream = new FileInputStream(filepath)) {
+			CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+			cert = certificateFactory.generateCertificate(fileInputStream);
+		}
+		
+		return cert;
+	}
+	
+	public static PrivateKey readPrivateKey(String filepath, PrivateKeyType type)
+			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+		
+		if (StringUtils.isBlank(filepath)) {
+			throw new IllegalArgumentException("filepath is blank");
+		}
+		
+		KeyFactory keyFactory = null;
+		
+		switch (type) {
+		case RSA:
+			// JDK doesn't provide a means to load PEM key encoded in PKCS#1 without adding the
+			// Bouncy Castle to the classpath. The JDK can only load PEM key encoded in PKCS#8 encoding.
+			// Run the following command and convert PEM file first:
+			// openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key
+			keyFactory = KeyFactory.getInstance("RSA");
+			
+			return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(
+					Paths.get(filepath))));
+
+		case EC:
+			
+			List<String> lines = Files.readAllLines(Paths.get(filepath));
+			StringBuilder stringBuilder = new StringBuilder();
+			
+			for (String line: lines) {
+				
+				// end of file
+				if (line.contains("-----END PRIVATE KEY-----") ||
+						line.contains("-----END RSA PRIVATE KEY-----")) {
+					break;
+				}
+				
+				// add key content
+				if (StringUtils.isNotBlank(line) &&
+						false == line.contains("-----BEGIN PRIVATE KEY-----")) {
+					stringBuilder.append(line + "\n");
+				} 
+			}
+			
+			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(DatatypeConverter.parseBase64Binary(
+					stringBuilder.toString()));
+			keyFactory = KeyFactory.getInstance("EC");
+			
+			return keyFactory.generatePrivate(keySpec);
+			
+		default:
+			throw new CommonDemoException("Unknown private key type");
+		}
 	}
 }

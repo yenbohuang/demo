@@ -18,6 +18,13 @@ This project is for AWS tools testing by free-tier services. Create a free-tier 
 
 # AWS IoT private key
 
+A private key should be look like this:
+
+    -----BEGIN RSA PRIVATE KEY-----
+    ...
+    -----END RSA PRIVATE KEY-----
+
+
 PEM file cannot be read by PKCS8EncodedKeySpec class. You need to convert it by the following command:
 
     openssl pkcs8 -topk8 -inform PEM -outform DER -in privateKey.pem  -nocrypt > pkcs8_key

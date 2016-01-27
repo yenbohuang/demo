@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.awssdkdemo.PropertiesSingleton;
 import org.yenbo.commonDemo.security.KeyReader;
+import org.yenbo.commonDemo.security.KeyReader.PrivateKeyType;
 
 public class AwsIotHttpsClient {
 
@@ -59,7 +60,8 @@ public class AwsIotHttpsClient {
 		
 		KeyReader keyReader = new KeyReader(
 				PropertiesSingleton.getInstance().getParam("iot.certificateFilePath"),
-				PropertiesSingleton.getInstance().getParam("iot.privateKeyFilePath"));
+				PropertiesSingleton.getInstance().getParam("iot.privateKeyFilePath"),
+				PrivateKeyType.RSA);
 		
 		HttpClient client = HttpClientBuilder.create()
 				.setSSLContext(keyReader.getSslContext())

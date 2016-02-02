@@ -13,8 +13,8 @@ import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.commonDemo.security.KeyReader;
-import org.yenbo.commonDemo.security.KeyReader.PrivateKeyType;
+import org.yenbo.commonUtils.KeyReader;
+import org.yenbo.commonUtils.KeyReader.PrivateKeyType;
 
 public class DeviceConnectorCoapDemo {
 

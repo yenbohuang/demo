@@ -36,7 +36,7 @@
 		
 		<dependency>
 			<groupId>org.yenbo</groupId>
-			<artifactId>commonDemo</artifactId>
+			<artifactId>commonUtils</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

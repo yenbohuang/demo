@@ -1,7 +1,7 @@
 package org.yenbo.mbed;
 
-import org.yenbo.commonDemo.PropertiesReader;
-import org.yenbo.commonDemo.PropertiesReader.FileType;
+import org.yenbo.commonUtils.PropertiesReader;
+import org.yenbo.commonUtils.PropertiesReader.FileType;
 
 public class PropertiesSingleton {
 

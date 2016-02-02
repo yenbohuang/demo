@@ -1,6 +1,7 @@
 package org.yenbo.commonDemo;
 
-import org.yenbo.commonDemo.PropertiesReader.FileType;
+import org.yenbo.commonUtils.PropertiesReader;
+import org.yenbo.commonUtils.PropertiesReader.FileType;
 
 public class PropertyDemo {
 

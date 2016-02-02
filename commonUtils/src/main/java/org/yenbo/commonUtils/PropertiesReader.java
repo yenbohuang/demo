@@ -1,4 +1,4 @@
-package org.yenbo.commonDemo;
+package org.yenbo.commonUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class PropertiesReader {
 						filename)) {
 					value = readKey(key, inputStream);
 				} catch (IOException e) {
-					throw new CommonDemoException(e);
+					throw new CommonUtilsException(e);
 				}
 				
 				break;
@@ -90,13 +90,13 @@ public class PropertiesReader {
 				try (FileInputStream inputStream = new FileInputStream(filename)) {
 					value = readKey(key, inputStream);
 				} catch (IOException e) {
-					throw new CommonDemoException(e);
+					throw new CommonUtilsException(e);
 				}
 				
 				break;
 				
 			default:
-				throw new CommonDemoException("unknown FileType");
+				throw new CommonUtilsException("unknown FileType");
 			}
 		}
 		

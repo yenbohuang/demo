@@ -1,4 +1,4 @@
-package org.yenbo.commonDemo.security;
+package org.yenbo.commonDemo;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

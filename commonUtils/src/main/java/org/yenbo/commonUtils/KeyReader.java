@@ -1,4 +1,4 @@
-package org.yenbo.commonDemo.security;
+package org.yenbo.commonUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +21,6 @@ import javax.net.ssl.SSLContext;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.yenbo.commonDemo.CommonDemoException;
 
 public class KeyReader {
 
@@ -164,7 +163,7 @@ public class KeyReader {
 			return keyFactory.generatePrivate(keySpec);
 			
 		default:
-			throw new CommonDemoException("Unknown private key type");
+			throw new CommonUtilsException("Unknown private key type");
 		}
 	}
 }

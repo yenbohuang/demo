@@ -1,4 +1,4 @@
-package org.yenbo.commonDemo.java2d;
+package org.yenbo.commonDemo;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

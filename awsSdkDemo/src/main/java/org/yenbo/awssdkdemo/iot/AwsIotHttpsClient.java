@@ -16,8 +16,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.awssdkdemo.PropertiesSingleton;
-import org.yenbo.commonDemo.security.KeyReader;
-import org.yenbo.commonDemo.security.KeyReader.PrivateKeyType;
+import org.yenbo.commonUtils.KeyReader;
+import org.yenbo.commonUtils.KeyReader.PrivateKeyType;
 
 public class AwsIotHttpsClient {
 

@@ -1,4 +1,4 @@
-package org.yenbo.coapDemo;
+package org.yenbo.californium;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

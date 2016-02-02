@@ -1,4 +1,4 @@
-package org.yenbo.coapDemo;
+package org.yenbo.californium;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;

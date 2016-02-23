@@ -3,8 +3,13 @@ package org.yenbo.commonDemo;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ListDemo {
 
+	private static final Logger log = LoggerFactory.getLogger(ListDemo.class);
+	
 	public static void main(String[] args) {
 		
 		printArray();
@@ -16,7 +21,7 @@ public class ListDemo {
 		String str = "Test string";
 		byte[] bytes = str.getBytes();
 		
-		System.out.println(Arrays.toString(bytes));
+		log.info(Arrays.toString(bytes));
 	}
 	
 	public static void arrayToArrayList() {
@@ -25,6 +30,6 @@ public class ListDemo {
 		list[0] = "string 1";
 		list[1] = "string 2";
 		
-		System.out.println(new ArrayList<String>(Arrays.asList(list)));
+		log.info(new ArrayList<String>(Arrays.asList(list)).toString());
 	}
 }

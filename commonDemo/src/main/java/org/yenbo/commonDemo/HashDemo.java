@@ -1,6 +1,5 @@
 package org.yenbo.commonDemo;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,9 +17,6 @@ public class HashDemo {
 
 	private static final Logger log = LoggerFactory.getLogger(HashDemo.class);
 	
-	private static String ALGORITHM_SHA256 = "SHA-256";
-	private static String ALGORITHM_MD5 = "MD5";
-	
 	public static void main(String[] args) {
 		
 		try {
@@ -28,21 +24,49 @@ public class HashDemo {
 			byte[] binary = RandomUtils.nextBytes(20);
 			byte[] key = "secret".getBytes();
 			
-			log.info("SHA-256=" + Hex.encodeHexString(hash(ALGORITHM_SHA256,binary)));
-			log.info("MD5=" + Hex.encodeHexString(hash(ALGORITHM_MD5, binary)));
+			log.info("SHA-256=" + Hex.encodeHexString(MessageDigest.getInstance("SHA-256").digest(binary)));
 			log.info("CRC32=" + getCrc32(binary));
 			log.info("HMAC SHA-1: " + getHmacSha1(binary, key));
+			
+			md5(binary);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
 	}
 	
-	private static byte[] hash(String algorithm, byte[] input)
-	throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		
-	       MessageDigest digest = MessageDigest.getInstance(algorithm);
-	       digest.reset();
-	       return digest.digest(input);
+	private static void md5(byte[] binary) throws NoSuchAlgorithmException, CloneNotSupportedException {
+	    
+	    /* the following source codes returned the same results */
+	    
+	    // digest directly
+	    log.info("MD5 digest=" + Hex.encodeHexString(MessageDigest.getInstance("MD5").digest(binary)));
+	    
+	    // update, and digest
+	    MessageDigest digest1 = MessageDigest.getInstance("MD5");
+	    digest1.update(binary);
+	    log.info("MD5 update/digest=" + Hex.encodeHexString(digest1.digest()));
+	    
+	    // reset, and digest
+	    MessageDigest digest2 = MessageDigest.getInstance("MD5");
+	    digest2.reset();
+	    log.info("MD5 reset/digest=" + Hex.encodeHexString(digest2.digest(binary)));
+	    
+	    // reset, update, and digest
+	    MessageDigest digest3 = MessageDigest.getInstance("MD5");
+	    digest3.reset();
+	    digest3.update(binary);
+            log.info("MD5 reset/update/digest=" + Hex.encodeHexString(digest3.digest()));
+            
+            // clone, and digest
+            MessageDigest digest4 = (MessageDigest) digest1.clone();
+            log.info("MD5 clone/digest=" + Hex.encodeHexString(digest4.digest(binary)));
+            
+            /* return different values*/
+            MessageDigest digest5 = (MessageDigest) digest1.clone();
+            log.info("MD5 newValue/clone/digest=" + Hex.encodeHexString(digest5.digest(RandomUtils.nextBytes(20))));
+            
+            digest5.reset();
+            log.info("MD5 newValue/reset/digest=" + Hex.encodeHexString(digest5.digest(RandomUtils.nextBytes(20))));
 	}
 	
 	private static long getCrc32(byte[] input) {

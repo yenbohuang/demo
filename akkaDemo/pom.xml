@@ -57,7 +57,7 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-		
+
 		<!-- start AKKA dependencies -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
@@ -70,10 +70,10 @@
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
-    <groupId>com.typesafe.akka</groupId>
-    <artifactId>akka-cluster_2.11</artifactId>
-    <version>${akka.version}</version>
-</dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-cluster_2.11</artifactId>
+			<version>${akka.version}</version>
+		</dependency>
 		<!-- end AKKA dependencies -->
 
 		<dependency>

@@ -50,10 +50,11 @@
 	</build>
 
 	<dependencies>
+
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.7</version>
 		</dependency>
 
 		<!-- start AKKA dependencies -->
@@ -73,11 +74,6 @@
 			<version>${akka.version}</version>
 		</dependency>
 		<!-- end AKKA dependencies -->
-
-		<dependency>
-			<groupId>org.yenbo</groupId>
-			<artifactId>commonUtils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		
 	</dependencies>
 </project>

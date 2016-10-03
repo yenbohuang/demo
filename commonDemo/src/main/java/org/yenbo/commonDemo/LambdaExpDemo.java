@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +24,7 @@ public class LambdaExpDemo {
 		printByForEach();
 		sumByReduce();
 		flatternStreams();
+		filterByRegex();
 	}
 	
 	private static void listByFilter() {
@@ -165,4 +167,20 @@ public class LambdaExpDemo {
 	// TODO Map::putIfAbsent
 	// TODO Map::getOrDefault
 	// TODO List::sort
+	
+	private static void filterByRegex() {
+		
+		System.out.println("-------- filterByRegex() --------");
+		
+		Pattern pattern = Pattern.compile("\\d");
+		
+		String[] inputs = {"cat", "dog", "ice-9", "99 ranch"};
+		List<String> list = Arrays.asList(inputs);
+		
+		List<String> containDigits = list.stream()
+				.filter(pattern.asPredicate())
+				.collect(Collectors.toList());
+		
+		System.out.println(containDigits);
+	}
 }

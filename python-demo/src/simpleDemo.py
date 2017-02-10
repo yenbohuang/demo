@@ -48,3 +48,43 @@ print('\'hello with single quote\'')
 print('Go ' * 4)
 offsetTest = 'abcd'
 print(offsetTest[0], offsetTest[-1])
+
+print(len('0123456789'))
+
+# slice
+sliceTest = '0123456789'
+print(sliceTest[:], sliceTest[0:], sliceTest[5:], sliceTest[3:6], sliceTest[-3:], sliceTest[8:-3], sliceTest[-6:-2])
+print(sliceTest[::2], sliceTest[-1::-1], sliceTest[::-1])
+
+# split
+splitTest = 'hello one, hello two,\nhello three,\thello four'
+print(splitTest.split(','))
+print(splitTest.split())
+
+# join
+joinTest = ['hello one', 'hello two', 'hello three']
+print(', '.join(joinTest))
+print('\n'.join(joinTest))
+
+# string functions
+
+stringFuncTest = 'hello one, Hello two, hello Three...'
+print(stringFuncTest.startswith('hello'))
+print(stringFuncTest.endswith('Three...'))
+print(stringFuncTest.find('one'))
+print(stringFuncTest.rfind('two'))
+print(stringFuncTest.count('hello'))
+print(stringFuncTest.isalnum())
+print(stringFuncTest.isalpha())
+print(stringFuncTest.strip('.'))
+print(stringFuncTest.capitalize())
+print(stringFuncTest.title())
+print(stringFuncTest.upper())
+print(stringFuncTest.lower())
+print(stringFuncTest.swapcase())
+print(stringFuncTest.center(100))
+print(stringFuncTest.ljust(50))
+print(stringFuncTest.rjust(50))
+
+print(stringFuncTest.replace('hello', 'replaced'))
+print(stringFuncTest.replace('hello', 'replaced', 1))

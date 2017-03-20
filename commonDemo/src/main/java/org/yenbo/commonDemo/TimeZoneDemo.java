@@ -36,8 +36,10 @@ public class TimeZoneDemo {
 		timeZoneList.add("GMT+0");
 		timeZoneList.add("GMT-0");
 		
-		// Include group ID
+		// Include group ID: https://en.wikipedia.org/wiki/International_Air_Transport_Association_code#IATA_timezone_codes
+		// FIXME This part does not work and will always mapped to GMT.
 		timeZoneList.add("IATA~UTC");
+		timeZoneList.add("IATA~RU01");
 		
 		// Windows
 		timeZoneList.addAll(readWindowsRegistry());
@@ -55,7 +57,7 @@ public class TimeZoneDemo {
 	
 	private static List<String> readWindowsRegistry() {
 		
-		// Microsoft https://technet.microsoft.com/en-us/library/cc749073(v=ws.10).aspx
+		// Microsoft https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values
 		
 		List<String> list = new ArrayList<>();
 		
@@ -66,6 +68,7 @@ public class TimeZoneDemo {
 			for (String line: IOUtils.readLines(process.getInputStream(), StandardCharsets.UTF_8)) {
 				
 				if (line.startsWith(pattern)) {
+					// FIXME This part does not work and will always mapped to GMT.
 					list.add("MICROSOFT~" + line.replace(pattern, ""));
 				}
 			}

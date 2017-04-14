@@ -44,10 +44,10 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<dependencyManagement>
 		<dependencies>
-			
+
 			<!-- start standard Java libraries -->
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -60,7 +60,7 @@
 				<version>1.2</version>
 			</dependency>
 			<!-- end standard Java libraries -->
-			
+
 			<!-- start AWS -->
 			<dependency>
 				<groupId>com.amazonaws</groupId>
@@ -68,7 +68,7 @@
 				<version>1.11.58</version>
 			</dependency>
 			<!-- end AWS -->
-			
+
 			<!-- start californium -->
 			<dependency>
 				<groupId>org.eclipse.californium</groupId>
@@ -81,7 +81,7 @@
 				<version>1.0.4</version>
 			</dependency>
 			<!-- end californium -->
-			
+
 			<!-- start commons -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -89,12 +89,12 @@
 				<version>3.5</version>
 			</dependency>
 			<dependency>
-    			<groupId>commons-io</groupId>
-    			<artifactId>commons-io</artifactId>
-    			<version>2.5</version>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.5</version>
 			</dependency>
 			<!-- end commons -->
-			
+
 			<!-- start google -->
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
@@ -102,15 +102,15 @@
 				<version>2.8.0</version>
 			</dependency>
 			<!-- end google -->
-			
+
 			<!-- start httpclient -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.5.2</version>
+				<version>4.5.3</version>
 			</dependency>
 			<!-- end httpclient -->
-			
+
 			<!-- start mbed -->
 			<dependency>
 				<groupId>com.mbed</groupId>
@@ -118,67 +118,90 @@
 				<version>3.0.0-464</version>
 			</dependency>
 			<!-- end mbed -->
-			
+
 			<!-- start mysql -->
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>6.0.5</version>
+				<version>6.0.6</version>
 			</dependency>
 			<!-- end mysql -->
-			
+
 			<!-- start paho -->
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
 				<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-				<version>1.1.0</version>
+				<version>1.1.1</version>
 			</dependency>
 			<!-- end paho -->
-			
+
 			<!-- start slf4j -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.21</version>
+				<version>1.7.25</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.21</version>
+				<version>1.7.25</version>
 			</dependency>
 			<!-- end slf4j -->
-			
+
 			<!-- start Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.4.RELEASE</version>
+				<version>4.3.7.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
-				<version>4.3.4.RELEASE</version>
+				<version>4.3.7.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>4.3.4.RELEASE</version>
+				<version>4.3.7.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-websocket</artifactId>
-				<version>4.3.4.RELEASE</version>
+				<version>4.3.7.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.social</groupId>
+				<artifactId>spring-social-facebook</artifactId>
+				<version>2.0.3.RELEASE</version>
 			</dependency>
 			<!-- end Spring -->
-			
+
+			<!-- start akka -->
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-actor_2.11</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-slf4j_2.11</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-cluster_2.11</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			<!-- end akka -->
+
 			<!-- start yenbo's library -->
 			<dependency>
 				<groupId>org.yenbo</groupId>
 				<artifactId>commonDemo</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.yenbo</groupId>
 				<artifactId>commonUtils</artifactId>
@@ -198,8 +221,8 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-    		<groupId>commons-io</groupId>
-    		<artifactId>commons-io</artifactId>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 	</dependencies>
 </project>

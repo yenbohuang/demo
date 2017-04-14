@@ -23,7 +23,7 @@ public class LambdaExpDemo {
 		mapToStringLength();
 		printByForEach();
 		sumByReduce();
-		flatternStreams();
+//		flatternStreams();
 		filterByRegex();
 	}
 	
@@ -127,32 +127,33 @@ public class LambdaExpDemo {
 		System.out.println("Sum of some primes: " + sumPrimes);
 	}
 	
-	private static void flatternStreams() {
-		
-		System.out.println("-------- flatternStreams() --------");
-		
-		String[] billyQuotes = {
-				"For Brutus is an honourable man",
-				"Give me your hands if we be friends and Robin shall restore amends",
-				"Misery acquaints a man with strange bedfellows"
-		};
-		List<String> quotes = Arrays.asList(billyQuotes);
-		
-		List<String> words = quotes.stream()
-				.flatMap(line -> Stream.of(line.split(" +")))
-				.collect(Collectors.toList());
-		
-		long wordCount = words.size();
-		
-		double avg = (double) words.stream()
-				.map(String::length)
-				.reduce(0, (x, y) -> {
-					return x + y;
-					}
-				) / wordCount;
-		
-		System.out.println("Avg. word length: " + avg);
-	}
+//	private static void flatternStreams() {
+//		
+//		System.out.println("-------- flatternStreams() --------");
+//		
+//		String[] billyQuotes = {
+//				"For Brutus is an honourable man",
+//				"Give me your hands if we be friends and Robin shall restore amends",
+//				"Misery acquaints a man with strange bedfellows"
+//		};
+//		List<String> quotes = Arrays.asList(billyQuotes);
+//		
+//		// FIXME: Type mismatch
+//		List<String> words = quotes.stream()
+//				.flatMap(line -> Stream.of(line.split(" +")))
+//				.collect(Collectors.toList());
+//		
+//		long wordCount = words.size();
+//		
+//		double avg = (double) words.stream()
+//				.map(String::length)
+//				.reduce(0, (x, y) -> {
+//					return x + y;
+//					}
+//				) / wordCount;
+//		
+//		System.out.println("Avg. word length: " + avg);
+//	}
 	
 	// TODO Collection::parallelStream
 	// TODO Collection::spliterator

@@ -85,14 +85,23 @@ public class TestUserApiDemo {
 	public static void printUserInfo(String accessToken) {
 		
 		Facebook facebook = new FacebookTemplate(accessToken);
-		String[] fields = {"id", "email", "first_name", "last_name"};
+		String[] fields = {"id", "email", "first_name", "last_name", "locale", "location"};
 		User user = facebook.fetchObject("me", User.class, fields);
-		log.info("id={}, email={}, first_name={}, last_name={}, locale={}, location={}",
+		log.info("id={}, email={}, first_name={}, last_name={}, locale={}",
 				user.getId(),
 				user.getEmail(),
 				user.getFirstName(),
 				user.getLastName(),
-				user.getLocale(),
-				user.getLocation());
+				user.getLocale());
+		
+		if (null != user.getLocation()) {
+		
+			log.info("location.extraData={}, location.id={}, location.name={}",
+					user.getLocation().getExtraData(),
+					user.getLocation().getId(),
+					user.getLocation().getName());
+		} else {
+			log.info("location=null");;
+		}
 	}
 }

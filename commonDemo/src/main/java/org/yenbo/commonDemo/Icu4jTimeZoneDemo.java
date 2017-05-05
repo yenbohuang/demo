@@ -67,6 +67,7 @@ public class Icu4jTimeZoneDemo {
 		try {
 			ZoneId.of(zoneId).getId();
 		} catch (ZoneRulesException ex) {
+			log.info("ICU4J canonical ID for '{}' is '{}'", zoneId, TimeZone.getCanonicalID(zoneId));
 			log.error(ex.getMessage(), ex);
 		}
 	}

@@ -33,6 +33,7 @@ public class Icu4jTimeZoneDemo {
 					anyTimeZones.size(), canoicalTimeZones.size(), canoicalLocationTimeZones.size(), timezoneIds.length);
 			
 			if (canoicalLocationTimeZones.size() != canoicalTimeZones.size()) {
+				// The result: sizes are always match.
 				log.warn("Size of CANONICAL and CANONICAL_LOCATION not match");
 			}
 			
@@ -41,8 +42,9 @@ public class Icu4jTimeZoneDemo {
 				log.error("List is empty");
 			} else {
 				String[] zoneIdArray = canoicalTimeZones.toArray(new String[0]);
+				compareNormalized(zoneIdArray);
 				Arrays.sort(zoneIdArray);
-				log.info("Default timezone={}", ZoneId.of(zoneIdArray[0]));
+				log.info("Default timezone={}", ZoneId.of(zoneIdArray[0]).getId());
 			}
 			
 			// check of ZoneId throws exceptions
@@ -55,6 +57,7 @@ public class Icu4jTimeZoneDemo {
 			}
 			
 			for (String id: anyTimeZones) {
+				// Only this one throws exceptions
 				checkByZoneId(id);
 			}
 		}
@@ -65,6 +68,18 @@ public class Icu4jTimeZoneDemo {
 			ZoneId.of(zoneId).getId();
 		} catch (ZoneRulesException ex) {
 			log.error(ex.getMessage(), ex);
+		}
+	}
+	
+	private static void compareNormalized(String[] zoneIdArray) {
+		for (String id: zoneIdArray) {
+			String original = ZoneId.of(id).getId();
+			String normalized = ZoneId.of(id).normalized().getId();
+			
+			if (!original.equals(normalized)) {
+				// The result: all of them are identical.
+				log.info("Normalized timezone ID is different: original={}, normalized={}", original, normalized);
+			}
 		}
 	}
 }

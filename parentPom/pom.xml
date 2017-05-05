@@ -194,6 +194,14 @@
 				<version>2.5.0</version>
 			</dependency>
 			<!-- end akka -->
+			
+			<!-- start ibm -->
+			<dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>59.1</version>
+            </dependency>
+            <!-- end ibm -->
 
 			<!-- start yenbo's library -->
 			<dependency>

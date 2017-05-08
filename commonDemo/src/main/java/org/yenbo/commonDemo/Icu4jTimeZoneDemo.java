@@ -61,6 +61,8 @@ public class Icu4jTimeZoneDemo {
 				checkByZoneId(id);
 			}
 		}
+		
+		canonicalTimezones();
 	}
 	
 	private static void checkByZoneId(String zoneId) {
@@ -80,6 +82,19 @@ public class Icu4jTimeZoneDemo {
 			if (!original.equals(normalized)) {
 				// The result: all of them are identical.
 				log.info("Normalized timezone ID is different: original={}, normalized={}", original, normalized);
+			}
+		}
+	}
+	
+	private static void canonicalTimezones() {
+		
+		for (String zoneId: TimeZone.getAvailableIDs()) {
+			
+			String canonical = TimeZone.getCanonicalID(zoneId);
+			
+			if (!zoneId.equals(canonical)) {
+				log.info("Non-canonical: {}, canonical: {}", zoneId, canonical);
+//				System.out.format("Non-canonical: %s, canonical: %s\n", zoneId, canonical);
 			}
 		}
 	}

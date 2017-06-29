@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
@@ -18,6 +21,12 @@ public class TimeZoneDemo {
 	private static final Logger log = LoggerFactory.getLogger(TimeZoneDemo.class);
 	
 	public static void main(String[] args) {
+		
+		listTimezoneIds();
+		zoneOffset();
+	}
+	
+	private static void listTimezoneIds() {
 		
 		List<String> timeZoneList = new ArrayList<>();
 		timeZoneList.addAll(Arrays.asList(TimeZone.getAvailableIDs()));
@@ -77,5 +86,14 @@ public class TimeZoneDemo {
 		}
 		
 		return list;
+	}
+	
+	private static void zoneOffset() {
+		ZoneOffset offset = ZoneOffset.ofHours(-11);
+		log.info("Full+English: {}, Id={}, toString={}, CanonicalId={}",
+				offset.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
+				offset.getId(),
+				offset,
+				TimeZone.getAvailableIDs(offset.getTotalSeconds() * 1000));
 	}
 }

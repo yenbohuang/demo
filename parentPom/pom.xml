@@ -9,9 +9,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
-		
+
 		<akka.version>2.5.0</akka.version>
 		<jackson.version>2.9.0</jackson.version>
+		<jettyVersion>9.3.9.v20160517</jettyVersion>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>4.3.10.RELEASE</spring.version>
 	</properties>
@@ -223,6 +224,14 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			<!-- end -->
+
+			<!-- start jetty -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${jettyVersion}</version>
 			</dependency>
 			<!-- end -->
 

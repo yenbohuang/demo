@@ -20,15 +20,11 @@ public class StartJetty {
 	public static void main(String[] args) {
 		
 		Server server = new Server(8080);
-		
-		server.setStopAtShutdown(true);
-		server.setStopTimeout(5000);
         
         WebAppContext webapp = new WebAppContext();
-        webapp.setThrowUnavailableOnStartupException(true);
+        webapp.setContextPath("/");
         webapp.setResourceBase(
         		StartJetty.class.getProtectionDomain().getCodeSource().getLocation().toString());
-        webapp.setParentLoaderPriority(true);
         webapp.setConfigurations(new Configuration[] {
         		new WebInfConfiguration(),
         		new AnnotationConfiguration()

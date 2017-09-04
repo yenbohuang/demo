@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.yenbo.jetty.api.DemoService;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 @Configuration
 @ComponentScan("org.yenbo.jetty")
 public class WebConfiguration {
@@ -30,7 +32,9 @@ public class WebConfiguration {
         factory.setServiceBeans(Arrays.<Object>asList(
         		demoService()
         		));
-        // TODO JSON provider
+        factory.setProviders(Arrays.<Object>asList(
+        		jsonProvider()
+        		));
         factory.setAddress(factory.getAddress());
         return factory.create();
     }
@@ -38,6 +42,11 @@ public class WebConfiguration {
     @Bean
     public JaxRsApiApplication jaxRsApiApplication() {
         return new JaxRsApiApplication();
+    }
+    
+    @Bean
+    public JacksonJsonProvider jsonProvider() {
+    	return new JacksonJsonProvider();
     }
 
     @Bean 

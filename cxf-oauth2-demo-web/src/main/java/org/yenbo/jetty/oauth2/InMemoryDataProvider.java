@@ -11,7 +11,7 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthDataProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 
-public class OAuthMemoryDataProvider implements OAuthDataProvider {
+public class InMemoryDataProvider implements OAuthDataProvider {
 
 	@Override
 	public List<OAuthPermission> convertScopeToPermissions(Client client, List<String> requestedScopes) {

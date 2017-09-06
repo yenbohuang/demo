@@ -13,9 +13,10 @@
 		<akka.version>2.5.0</akka.version>
 		<cxf.version>3.1.12</cxf.version>
 		<jackson.version>2.9.0</jackson.version>
-		<jettyVersion>9.3.9.v20160517</jettyVersion>
+		<jetty.version>9.3.9.v20160517</jetty.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>4.3.10.RELEASE</spring.version>
+		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 	</properties>
 
 	<build>
@@ -192,6 +193,16 @@
 				<artifactId>spring-social-facebook</artifactId>
 				<version>2.0.3.RELEASE</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
 			<!-- end Spring -->
 
 			<!-- start akka -->
@@ -247,17 +258,17 @@
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
-				<version>${jettyVersion}</version>
+				<version>${jetty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-webapp</artifactId>
-				<version>${jettyVersion}</version>
+				<version>${jetty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-annotations</artifactId>
-				<version>${jettyVersion}</version>
+				<version>${jetty.version}</version>
 			</dependency>
 			<!-- end -->
 

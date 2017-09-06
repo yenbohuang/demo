@@ -12,12 +12,14 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.provider.RequestDispatcherProvider;
+import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.domain.InMemoryClient;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
@@ -25,6 +27,7 @@ import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
+@Import(UserDetailsSecurityConfig.class)
 @ComponentScan("org.yenbo.jetty")
 public class WebConfiguration {
 
@@ -46,6 +49,11 @@ public class WebConfiguration {
     public JacksonJsonProvider jsonProvider() {
     	return new JacksonJsonProvider();
     }
+	
+	@Bean
+	public OAuthJSONProvider oauthJSONProvider() {
+		return new OAuthJSONProvider();
+	}
 	
 	@Bean
     public Server demoServer(JacksonJsonProvider jsonProvider) {

@@ -1,22 +1,18 @@
 package org.yenbo.jetty;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-
-import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.SpringServletContainerInitializer;
-import org.springframework.web.filter.DelegatingFilterProxy;
+import org.yenbo.jetty.spring.WebConfiguration;
 
 public class StartJetty {
 
@@ -44,13 +40,6 @@ public class StartJetty {
                 new Class[] {WebConfiguration.class}
                 ));
         webapp.setAttribute("org.eclipse.jetty.containerInitializers", initializers);
-
-        webapp.addFilter(
-            new FilterHolder(
-            		new DelegatingFilterProxy("springSecurityFilterChain")),
-            		"/*",
-            		EnumSet.allOf(DispatcherType.class)
-        );
         
         server.insertHandler(webapp);
         

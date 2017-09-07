@@ -1,4 +1,4 @@
-package org.yenbo.jetty;
+package org.yenbo.jetty.spring;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -11,7 +11,6 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.provider.RequestDispatcherProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
-@Import(UserDetailsSecurityConfig.class)
+@Import(SecurityBeansConfig.class)
 @ComponentScan("org.yenbo.jetty")
 public class WebConfiguration {
 
@@ -76,12 +75,6 @@ public class WebConfiguration {
     	service.setDataProvider(new InMemoryAuthorizationCodeDataProvider());
     	return service;
     }
-	
-    private RequestDispatcherProvider requestDispatcherProvider() {
-    	RequestDispatcherProvider provider = new RequestDispatcherProvider();
-    	provider.setResourcePath("/login.jsp");
-    	return provider;
-    }
     
 	@Bean
     public Server oauth2Server(JacksonJsonProvider jsonProvider) {
@@ -89,8 +82,7 @@ public class WebConfiguration {
         JAXRSServerFactoryBean factory = createServerFactory(new Oauth2Application());
         
         factory.setProviders(Arrays.<Object>asList(
-        		jsonProvider,
-        		requestDispatcherProvider()
+        		jsonProvider
         		));
         
         factory.setServiceBeans(Arrays.<Object>asList(

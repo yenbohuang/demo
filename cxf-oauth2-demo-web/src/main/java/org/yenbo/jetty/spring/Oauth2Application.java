@@ -1,4 +1,4 @@
-package org.yenbo.jetty;
+package org.yenbo.jetty.spring;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

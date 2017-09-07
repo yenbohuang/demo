@@ -1,4 +1,4 @@
-package org.yenbo.jetty;
+package org.yenbo.jetty.spring;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -8,6 +8,9 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+/**
+ * This class is automatically scanned by Spring.
+ */
 public class WebInitializer implements WebApplicationInitializer {
 
 	@Override

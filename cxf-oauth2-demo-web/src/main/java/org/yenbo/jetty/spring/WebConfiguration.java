@@ -3,6 +3,7 @@ package org.yenbo.jetty.spring;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.core.Application;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.yenbo.jetty.api.DemoService;
+import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 
@@ -32,11 +34,15 @@ public class WebConfiguration {
 
 	private static final Logger log = LoggerFactory.getLogger(WebConfiguration.class);
 	
-	private JAXRSServerFactoryBean createServerFactory(Application application) {
+	private Server createServerFactory(Application application,
+			List<Object> providers, List<Object> serviceBeans) {
+		
 		JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(
 				application, JAXRSServerFactoryBean.class);
         factory.setAddress(factory.getAddress());
-        return factory;
+        factory.setProviders(providers);
+        factory.setServiceBeans(serviceBeans);
+        return factory.create();
 	}
 	
 	@Bean(destroyMethod = "shutdown")
@@ -56,18 +62,17 @@ public class WebConfiguration {
 	
 	@Bean
     public Server demoServer(JacksonJsonProvider jsonProvider) {
+        return createServerFactory(new DemoApplication(),
+        		Arrays.<Object>asList(jsonProvider),
+        		Arrays.<Object>asList(new DemoService()));
+    }
+	
+	@Bean
+    public Server resourceServer(JacksonJsonProvider jsonProvider) {
 		
-        JAXRSServerFactoryBean factory = createServerFactory(new DemoApplication());
-        
-        factory.setProviders(Arrays.<Object>asList(
-        		jsonProvider
-        		));
-        
-        factory.setServiceBeans(Arrays.<Object>asList(
-        		new DemoService()
-        		));
-        
-        return factory.create();
+        return createServerFactory(new ResourceApplication(),
+        		Arrays.<Object>asList(jsonProvider),
+        		Arrays.<Object>asList(new SecretService()));
     }
     
     private AuthorizationCodeGrantService authorizationCodeGrantService() {
@@ -79,17 +84,14 @@ public class WebConfiguration {
 	@Bean
     public Server oauth2Server(JacksonJsonProvider jsonProvider) {
 		
-        JAXRSServerFactoryBean factory = createServerFactory(new Oauth2Application());
-        
-        factory.setProviders(Arrays.<Object>asList(
-        		jsonProvider
-        		));
-        
-        factory.setServiceBeans(Arrays.<Object>asList(
-        		authorizationCodeGrantService()
-        		));
-        
-        return factory.create();
+        return createServerFactory(new Oauth2Application(),
+        		Arrays.<Object>asList(
+        				jsonProvider
+        				),
+        		Arrays.<Object>asList(
+                		authorizationCodeGrantService()
+                		)
+        		);
     }
     
     @Bean

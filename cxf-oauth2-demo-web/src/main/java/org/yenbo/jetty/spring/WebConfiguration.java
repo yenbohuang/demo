@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
@@ -28,7 +27,6 @@ import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
-@Import(SecurityBeansConfig.class)
 @ComponentScan("org.yenbo.jetty")
 public class WebConfiguration {
 

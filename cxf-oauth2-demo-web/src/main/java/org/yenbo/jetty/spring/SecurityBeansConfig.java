@@ -17,8 +17,8 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/oauth2/*", "/resource/*").authenticated()
-			.anyRequest().permitAll()
+			.antMatchers("/api/*").anonymous()
+			.anyRequest().authenticated()
 			.and().formLogin();
 	}
 	

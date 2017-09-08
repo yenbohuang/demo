@@ -16,9 +16,15 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
@@ -28,6 +34,8 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
 @ComponentScan("org.yenbo.jetty")
+@ImportResource(value = {"classpath:META-INF/cxf/cxf.xml"})
+@EnableWebMvc
 public class CxfConfiguration {
 
 	private static final Logger log = LoggerFactory.getLogger(CxfConfiguration.class);
@@ -42,6 +50,26 @@ public class CxfConfiguration {
         factory.setServiceBeans(serviceBeans);
         return factory.create();
 	}
+	
+	@Bean
+	public ViewResolver viewResolver() {
+		
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix("/WEB-INF/views/");
+		resolver.setSuffix(".jsp");
+		resolver.setExposeContextBeansAsAttributes(true);
+		return resolver;
+	}
+	
+	@Bean
+	public MessageSource messageSource() {
+		
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("messages"); // messages.properties
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
+	}
+	
 	
 	@Bean(destroyMethod = "shutdown")
     public SpringBus cxf() {

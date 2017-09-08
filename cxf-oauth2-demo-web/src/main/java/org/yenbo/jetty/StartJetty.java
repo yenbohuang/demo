@@ -20,12 +20,13 @@ public class StartJetty {
         webapp.setContextPath("/");
         webapp.setResourceBase(
         		StartJetty.class.getProtectionDomain().getCodeSource().getLocation().toString());
+        log.info("Resource base: {}", webapp.getResourceBase());
         webapp.setConfigurations(new Configuration[] {
         		new WebInfConfiguration(),
         		new AnnotationConfiguration()
         		});
         webapp.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-            ".*/[^/]*\\.jar$|.*/target/classes/.*|.*/target/test-classes/.*");
+            ".*/[^/]*\\.jar$|.*/target/classes/.*");
         server.insertHandler(webapp);
         
         try {

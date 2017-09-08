@@ -1,4 +1,4 @@
-package org.yenbo.jetty.spring;
+package org.yenbo.jetty.config.cxf;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

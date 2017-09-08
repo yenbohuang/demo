@@ -12,7 +12,7 @@ import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.SpringServletContainerInitializer;
-import org.yenbo.jetty.spring.WebConfiguration;
+import org.yenbo.jetty.config.cxf.CxfConfiguration;
 
 public class StartJetty {
 
@@ -37,7 +37,7 @@ public class StartJetty {
         List<ContainerInitializer> initializers = new ArrayList<>();
         initializers.add(new ContainerInitializer(
                 new SpringServletContainerInitializer(),
-                new Class[] {WebConfiguration.class}
+                new Class[] {CxfConfiguration.class}
                 ));
         webapp.setAttribute("org.eclipse.jetty.containerInitializers", initializers);
         

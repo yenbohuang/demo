@@ -1,4 +1,4 @@
-package org.yenbo.jetty.spring;
+package org.yenbo.jetty.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

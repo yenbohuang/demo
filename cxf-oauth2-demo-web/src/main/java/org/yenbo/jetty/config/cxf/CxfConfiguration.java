@@ -1,4 +1,4 @@
-package org.yenbo.jetty.spring;
+package org.yenbo.jetty.config.cxf;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -28,9 +28,9 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
 @ComponentScan("org.yenbo.jetty")
-public class WebConfiguration {
+public class CxfConfiguration {
 
-	private static final Logger log = LoggerFactory.getLogger(WebConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(CxfConfiguration.class);
 	
 	private Server createServerFactory(Application application,
 			List<Object> providers, List<Object> serviceBeans) {
@@ -68,7 +68,7 @@ public class WebConfiguration {
 	@Bean
     public Server resourceServer(JacksonJsonProvider jsonProvider) {
 		
-        return createServerFactory(new ResourceApplication(),
+        return createServerFactory(new SecuredApplication(),
         		Arrays.<Object>asList(jsonProvider),
         		Arrays.<Object>asList(new SecretService()));
     }

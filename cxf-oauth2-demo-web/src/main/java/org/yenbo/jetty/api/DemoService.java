@@ -16,7 +16,7 @@ public class DemoService {
 	@Produces("application/json")
 	public Response hello() {
 		HelloJson json = new HelloJson();
-		json.setMessage("I am not public information.");
+		json.setMessage("I am a public information.");
 		return Response.ok().entity(json).build();
 	}
 }

@@ -1,18 +1,12 @@
 package org.yenbo.jetty;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.SpringServletContainerInitializer;
-import org.yenbo.jetty.config.cxf.CxfConfiguration;
 
 public class StartJetty {
 
@@ -30,17 +24,8 @@ public class StartJetty {
         		new WebInfConfiguration(),
         		new AnnotationConfiguration()
         		});
-
         webapp.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
             ".*/[^/]*\\.jar$|.*/target/classes/.*|.*/target/test-classes/.*");
-        
-        List<ContainerInitializer> initializers = new ArrayList<>();
-        initializers.add(new ContainerInitializer(
-                new SpringServletContainerInitializer(),
-                new Class[] {CxfConfiguration.class}
-                ));
-        webapp.setAttribute("org.eclipse.jetty.containerInitializers", initializers);
-        
         server.insertHandler(webapp);
         
         try {

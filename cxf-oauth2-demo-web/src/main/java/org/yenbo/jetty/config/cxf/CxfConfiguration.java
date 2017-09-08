@@ -66,7 +66,7 @@ public class CxfConfiguration {
     }
 	
 	@Bean
-    public Server resourceServer(JacksonJsonProvider jsonProvider) {
+    public Server secretServer(JacksonJsonProvider jsonProvider) {
 		
         return createServerFactory(new SecuredApplication(),
         		Arrays.<Object>asList(jsonProvider),

@@ -15,7 +15,7 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/api/**", "/forms/**", "/static/**").anonymous()
+			.antMatchers("/api/**").anonymous()
 			.anyRequest().authenticated()
 			.and().formLogin();
 	}

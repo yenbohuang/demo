@@ -91,13 +91,19 @@ public class CxfConfiguration {
     	return service;
     }
     
+    @Bean
+    public OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter() {
+    	return new OAuthAuthorizationDataMessageBodyWriter();
+    }
+    
 	@Bean
-    public Server oauth2Server(JacksonJsonProvider jsonProvider) {
+    public Server oauth2Server(JacksonJsonProvider jsonProvider,
+    		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter) {
 		
         return createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
         				jsonProvider,
-        				new OAuthAuthorizationDataMessageBodyWriter()
+        				oAuthAuthorizationDataMessageBodyWriter
         				),
         		Arrays.<Object>asList(
                 		authorizationCodeGrantService()

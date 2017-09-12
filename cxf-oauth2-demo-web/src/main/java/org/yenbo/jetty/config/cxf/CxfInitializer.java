@@ -8,6 +8,7 @@ import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.yenbo.jetty.config.thymeleaf.ThymeleafConfig;
 
 /**
  * This class is automatically scanned by Spring.
@@ -18,7 +19,10 @@ public class CxfInitializer implements WebApplicationInitializer {
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		context.register(new Class<?>[] {CxfConfiguration.class});
+		context.register(new Class<?>[] {
+			CxfConfiguration.class,
+			ThymeleafConfig.class
+			});
 		context.refresh();
 		servletContext.addListener(new ContextLoaderListener(context));
 		

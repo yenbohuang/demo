@@ -1,10 +1,7 @@
 package org.yenbo.jetty.oauth2;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
@@ -16,34 +13,18 @@ import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.yenbo.jetty.domain.InMemoryClient;
 
-@Component
 public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorizationCodeDataProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(InMemoryAuthorizationCodeDataProvider.class);
-	
+
+	@Autowired
 	private InMemoryClient inMemoryClients;
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		super();
-    	
-		inMemoryClients = new InMemoryClient();
-    	
-    	// this is hardcoded for demo.
-		inMemoryClients.setClientId(UUID.fromString("78fa6a41-aec6-4690-9237-7cd6bb6e1a84"));
-		inMemoryClients.setClientSecret("7cd6bb6e1a84");
-		inMemoryClients.setRedirectUri("http://localhost:8080/api/demo");
-    	
-    	// copy this line from log file and proceed with other tests
-    	try {
-			log.info("clientId={}, clientSecret={}, redirectUri={}",
-					inMemoryClients.getClientId(), inMemoryClients.getClientSecret(),
-					URLEncoder.encode(inMemoryClients.getRedirectUri(), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage(), e);
-		}
     }
 	
 	@Override

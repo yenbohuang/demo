@@ -15,7 +15,7 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/api/**").anonymous()
+			.antMatchers("/api/**").anonymous() // TODO why this is blocked after login?
 			.anyRequest().authenticated()
 			.and().formLogin();
 	}

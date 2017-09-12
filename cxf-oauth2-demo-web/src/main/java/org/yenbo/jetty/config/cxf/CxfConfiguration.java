@@ -78,15 +78,22 @@ public class CxfConfiguration {
         		Arrays.<Object>asList(new SecretService()));
     }
     
-    private AuthorizationCodeGrantService authorizationCodeGrantService() {
-    	
-    	Map<String, OAuthPermission> permissionMap = new HashMap<>();
+	@Bean
+	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
+		
+		Map<String, OAuthPermission> permissionMap = new HashMap<>();
     	permissionMap.put("demo1", new OAuthPermission("demo1"));
     	permissionMap.put("demo2", new OAuthPermission("demo2"));
     	
     	InMemoryAuthorizationCodeDataProvider dataProvider = new InMemoryAuthorizationCodeDataProvider();
     	dataProvider.setPermissionMap(permissionMap);
     	
+    	return dataProvider;
+	}
+	
+	@Bean
+    public AuthorizationCodeGrantService authorizationCodeGrantService(
+    		InMemoryAuthorizationCodeDataProvider dataProvider) {
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setDataProvider(dataProvider);
     	return service;
@@ -110,7 +117,8 @@ public class CxfConfiguration {
     public Server oauth2Server(
     		JacksonJsonProvider jsonProvider,
     		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
-    		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter) {
+    		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
+    		AuthorizationCodeGrantService authorizationCodeGrantService) {
 		
         return createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
@@ -119,7 +127,7 @@ public class CxfConfiguration {
         				oAuthErrorMessageBodyWriter
         				),
         		Arrays.<Object>asList(
-                		authorizationCodeGrantService()
+                		authorizationCodeGrantService
                 		)
         		);
     }

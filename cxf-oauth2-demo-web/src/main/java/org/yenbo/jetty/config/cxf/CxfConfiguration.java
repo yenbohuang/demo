@@ -26,6 +26,7 @@ import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
+import org.yenbo.jetty.oauth2.OAuthAuthorizationDataMessageBodyWriter;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -95,7 +96,8 @@ public class CxfConfiguration {
 		
         return createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
-        				jsonProvider
+        				jsonProvider,
+        				new OAuthAuthorizationDataMessageBodyWriter()
         				),
         		Arrays.<Object>asList(
                 		authorizationCodeGrantService()

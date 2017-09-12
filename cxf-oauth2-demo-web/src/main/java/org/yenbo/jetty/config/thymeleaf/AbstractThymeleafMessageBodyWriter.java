@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.config.thymeleaf;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-public abstract class AbstractOAuth2DataMessageBodyWriter<T> implements MessageBodyWriter<T> {
+public abstract class AbstractThymeleafMessageBodyWriter<T> implements MessageBodyWriter<T> {
 
 	@Autowired
 	protected TemplateEngine templateEngine;

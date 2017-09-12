@@ -9,11 +9,12 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.rs.security.oauth2.common.OAuthAuthorizationData;
 import org.thymeleaf.context.Context;
+import org.yenbo.jetty.config.thymeleaf.AbstractThymeleafMessageBodyWriter;
 
 @Provider
 @Produces("text/html")
 public class OAuthAuthorizationDataMessageBodyWriter
-	extends AbstractOAuth2DataMessageBodyWriter<OAuthAuthorizationData> {
+	extends AbstractThymeleafMessageBodyWriter<OAuthAuthorizationData> {
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {

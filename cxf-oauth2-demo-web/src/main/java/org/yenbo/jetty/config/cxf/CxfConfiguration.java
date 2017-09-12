@@ -27,6 +27,7 @@ import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 import org.yenbo.jetty.oauth2.OAuthAuthorizationDataMessageBodyWriter;
+import org.yenbo.jetty.oauth2.OAuthErrorMessageBodyWriter;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -93,17 +94,29 @@ public class CxfConfiguration {
     
     @Bean
     public OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter() {
-    	return new OAuthAuthorizationDataMessageBodyWriter();
+    	OAuthAuthorizationDataMessageBodyWriter writer = new OAuthAuthorizationDataMessageBodyWriter();
+    	writer.setTemplate("OAuthAuthorizationData");
+    	return writer;
+    }
+    
+    @Bean
+    public OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter() {
+    	OAuthErrorMessageBodyWriter writer = new OAuthErrorMessageBodyWriter();
+    	writer.setTemplate("OAuthError");
+    	return writer;
     }
     
 	@Bean
-    public Server oauth2Server(JacksonJsonProvider jsonProvider,
-    		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter) {
+    public Server oauth2Server(
+    		JacksonJsonProvider jsonProvider,
+    		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
+    		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter) {
 		
         return createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
         				jsonProvider,
-        				oAuthAuthorizationDataMessageBodyWriter
+        				oAuthAuthorizationDataMessageBodyWriter,
+        				oAuthErrorMessageBodyWriter
         				),
         		Arrays.<Object>asList(
                 		authorizationCodeGrantService()

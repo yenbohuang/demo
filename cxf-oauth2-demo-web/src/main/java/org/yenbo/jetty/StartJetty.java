@@ -21,7 +21,7 @@ public class StartJetty {
         webapp.setContextPath("/");
         webapp.setResourceBase(
         		StartJetty.class.getProtectionDomain().getCodeSource().getLocation().toString());
-        log.info("Resource base: {}", webapp.getResourceBase());
+        log.debug("Resource base: {}", webapp.getResourceBase());
         webapp.setConfigurations(new Configuration[] {
         		new WebInfConfiguration(),
         		new AnnotationConfiguration()

@@ -25,8 +25,8 @@ public class OAuthErrorMessageBodyWriter extends AbstractThymeleafMessageBodyWri
 		
 		Context context = new Context(locale);
 		context.setVariable("error", data.getError());
-		context.setVariable("errorDescription", data.getErrorDescription());
-		context.setVariable("errorUri", data.getErrorUri());
+		context.setVariable("error_description", data.getErrorDescription());
+		context.setVariable("error_uri", data.getErrorUri());
 		context.setVariable("state", data.getState());
 		return context;
 	}

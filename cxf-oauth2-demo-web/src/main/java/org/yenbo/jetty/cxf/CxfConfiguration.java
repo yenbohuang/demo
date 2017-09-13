@@ -147,7 +147,7 @@ public class CxfConfiguration {
     	
     	// copy this line from log file and proceed with other tests
     	try {
-			log.info("clientId={}, clientSecret={}, redirectUri={}",
+			log.debug("clientId={}, clientSecret={}, redirectUri={}",
 					client.getClientId(), client.getClientSecret(),
 					URLEncoder.encode(client.getRedirectUri(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {

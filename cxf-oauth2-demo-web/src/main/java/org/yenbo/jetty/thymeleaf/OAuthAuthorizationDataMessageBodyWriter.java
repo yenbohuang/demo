@@ -29,12 +29,12 @@ public class OAuthAuthorizationDataMessageBodyWriter
 		// TODO Form binding does not work on "th:field" with Spring web MVC.
 		
 		// required fields
-		context.setVariable("responseType", oAuthAuthorizationData.getResponseType());
-		context.setVariable("clientId", oAuthAuthorizationData.getClientId());
-		context.setVariable("redirectUri", oAuthAuthorizationData.getRedirectUri());
+		context.setVariable("response_type", oAuthAuthorizationData.getResponseType());
+		context.setVariable("client_id", oAuthAuthorizationData.getClientId());
+		context.setVariable("redirect_uri", oAuthAuthorizationData.getRedirectUri());
 		context.setVariable("scope", oAuthAuthorizationData.getProposedScope());
 		context.setVariable("state", oAuthAuthorizationData.getState());
-		context.setVariable("authenticityToken", oAuthAuthorizationData.getAuthenticityToken());
+		context.setVariable("session_authenticity_token", oAuthAuthorizationData.getAuthenticityToken());
 		
 		// Display only fields
 		context.setVariable("appDescription", oAuthAuthorizationData.getApplicationDescription());

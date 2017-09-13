@@ -14,7 +14,6 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.provider.DefaultResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
@@ -82,12 +81,14 @@ public class CxfConfiguration {
 	@Bean
 	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
 		
-		Map<String, OAuthPermission> permissionMap = new HashMap<>();
-    	permissionMap.put("demo1", new OAuthPermission("demo1"));
-    	permissionMap.put("demo2", new OAuthPermission("demo2"));
+		// TODO how do we reload supported scopes?
+		Map<String, String> scopes = new HashMap<>();
+    	scopes.put("demo1", "description for demo1");
+    	scopes.put("demo2", "description for demo2");
+    	scopes.put("demo3", "description for demo3");
     	
     	InMemoryAuthorizationCodeDataProvider dataProvider = new InMemoryAuthorizationCodeDataProvider();
-    	dataProvider.setPermissionMap(permissionMap);
+    	dataProvider.setSupportedScopes(scopes);
     	
     	return dataProvider;
 	}

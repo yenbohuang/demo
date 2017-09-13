@@ -2,6 +2,7 @@ package org.yenbo.jetty.thymeleaf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -21,9 +22,11 @@ public class OAuthAuthorizationDataMessageBodyWriter
 	}
 
 	@Override
-	protected Context createContext(OAuthAuthorizationData oAuthAuthorizationData) {
+	protected Context createContext(OAuthAuthorizationData oAuthAuthorizationData, Locale locale) {
 		
-		Context context = new Context();
+		Context context = new Context(locale);
+		
+		// TODO Form binding does not work on "th:field" with Spring web MVC.
 		
 		// required fields
 		context.setVariable("responseType", oAuthAuthorizationData.getResponseType());

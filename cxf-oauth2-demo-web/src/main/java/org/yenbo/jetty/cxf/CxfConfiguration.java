@@ -142,7 +142,7 @@ public class CxfConfiguration {
     	// this is hardcoded for demo.
     	client.setClientId(UUID.fromString("78fa6a41-aec6-4690-9237-7cd6bb6e1a84"));
     	client.setClientSecret("7cd6bb6e1a84");
-    	client.setRedirectUri("http://localhost:8080/api/demo");
+    	client.setRedirectUri("http://localhost/unknown");
     	
     	// copy this line from log file and proceed with other tests
     	try {

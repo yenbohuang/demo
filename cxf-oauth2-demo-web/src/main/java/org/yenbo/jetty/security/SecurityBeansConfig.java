@@ -9,15 +9,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/api/**").anonymous() // TODO why this is blocked after login?
+			// TODO why this is blocked after login?
+			.antMatchers("/api/**", "/index.html").anonymous()
 			.anyRequest().authenticated()
-			.and().formLogin(); // TODO add customized login form
+			// TODO This line does not work: <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			.and().csrf().disable()
+			// TODO add customized login form
+			.formLogin();
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ public class StartJetty {
 	public static void main(String[] args) {
 		
 		Server server = new Server(8080);
+		server.setStopAtShutdown(true);
         
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");

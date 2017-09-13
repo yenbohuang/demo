@@ -2,6 +2,7 @@ package org.yenbo.jetty.thymeleaf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +21,9 @@ public class OAuthErrorMessageBodyWriter extends AbstractThymeleafMessageBodyWri
 	}
 
 	@Override
-	protected Context createContext(OAuthError data) {
+	protected Context createContext(OAuthError data, Locale locale) {
 		
-		Context context = new Context();
+		Context context = new Context(locale);
 		context.setVariable("error", data.getError());
 		context.setVariable("errorDescription", data.getErrorDescription());
 		context.setVariable("errorUri", data.getErrorUri());

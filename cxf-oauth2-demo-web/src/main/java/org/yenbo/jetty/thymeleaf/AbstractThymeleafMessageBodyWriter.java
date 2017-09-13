@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -24,7 +25,7 @@ public abstract class AbstractThymeleafMessageBodyWriter<T> implements MessageBo
 	
 	private String template;
 	
-	protected abstract Context createContext(T data);
+	protected abstract Context createContext(T data, Locale locale);
 	
 	public String getTemplate() {
 		return template;
@@ -51,8 +52,9 @@ public abstract class AbstractThymeleafMessageBodyWriter<T> implements MessageBo
 		}
 		
 		Writer writer = new PrintWriter(entityStream);
+		// TODO How to pass Locale class into Context?
         writer.write(templateEngine.process(String.format("html/%s.html", template),
-        		createContext(data)));
+        		createContext(data, Locale.ENGLISH)));
         writer.flush();
         writer.close();
 	}

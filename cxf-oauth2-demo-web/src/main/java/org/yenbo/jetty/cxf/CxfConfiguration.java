@@ -15,6 +15,7 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
+import org.apache.cxf.rs.security.oauth2.provider.DefaultResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.slf4j.Logger;
@@ -96,6 +97,7 @@ public class CxfConfiguration {
     		InMemoryAuthorizationCodeDataProvider dataProvider) {
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setDataProvider(dataProvider);
+    	service.setResourceOwnerNameProvider(new DefaultResourceOwnerNameProvider());
     	return service;
     }
     

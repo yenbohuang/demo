@@ -17,7 +17,7 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 			.antMatchers("/api/**").anonymous() // TODO why this is blocked after login?
 			.anyRequest().authenticated()
-			.and().formLogin();
+			.and().formLogin(); // TODO add customized login form
 	}
 	
 	@Override

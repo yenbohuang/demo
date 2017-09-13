@@ -123,6 +123,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 					"demo1",
 					"demo2"
 					));
+			client.setApplicationDescription("This is application description");
+			client.setApplicationName("This is application name");
 		}
 		
 		return client;

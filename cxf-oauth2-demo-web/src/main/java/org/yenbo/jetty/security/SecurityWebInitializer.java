@@ -1,4 +1,4 @@
-package org.yenbo.jetty.config.security;
+package org.yenbo.jetty.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 

@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.thymeleaf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -9,7 +9,6 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.rs.security.oauth2.common.OAuthAuthorizationData;
 import org.thymeleaf.context.Context;
-import org.yenbo.jetty.config.thymeleaf.AbstractThymeleafMessageBodyWriter;
 
 @Provider
 @Produces("text/html")

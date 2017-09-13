@@ -1,4 +1,4 @@
-package org.yenbo.jetty.config.cxf;
+package org.yenbo.jetty.cxf;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,8 +26,8 @@ import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.api.SecretService;
 import org.yenbo.jetty.domain.InMemoryClient;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
-import org.yenbo.jetty.oauth2.OAuthAuthorizationDataMessageBodyWriter;
-import org.yenbo.jetty.oauth2.OAuthErrorMessageBodyWriter;
+import org.yenbo.jetty.thymeleaf.OAuthAuthorizationDataMessageBodyWriter;
+import org.yenbo.jetty.thymeleaf.OAuthErrorMessageBodyWriter;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 

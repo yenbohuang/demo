@@ -1,4 +1,4 @@
-package org.yenbo.jetty.config.thymeleaf;
+package org.yenbo.jetty.thymeleaf;
 
 import java.util.Collections;
 

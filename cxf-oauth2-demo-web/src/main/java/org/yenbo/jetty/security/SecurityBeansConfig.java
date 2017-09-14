@@ -16,7 +16,11 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			// TODO why this is blocked after login?
-			.antMatchers("/api/**", "/index.html").anonymous()
+			.antMatchers(
+					"/api/**",
+					"/index.html",
+					"/oauth2/token"
+					).anonymous()
 			.anyRequest().authenticated()
 			// TODO This line does not work: <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			.and().csrf().disable()

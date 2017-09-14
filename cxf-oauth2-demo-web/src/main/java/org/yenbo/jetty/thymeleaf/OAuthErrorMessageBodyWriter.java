@@ -15,6 +15,10 @@ import org.thymeleaf.context.Context;
 @Produces("text/html")
 public class OAuthErrorMessageBodyWriter extends AbstractThymeleafMessageBodyWriter<OAuthError> {
 
+	public OAuthErrorMessageBodyWriter() {
+		super("OAuthError");
+	}
+	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
 		return type == OAuthError.class;

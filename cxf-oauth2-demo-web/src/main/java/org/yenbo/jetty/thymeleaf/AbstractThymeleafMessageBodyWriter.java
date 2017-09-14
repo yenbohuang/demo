@@ -27,11 +27,12 @@ public abstract class AbstractThymeleafMessageBodyWriter<T> implements MessageBo
 	
 	protected abstract Context createContext(T data, Locale locale);
 	
-	public String getTemplate() {
-		return template;
-	}
-	
-	public void setTemplate(String template) {
+	public AbstractThymeleafMessageBodyWriter(String template) {
+		
+		if (StringUtils.isBlank(template)) {
+			throw new IllegalArgumentException("template is blank");
+		}
+		
 		this.template = template;
 	}
 	
@@ -46,10 +47,6 @@ public abstract class AbstractThymeleafMessageBodyWriter<T> implements MessageBo
 			Type genericType, Annotation[] annotations, MediaType mediaType,
 			MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
 			throws IOException, WebApplicationException {
-
-		if (StringUtils.isBlank(template)) {
-			throw new WebApplicationException("template is blank.");
-		}
 		
 		Writer writer = new PrintWriter(entityStream);
 		// TODO How to pass Locale class into Context?

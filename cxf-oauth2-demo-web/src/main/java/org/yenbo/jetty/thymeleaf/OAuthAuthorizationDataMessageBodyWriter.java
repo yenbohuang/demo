@@ -12,12 +12,21 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.rs.security.oauth2.common.OAuthAuthorizationData;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.context.Context;
+import org.yenbo.jetty.oauth2.ScopeRepository;
 
 @Provider
 @Produces("text/html")
 public class OAuthAuthorizationDataMessageBodyWriter
 	extends AbstractThymeleafMessageBodyWriter<OAuthAuthorizationData> {
+
+	@Autowired
+	private ScopeRepository scopeRepository;
+	
+	public OAuthAuthorizationDataMessageBodyWriter() {
+		super("OAuthAuthorizationData");
+	}
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -45,10 +54,10 @@ public class OAuthAuthorizationDataMessageBodyWriter
 		context.setVariable("endUserName", oAuthAuthorizationData.getEndUserName());
 		context.setVariable("replyTo", oAuthAuthorizationData.getReplyTo());
 		
-		// TODO read translation from DB
 		List<String> scopeDescriptions = new ArrayList<>();
 		for (OAuthPermission permission: oAuthAuthorizationData.getPermissions()) {
-			scopeDescriptions.add("Descriptions for " + permission.getPermission());
+			scopeDescriptions.add(scopeRepository.getScopeDescription(
+					permission.getPermission(), Locale.ENGLISH));
 		}
 		context.setVariable("scopeDescriptions", scopeDescriptions);
 		

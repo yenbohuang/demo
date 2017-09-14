@@ -1,28 +1,33 @@
 package org.yenbo.jetty.oauth2;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.grants.code.AbstractAuthorizationCodeDataProvider;
+import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistration;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
-import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.yenbo.jetty.domain.InMemoryClient;
 
 public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorizationCodeDataProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(InMemoryAuthorizationCodeDataProvider.class);
 
 	@Autowired
-	private InMemoryClient inMemoryClients;
+	private ClientRepository clientRepository;
+	
+	@Autowired
+	private AuthorizationCodeRepository authorizationCodeRepository;
+	
+	@Autowired
+	private AccessTokenRepository accessTokenRepository;
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		super();
@@ -44,10 +49,24 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	}
 	
 	@Override
+	public ServerAuthorizationCodeGrant createCodeGrant(AuthorizationCodeRegistration reg)
+	        throws OAuthServiceException {
+		
+		ServerAuthorizationCodeGrant grant = super.createCodeGrant(reg);
+		authorizationCodeRepository.saveAuthorizationCode(grant);
+		return grant;
+    }
+	
+	@Override
 	public ServerAuthorizationCodeGrant removeCodeGrant(String code) throws OAuthServiceException {
-		// TODO Auto-generated method stub
-		log.warn("removeCodeGrant is not implemented");
-		return null;
+		
+		ServerAuthorizationCodeGrant grant = authorizationCodeRepository.getAuthorizationCode(code);
+		
+		if (null != grant) {
+			authorizationCodeRepository.deleteAuthorizationCode(grant);
+		}
+		
+		return grant;
 	}
 
 	@Override
@@ -96,8 +115,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Override
 	protected void saveAccessToken(ServerAccessToken serverToken) {
-		// TODO Auto-generated method stub
-		log.warn("saveAccessToken is not implemented");
+		accessTokenRepository.saveAccessToken(serverToken);
 	}
 
 	@Override
@@ -128,34 +146,16 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	@Override
 	protected Client doGetClient(String clientId) {
 		
-		Client client = null;
+		UUID clietUuid = null;
 		
-		if (inMemoryClients.getClientId().toString().equals(clientId)) {
-			client = new Client();
-			client.setAllowedGrantTypes(Arrays.<String>asList(
-					OAuthConstants.AUTHORIZATION_CODE_GRANT,
-					OAuthConstants.REFRESH_TOKEN
-					));
-			client.setClientId(inMemoryClients.getClientId().toString());
-			client.setClientSecret(inMemoryClients.getClientSecret());
-			client.setConfidential(true);
-			client.setRedirectUris(Arrays.<String>asList(
-					inMemoryClients.getRedirectUri()
-					));
-			client.setRegisteredScopes(Arrays.<String>asList(
-					"demo1",
-					"demo2",
-					"demo3"
-					));
-			client.setApplicationDescription("This is application description");
-			client.setApplicationName("This is application name");
-			
-			log.debug("doGetClient: load client ID {}", inMemoryClients.getClientId());
-		} else {
-			log.warn("Client ID not found: {}", clientId);
+		try {
+			clietUuid = UUID.fromString(clientId);
+		} catch (IllegalArgumentException ex) {
+			log.error(ex.getMessage(), ex);
+			return null;
 		}
 		
-		return client;
+		return clientRepository.getClient(clietUuid);
 	}
 
 	@Override

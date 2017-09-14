@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.cxf.rs.security.oauth2.common.Client;
+import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.grants.code.AbstractAuthorizationCodeDataProvider;
@@ -26,6 +27,21 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	public InMemoryAuthorizationCodeDataProvider() {
 		super();
     }
+	
+	@Override
+	protected void convertSingleScopeToPermission(Client client, String scope, List<OAuthPermission> perms) {
+		
+		// skip preset permissionMap and compose allowed list from client definition
+		if (client.getRegisteredScopes().contains(scope)) {
+			perms.add(new OAuthPermission(scope));
+		} else {
+			String msg = String.format(
+					"Unexpected scope: clientId=%s, scope=%s, registeredScopes=%s",
+					client.getClientId(), scope, client.getRegisteredScopes());
+			log.warn(msg);
+			throw new OAuthServiceException(msg);
+		}
+	}
 	
 	@Override
 	public ServerAuthorizationCodeGrant removeCodeGrant(String code) throws OAuthServiceException {
@@ -128,7 +144,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 					));
 			client.setRegisteredScopes(Arrays.<String>asList(
 					"demo1",
-					"demo2"
+					"demo2",
+					"demo3"
 					));
 			client.setApplicationDescription("This is application description");
 			client.setApplicationName("This is application name");

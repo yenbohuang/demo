@@ -9,6 +9,9 @@
   	<h1 th:text="#{hello.user(${endUserName})}"></h1>
   	<h2 th:text="${appName}"></h2>
   	<h3 th:text="${appDescription}"></h3>
+  	<ol>
+  		<li th:each="description : ${scopeDescriptions}" th:text="${description}"></li>
+  	</ol>
     
   	<form id="decisionForm" th:action="@{${replyTo}}" method="post">
   		

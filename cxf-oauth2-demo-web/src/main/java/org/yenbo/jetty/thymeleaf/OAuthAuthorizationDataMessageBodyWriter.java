@@ -2,6 +2,8 @@ package org.yenbo.jetty.thymeleaf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ws.rs.Produces;
@@ -9,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.rs.security.oauth2.common.OAuthAuthorizationData;
+import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.thymeleaf.context.Context;
 
 @Provider
@@ -41,6 +44,13 @@ public class OAuthAuthorizationDataMessageBodyWriter
 		context.setVariable("appName", oAuthAuthorizationData.getApplicationName());
 		context.setVariable("endUserName", oAuthAuthorizationData.getEndUserName());
 		context.setVariable("replyTo", oAuthAuthorizationData.getReplyTo());
+		
+		// TODO read translation from DB
+		List<String> scopeDescriptions = new ArrayList<>();
+		for (OAuthPermission permission: oAuthAuthorizationData.getPermissions()) {
+			scopeDescriptions.add("Descriptions for " + permission.getPermission());
+		}
+		context.setVariable("scopeDescriptions", scopeDescriptions);
 		
 		return context;
 	}

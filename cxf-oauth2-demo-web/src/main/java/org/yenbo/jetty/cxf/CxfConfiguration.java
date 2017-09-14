@@ -3,9 +3,7 @@ package org.yenbo.jetty.cxf;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.core.Application;
@@ -65,6 +63,7 @@ public class CxfConfiguration {
 	
 	@Bean
     public Server demoServer(JacksonJsonProvider jsonProvider) {
+		
         return createServerFactory(new DemoApplication(),
         		Arrays.<Object>asList(jsonProvider),
         		Arrays.<Object>asList(new DemoService()));
@@ -80,30 +79,23 @@ public class CxfConfiguration {
     
 	@Bean
 	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
-		
-		// TODO how do we reload supported scopes?
-		Map<String, String> scopes = new HashMap<>();
-    	scopes.put("demo1", "description for demo1");
-    	scopes.put("demo2", "description for demo2");
-    	scopes.put("demo3", "description for demo3");
-    	
-    	InMemoryAuthorizationCodeDataProvider dataProvider = new InMemoryAuthorizationCodeDataProvider();
-    	dataProvider.setSupportedScopes(scopes);
-    	
-    	return dataProvider;
+		return new InMemoryAuthorizationCodeDataProvider();
 	}
 	
 	@Bean
     public AuthorizationCodeGrantService authorizationCodeGrantService(
     		InMemoryAuthorizationCodeDataProvider dataProvider) {
+		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setDataProvider(dataProvider);
     	service.setResourceOwnerNameProvider(new DefaultResourceOwnerNameProvider());
+    	service.setPartialMatchScopeValidation(true);
     	return service;
     }
     
     @Bean
     public OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter() {
+    	
     	OAuthAuthorizationDataMessageBodyWriter writer = new OAuthAuthorizationDataMessageBodyWriter();
     	writer.setTemplate("OAuthAuthorizationData");
     	return writer;
@@ -111,6 +103,7 @@ public class CxfConfiguration {
     
     @Bean
     public OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter() {
+    	
     	OAuthErrorMessageBodyWriter writer = new OAuthErrorMessageBodyWriter();
     	writer.setTemplate("OAuthError");
     	return writer;

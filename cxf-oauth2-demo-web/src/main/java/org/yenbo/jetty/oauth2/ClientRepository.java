@@ -47,8 +47,10 @@ public class ClientRepository {
 	
 	public Client getClient(UUID clientId) {
 		if (null != clientId && client.getClientId().equals(clientId.toString())) {
+			log.debug("Client found: {}", clientId);
 			return client;
 		} else {
+			log.debug("Client not found: {}", clientId);
 			return null;
 		}
 	}

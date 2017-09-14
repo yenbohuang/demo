@@ -15,6 +15,8 @@ public class AccessTokenRepository {
 	
 	public void saveAccessToken(ServerAccessToken accessToken) {
 		accessTokenSet.add(accessToken);
-//		log.debug("Save accessToken: {}", accessToken.get);
+		log.debug("Save accessToken: refreshToken={}, responseType={}, tokenKey={}, tokenType={}",
+				accessToken.getRefreshToken(), accessToken.getResponseType(),
+				accessToken.getTokenKey(), accessToken.getTokenType());
 	}
 }

@@ -21,6 +21,8 @@ public class CxfInitializer implements WebApplicationInitializer {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 		context.register(new Class<?>[] {
 			CxfConfiguration.class,
+			Oauth2Configuration.class,
+			BeanConfiguration.class,
 			ThymeleafConfig.class
 			});
 		context.refresh();

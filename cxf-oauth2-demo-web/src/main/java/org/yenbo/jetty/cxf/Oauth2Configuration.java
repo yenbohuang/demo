@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.rs.security.oauth2.provider.DefaultResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
+import org.apache.cxf.rs.security.oauth2.provider.ResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.services.AccessTokenService;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.springframework.context.annotation.Bean;
@@ -27,13 +28,20 @@ public class Oauth2Configuration {
 	}
 	
 	@Bean
+	public ResourceOwnerNameProvider resourceOwnerNameProvider() {
+		// return login name on UI
+		return new DefaultResourceOwnerNameProvider();
+	}
+	
+	@Bean
     public AuthorizationCodeGrantService authorizationCodeGrantService(
-    		InMemoryAuthorizationCodeDataProvider dataProvider) {
+    		InMemoryAuthorizationCodeDataProvider dataProvider,
+    		ResourceOwnerNameProvider resourceOwnerNameProvider) {
 		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setCanSupportPublicClients(false);
     	service.setDataProvider(dataProvider);
-    	service.setResourceOwnerNameProvider(new DefaultResourceOwnerNameProvider());
+    	service.setResourceOwnerNameProvider(resourceOwnerNameProvider);
     	service.setPartialMatchScopeValidation(true);
     	return service;
     }

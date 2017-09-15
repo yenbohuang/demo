@@ -22,7 +22,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	private static final Logger log = LoggerFactory.getLogger(InMemoryAuthorizationCodeDataProvider.class);
 	
-	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = Long.MAX_VALUE;
+	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
+	private static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
 
 	@Autowired
 	private ClientRepository clientRepository;
@@ -31,7 +32,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	private AuthorizationCodeRepository authorizationCodeRepository;
 	
 	@Autowired
-	private AccessTokenRepository accessTokenRepository;
+	private TokenRepository tokenRepository;
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		super();
@@ -55,20 +56,30 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	@Override
 	protected ServerAccessToken createNewAccessToken(Client client, UserSubject userSub) {
 		// generate customized access token
-		BearerAccessToken token = new BearerAccessToken(client, UUID.randomUUID().toString(),
+		BearerAccessToken accessToken = new BearerAccessToken(client,
+				"AT:" + UUID.randomUUID().toString(),
 				ACCESS_TOKEN_EXPIRED_TIME_SECONDS, OAuthUtils.getIssuedAt());
 		log.debug(
 				"createNewAccessToken: responseType={}, refreshToken={}, tokenKey={}, tokenType={}",
-				token.getResponseType(), token.getRefreshToken(), token.getTokenKey(),
-				token.getTokenType());
-		return token;
+				accessToken.getResponseType(), accessToken.getRefreshToken(), accessToken.getTokenKey(),
+				accessToken.getTokenType());
+		return accessToken;
 	}
 	
 	@Override
 	protected boolean isRefreshTokenSupported(List<String> theScopes) {
 		// make refresh token always supported
 		log.debug("Always generate refresh token");
-		return super.isRefreshTokenSupported(theScopes);
+		return true;
+	}
+	
+	@Override
+	protected RefreshToken doCreateNewRefreshToken(ServerAccessToken at) {
+		// generate customized refresh token
+		RefreshToken refreshToken = super.doCreateNewRefreshToken(at);
+		refreshToken.setTokenKey("RT:" + UUID.randomUUID().toString());
+		refreshToken.setExpiresIn(REFRESH_TOKEN_EXPIRED_TIME_SECONDS);
+		return refreshToken;
 	}
 	
 	@Override
@@ -138,13 +149,12 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Override
 	protected void saveAccessToken(ServerAccessToken serverToken) {
-		accessTokenRepository.saveAccessToken(serverToken);
+		tokenRepository.saveAccessToken(serverToken);
 	}
 
 	@Override
 	protected void saveRefreshToken(RefreshToken refreshToken) {
-		// TODO Auto-generated method stub
-		log.warn("saveRefreshToken is not implemented");
+		tokenRepository.saveRefreshToken(refreshToken);
 	}
 
 	@Override

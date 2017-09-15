@@ -24,6 +24,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	
 	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	private static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
+	private static final boolean RECYCLE_REFRESH_TOKENS = true;
 
 	@Autowired
 	private ClientRepository clientRepository;
@@ -36,6 +37,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		super();
+		setRecycleRefreshTokens(RECYCLE_REFRESH_TOKENS);
     }
 	
 	@Override
@@ -113,9 +115,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Override
 	public ServerAccessToken getAccessToken(String accessToken) throws OAuthServiceException {
-		// TODO Auto-generated method stub
-		log.warn("getAccessToken is not implemented");
-		return null;
+		return tokenRepository.getAccessToken(accessToken);
 	}
 
 	@Override
@@ -159,21 +159,17 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Override
 	protected void doRevokeAccessToken(ServerAccessToken accessToken) {
-		// TODO Auto-generated method stub
-		log.warn("doRevokeAccessToken is not implemented");
+		tokenRepository.deleteAccessToken(accessToken);
 	}
 
 	@Override
 	protected void doRevokeRefreshToken(RefreshToken refreshToken) {
-		// TODO Auto-generated method stub
-		log.warn("doRevokeRefreshToken is not implemented");
+		tokenRepository.deleteRefreshToken(refreshToken);
 	}
 
 	@Override
 	protected RefreshToken getRefreshToken(String refreshTokenKey) {
-		// TODO Auto-generated method stub
-		log.warn("getRefreshToken is not implemented");
-		return null;
+		return tokenRepository.getRefreshToken(refreshTokenKey);
 	}
 
 	@Override

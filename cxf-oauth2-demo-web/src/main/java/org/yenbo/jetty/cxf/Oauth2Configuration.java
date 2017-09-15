@@ -1,8 +1,13 @@
 package org.yenbo.jetty.cxf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeGrantHandler;
+import org.apache.cxf.rs.security.oauth2.grants.refresh.RefreshTokenGrantHandler;
+import org.apache.cxf.rs.security.oauth2.provider.AccessTokenGrantHandler;
 import org.apache.cxf.rs.security.oauth2.provider.DefaultResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.provider.ResourceOwnerNameProvider;
@@ -16,11 +21,9 @@ import org.yenbo.jetty.thymeleaf.OAuthErrorMessageBodyWriter;
 
 @Configuration
 public class Oauth2Configuration {
-
-	@Bean
-	public OAuthJSONProvider oauthJSONProvider() {
-		return new OAuthJSONProvider();
-	}
+	
+	private static final boolean PARTIAL_MATCH_SCOPE_VALIDATION = true;
+	private static final boolean CAN_SUPPORT_PUBLIC_CLIENTS = false;
 	
 	@Bean
 	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
@@ -39,24 +42,37 @@ public class Oauth2Configuration {
     		ResourceOwnerNameProvider resourceOwnerNameProvider) {
 		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
-    	service.setCanSupportPublicClients(false);
+    	service.setCanSupportPublicClients(CAN_SUPPORT_PUBLIC_CLIENTS);
     	service.setDataProvider(dataProvider);
     	service.setResourceOwnerNameProvider(resourceOwnerNameProvider);
-    	service.setPartialMatchScopeValidation(true);
+    	service.setPartialMatchScopeValidation(PARTIAL_MATCH_SCOPE_VALIDATION);
     	return service;
     }
 	
 	@Bean
 	public AccessTokenService accessTokenService(InMemoryAuthorizationCodeDataProvider dataProvider) {
 		
+		RefreshTokenGrantHandler refreshTokenGrantHandler = new RefreshTokenGrantHandler();
+		refreshTokenGrantHandler.setDataProvider(dataProvider);
+		refreshTokenGrantHandler.setPartialMatchScopeValidation(PARTIAL_MATCH_SCOPE_VALIDATION);
+		
+		AuthorizationCodeGrantHandler authorizationCodeGrantHandler = new AuthorizationCodeGrantHandler();
+		authorizationCodeGrantHandler.setCanSupportPublicClients(CAN_SUPPORT_PUBLIC_CLIENTS);
+		authorizationCodeGrantHandler.setDataProvider(dataProvider);
+		authorizationCodeGrantHandler.setPartialMatchScopeValidation(PARTIAL_MATCH_SCOPE_VALIDATION);
+		
+		List<AccessTokenGrantHandler> handlers = new ArrayList<>();
+		handlers.add(authorizationCodeGrantHandler);
+		handlers.add(refreshTokenGrantHandler);
+		
 		AccessTokenService service = new AccessTokenService();
 		service.setDataProvider(dataProvider);
+		service.setGrantHandlers(handlers);
 		return service;
 	}
     
 	@Bean
     public Server oauth2Server(
-    		OAuthJSONProvider oauthJSONProvider,
     		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
     		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
     		AuthorizationCodeGrantService authorizationCodeGrantService,
@@ -64,7 +80,7 @@ public class Oauth2Configuration {
 		
         return CxfConfiguration.createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
-        				oauthJSONProvider,
+        				new OAuthJSONProvider(),
         				oAuthAuthorizationDataMessageBodyWriter,
         				oAuthErrorMessageBodyWriter
         				),

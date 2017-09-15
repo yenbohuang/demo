@@ -19,13 +19,18 @@ public class ClientRepository {
 	public ClientRepository() {
 		
 		client = new Client();
+		
+		// set default values
+		client.setConfidential(true);
+		client.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
 		client.setAllowedGrantTypes(Arrays.<String>asList(
 				OAuthConstants.AUTHORIZATION_CODE_GRANT,
 				OAuthConstants.REFRESH_TOKEN
 				));
+		
+		// set customized fields
 		client.setClientId("78fa6a41-aec6-4690-9237-7cd6bb6e1a84");
 		client.setClientSecret("7cd6bb6e1a84");
-		client.setConfidential(true);
 		client.setRedirectUris(Arrays.<String>asList(
 				"http://localhost/unknown"));
 		client.setRegisteredScopes(Arrays.<String>asList(

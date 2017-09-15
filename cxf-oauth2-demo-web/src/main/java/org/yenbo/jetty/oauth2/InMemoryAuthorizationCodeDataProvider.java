@@ -11,7 +11,9 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AbstractAuthorizationCodeDa
 import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistration;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
+import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
+import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorizationCodeDataProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(InMemoryAuthorizationCodeDataProvider.class);
+	
+	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = Long.MAX_VALUE;
 
 	@Autowired
 	private ClientRepository clientRepository;
@@ -46,6 +50,25 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 			log.warn(msg);
 			throw new OAuthServiceException(msg);
 		}
+	}
+	
+	@Override
+	protected ServerAccessToken createNewAccessToken(Client client, UserSubject userSub) {
+		// generate customized access token
+		BearerAccessToken token = new BearerAccessToken(client, UUID.randomUUID().toString(),
+				ACCESS_TOKEN_EXPIRED_TIME_SECONDS, OAuthUtils.getIssuedAt());
+		log.debug(
+				"createNewAccessToken: responseType={}, refreshToken={}, tokenKey={}, tokenType={}",
+				token.getResponseType(), token.getRefreshToken(), token.getTokenKey(),
+				token.getTokenType());
+		return token;
+	}
+	
+	@Override
+	protected boolean isRefreshTokenSupported(List<String> theScopes) {
+		// make refresh token always supported
+		log.debug("Always generate refresh token");
+		return super.isRefreshTokenSupported(theScopes);
 	}
 	
 	@Override

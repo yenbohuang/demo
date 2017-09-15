@@ -91,6 +91,7 @@ public class CxfConfiguration {
     		InMemoryAuthorizationCodeDataProvider dataProvider) {
 		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
+    	service.setCanSupportPublicClients(false);
     	service.setDataProvider(dataProvider);
     	service.setResourceOwnerNameProvider(new DefaultResourceOwnerNameProvider());
     	service.setPartialMatchScopeValidation(true);
@@ -117,7 +118,6 @@ public class CxfConfiguration {
     
 	@Bean
     public Server oauth2Server(
-    		JacksonJsonProvider jsonProvider,
     		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
     		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
     		AuthorizationCodeGrantService authorizationCodeGrantService,
@@ -125,7 +125,7 @@ public class CxfConfiguration {
 		
         return createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
-        				jsonProvider,
+        				new OAuthJSONProvider(),
         				oAuthAuthorizationDataMessageBodyWriter,
         				oAuthErrorMessageBodyWriter
         				),

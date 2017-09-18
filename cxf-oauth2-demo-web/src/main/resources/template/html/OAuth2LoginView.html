@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title th:text="#{headline}"></title>
+	</head>
+	<body onload="document.frmLogin.username.focus();">
+		<form name="frmLogin" action="/oauth2/login" method="POST">
+			<span th:text="#{login.username}"></span><input type="text" name="username" value=""><br />
+			<span th:text="#{login.password}"></span><input type="password" name="password" /><br />
+			<input name="submit" type="submit" value="Login"/>
+		</form>
+	</body>
+</html>

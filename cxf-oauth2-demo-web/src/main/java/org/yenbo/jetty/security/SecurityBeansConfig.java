@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -14,26 +15,26 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			// TODO why this is blocked after login?
-			.antMatchers(
-					"/api/**",
-					"/index.html",
-					"/oauth2/token"
-					).anonymous()
-			.anyRequest().authenticated()
-			// TODO This line does not work: <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-			.and().csrf().disable()
-			// TODO add customized login form
-			.formLogin();
+		
+		// TODO the hidden "_csrf" field is not added automatically for "th:action"
+		http.csrf().disable()
+			.formLogin()
+				.loginPage("/oauth2/login").permitAll()
+			.and().authorizeRequests()
+				.regexMatchers(
+						"/api/.*",
+						"/index.html$",
+						"/oauth2/token$",
+						// TODO Revise CXFServlet and see if static contents work
+						"/static/.*"
+					).permitAll()
+				.anyRequest().authenticated();
 	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// replace this with a real database
-		auth.inMemoryAuthentication()
-			.withUser("user").password("password").roles("USER")
-			.and()
-			.withUser("admin").password("password").roles("USER", "ADMIN");
+		
+		auth.userDetailsService(new DemoUserDetailsService())
+			.passwordEncoder(new StandardPasswordEncoder());
 	}	
 }

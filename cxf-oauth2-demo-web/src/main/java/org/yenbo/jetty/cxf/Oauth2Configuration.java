@@ -16,6 +16,8 @@ import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
+import org.yenbo.jetty.security.DemoLoginService;
+import org.yenbo.jetty.thymeleaf.OAuth2LoginViewMessageBodyWriter;
 import org.yenbo.jetty.thymeleaf.OAuthAuthorizationDataMessageBodyWriter;
 import org.yenbo.jetty.thymeleaf.OAuthErrorMessageBodyWriter;
 
@@ -80,6 +82,7 @@ public class Oauth2Configuration {
     public Server oauth2Server(
     		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
     		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
+    		OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter,
     		AuthorizationCodeGrantService authorizationCodeGrantService,
     		AccessTokenService accessTokenService) {
 		
@@ -87,11 +90,13 @@ public class Oauth2Configuration {
         		Arrays.<Object>asList(
         				new OAuthJSONProvider(),
         				oAuthAuthorizationDataMessageBodyWriter,
-        				oAuthErrorMessageBodyWriter
+        				oAuthErrorMessageBodyWriter,
+        				oAuth2LoginViewMessageBodyWriter
         				),
         		Arrays.<Object>asList(
                 		authorizationCodeGrantService,
-                		accessTokenService
+                		accessTokenService,
+                		new DemoLoginService()
                 		)
         		);
     }
@@ -104,5 +109,10 @@ public class Oauth2Configuration {
     @Bean
     public OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter() {
     	return new OAuthErrorMessageBodyWriter();
+    }
+    
+    @Bean
+    public OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter() {
+    	return new OAuth2LoginViewMessageBodyWriter();
     }
 }

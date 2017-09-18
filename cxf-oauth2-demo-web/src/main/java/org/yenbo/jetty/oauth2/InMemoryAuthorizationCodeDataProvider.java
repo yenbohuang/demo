@@ -18,9 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorizationCodeDataProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(InMemoryAuthorizationCodeDataProvider.class);
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	private static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
@@ -57,22 +61,23 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	
 	@Override
 	protected ServerAccessToken createNewAccessToken(Client client, UserSubject userSub) {
+		
 		// generate customized access token
 		BearerAccessToken accessToken = new BearerAccessToken(client,
 				"AT:" + UUID.randomUUID().toString(),
 				ACCESS_TOKEN_EXPIRED_TIME_SECONDS, OAuthUtils.getIssuedAt());
-		log.debug(
-				"Create: responseType={}, refreshToken={}, tokenKey={}, tokenType={}, scopes={}",
-				accessToken.getResponseType(),
-				accessToken.getRefreshToken(),
-				accessToken.getTokenKey(),
-				accessToken.getTokenType(),
-				OAuthUtils.convertPermissionsToScopeList(accessToken.getScopes()));
+		try {
+			log.debug("{}", OBJECT_MAPPER.writeValueAsString(accessToken));
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
+		
 		return accessToken;
 	}
 	
 	@Override
 	protected boolean isRefreshTokenSupported(List<String> theScopes) {
+		
 		// make refresh token always supported
 		log.debug("Always generate refresh token");
 		return true;
@@ -80,19 +85,37 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	
 	@Override
 	protected RefreshToken doCreateNewRefreshToken(ServerAccessToken at) {
+		
 		// generate customized refresh token
 		RefreshToken refreshToken = super.doCreateNewRefreshToken(at);
 		refreshToken.setTokenKey("RT:" + UUID.randomUUID().toString());
 		refreshToken.setExpiresIn(REFRESH_TOKEN_EXPIRED_TIME_SECONDS);
+		
+		try {
+			log.debug("{}", OBJECT_MAPPER.writeValueAsString(refreshToken));
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
+		
 		return refreshToken;
 	}
 	
 	@Override
 	protected ServerAccessToken doRefreshAccessToken(Client client, RefreshToken oldRefreshToken,
 			List<String> restrictedScopes) {
+		
 		// always renew and grant the same scopes from old refresh token
 		restrictedScopes.clear();
-		return super.doRefreshAccessToken(client, oldRefreshToken, restrictedScopes);
+		ServerAccessToken accessToken = super.doRefreshAccessToken(
+				client, oldRefreshToken, restrictedScopes);
+		
+		try {
+			log.debug("{}", OBJECT_MAPPER.writeValueAsString(accessToken));
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
+		
+		return accessToken;
 	}
 	
 	@Override
@@ -100,6 +123,13 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	        throws OAuthServiceException {
 		
 		ServerAuthorizationCodeGrant grant = super.createCodeGrant(reg);
+		
+		try {
+			log.debug("{}", OBJECT_MAPPER.writeValueAsString(grant));
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
+		
 		authorizationCodeRepository.saveAuthorizationCode(grant);
 		return grant;
     }

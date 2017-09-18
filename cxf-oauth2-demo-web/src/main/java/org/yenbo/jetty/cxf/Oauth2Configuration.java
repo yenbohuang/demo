@@ -24,10 +24,15 @@ public class Oauth2Configuration {
 	
 	private static final boolean PARTIAL_MATCH_SCOPE_VALIDATION = true;
 	private static final boolean CAN_SUPPORT_PUBLIC_CLIENTS = false;
+	private static final long GRANT_LIFE_TIME = 360L;
 	
 	@Bean
 	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
-		return new InMemoryAuthorizationCodeDataProvider();
+		
+		InMemoryAuthorizationCodeDataProvider dataProvider =
+				new InMemoryAuthorizationCodeDataProvider();
+		dataProvider.setGrantLifetime(GRANT_LIFE_TIME);
+		return dataProvider;
 	}
 	
 	@Bean

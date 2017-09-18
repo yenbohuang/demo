@@ -28,7 +28,6 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	
 	private static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	private static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
-	private static final boolean RECYCLE_REFRESH_TOKENS = true;
 
 	@Autowired
 	private ClientRepository clientRepository;
@@ -40,8 +39,10 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	private TokenRepository tokenRepository;
 
 	public InMemoryAuthorizationCodeDataProvider() {
+		
 		super();
-		setRecycleRefreshTokens(RECYCLE_REFRESH_TOKENS);
+		// always recycle refresh tokens
+		setRecycleRefreshTokens(true);
     }
 	
 	@Override

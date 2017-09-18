@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
+import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.jetty.exception.AccessTokenExistedException;
@@ -28,11 +29,12 @@ public class TokenRepository {
 		
 		accessTokenMap.put(accessToken.getTokenKey(), accessToken);
 		
-		log.debug("tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}",
+		log.debug("tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}, scopes={}",
 				accessToken.getTokenKey(),
 				accessToken.getTokenType(),
 				accessToken.getExpiresIn(),
-				accessToken.getRefreshToken());
+				accessToken.getRefreshToken(),
+				OAuthUtils.convertPermissionsToScopeList(accessToken.getScopes()));
 	}
 	
 	public void saveRefreshToken(RefreshToken refreshToken) {
@@ -46,11 +48,12 @@ public class TokenRepository {
 				
 		refreshTokenMap.put(refreshToken.getTokenKey(), refreshToken);
 		
-		log.debug("tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}",
+		log.debug("tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}, scopes={}",
 				refreshToken.getTokenKey(),
 				refreshToken.getTokenType(),
 				refreshToken.getExpiresIn(),
-				refreshToken.getAccessTokens());
+				refreshToken.getAccessTokens(),
+				OAuthUtils.convertPermissionsToScopeList(refreshToken.getScopes()));
 	}
 	
 	public RefreshToken getRefreshToken(String refreshTokenKey) {
@@ -58,11 +61,12 @@ public class TokenRepository {
 		RefreshToken refreshToken = refreshTokenMap.get(refreshTokenKey);
 		
 		if (null != refreshToken) {
-			log.debug("Found: tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}",
+			log.debug("Found: tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}, scopes={}",
 					refreshToken.getTokenKey(),
 					refreshToken.getTokenType(),
 					refreshToken.getExpiresIn(),
-					refreshToken.getAccessTokens());
+					refreshToken.getAccessTokens(),
+					OAuthUtils.convertPermissionsToScopeList(refreshToken.getScopes()));
 			
 		} else {
 			log.debug("Not found: {}", refreshTokenKey);
@@ -75,11 +79,12 @@ public class TokenRepository {
 		
 		if (refreshTokenMap.containsKey(refreshToken.getTokenKey())) {
 			refreshTokenMap.remove(refreshToken.getTokenKey());
-			log.debug("Deleted: tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}",
+			log.debug("Deleted: tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}, scopes={}",
 					refreshToken.getTokenKey(),
 					refreshToken.getTokenType(),
 					refreshToken.getExpiresIn(),
-					refreshToken.getAccessTokens());
+					refreshToken.getAccessTokens(),
+					OAuthUtils.convertPermissionsToScopeList(refreshToken.getScopes()));
 		} else {
 			log.warn("Not found: tokenKey={}, tokenType={}, expiresIn={}, accessTokens={}",
 					refreshToken.getTokenKey(),
@@ -94,11 +99,12 @@ public class TokenRepository {
 		ServerAccessToken serverAccessToken = accessTokenMap.get(accessToken);
 		
 		if (null != serverAccessToken) {
-			log.debug("Found: tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}",
+			log.debug("Found: tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}, scopes={}",
 					serverAccessToken.getTokenKey(),
 					serverAccessToken.getTokenType(),
 					serverAccessToken.getExpiresIn(),
-					serverAccessToken.getRefreshToken());
+					serverAccessToken.getRefreshToken(),
+					OAuthUtils.convertPermissionsToScopeList(serverAccessToken.getScopes()));
 		} else {
 			log.debug("Not found: {}", accessToken);
 		}
@@ -110,11 +116,12 @@ public class TokenRepository {
 		
 		if (accessTokenMap.containsKey(accessToken.getTokenKey())) {
 			accessTokenMap.remove(accessToken.getTokenKey());
-			log.debug("Deleted: tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}",
+			log.debug("Deleted: tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}, scopes={}",
 					accessToken.getTokenKey(),
 					accessToken.getTokenType(),
 					accessToken.getExpiresIn(),
-					accessToken.getRefreshToken());
+					accessToken.getRefreshToken(),
+					OAuthUtils.convertPermissionsToScopeList(accessToken.getScopes()));
 		} else {
 			log.warn("Not found: tokenKey={}, tokenType={}, expiresIn={}, refreshToken={}",
 					accessToken.getTokenKey(),

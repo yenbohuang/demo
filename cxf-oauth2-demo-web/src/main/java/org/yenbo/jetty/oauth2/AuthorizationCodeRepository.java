@@ -15,26 +15,27 @@ public class AuthorizationCodeRepository {
 	
 	public void saveAuthorizationCode(ServerAuthorizationCodeGrant grant) {
 		grantSet.add(grant);
-		log.debug("Save authorization code: code={}", grant.getCode());
+		log.debug("Save: code={}", grant.getCode());
 	}
 	
 	public ServerAuthorizationCodeGrant getAuthorizationCode(String authorizationCode) {
 		
 		for (ServerAuthorizationCodeGrant grant: grantSet) {
 			if (grant.getCode().equals(authorizationCode)) {
-				log.debug("Get authorization code: {}", authorizationCode);
+				log.debug("Found: {}", authorizationCode);
 				return grant;
 			}
 		}
 		
+		log.debug("Not found: {}", authorizationCode);
 		return null;
 	}
 	
 	public void deleteAuthorizationCode(ServerAuthorizationCodeGrant grant) {
 		if (grantSet.remove(grant)) {
-			log.debug("Authorization code deleted: {}", grant.getCode());
+			log.debug("Deleted: {}", grant.getCode());
 		} else {
-			log.debug("Authorization code not found when deleting it: {}", grant.getCode());
+			log.debug("Not found: {}", grant.getCode());
 		}
 	}
 }

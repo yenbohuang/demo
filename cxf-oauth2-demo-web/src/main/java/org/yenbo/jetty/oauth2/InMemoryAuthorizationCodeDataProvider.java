@@ -62,9 +62,12 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 				"AT:" + UUID.randomUUID().toString(),
 				ACCESS_TOKEN_EXPIRED_TIME_SECONDS, OAuthUtils.getIssuedAt());
 		log.debug(
-				"createNewAccessToken: responseType={}, refreshToken={}, tokenKey={}, tokenType={}",
-				accessToken.getResponseType(), accessToken.getRefreshToken(), accessToken.getTokenKey(),
-				accessToken.getTokenType());
+				"Create: responseType={}, refreshToken={}, tokenKey={}, tokenType={}, scopes={}",
+				accessToken.getResponseType(),
+				accessToken.getRefreshToken(),
+				accessToken.getTokenKey(),
+				accessToken.getTokenType(),
+				OAuthUtils.convertPermissionsToScopeList(accessToken.getScopes()));
 		return accessToken;
 	}
 	
@@ -82,6 +85,14 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		refreshToken.setTokenKey("RT:" + UUID.randomUUID().toString());
 		refreshToken.setExpiresIn(REFRESH_TOKEN_EXPIRED_TIME_SECONDS);
 		return refreshToken;
+	}
+	
+	@Override
+	protected ServerAccessToken doRefreshAccessToken(Client client, RefreshToken oldRefreshToken,
+			List<String> restrictedScopes) {
+		// always renew and grant the same scopes from old refresh token
+		restrictedScopes.clear();
+		return super.doRefreshAccessToken(client, oldRefreshToken, restrictedScopes);
 	}
 	
 	@Override

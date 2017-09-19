@@ -20,7 +20,7 @@
 	 		Get authorization code</a></li>
 	 	<li>Get access token by authorization code (logout before testing it)
 	 		<form action="http://localhost:8080/oauth2/token" method="post" target="getAccessCodeByAuthorizationCodeTab">
-	 			Authorization code = <input type="text" name="code" />
+	 			Authorization code = <input type="text" name="code" size="64" />
 	 			<input type="hidden" name="grant_type" value="authorization_code" />
 	 			<input type="hidden" name="client_id" value="78fa6a41-aec6-4690-9237-7cd6bb6e1a84" />
 	 			<input type="hidden" name="client_secret" value="7cd6bb6e1a84" />
@@ -30,7 +30,7 @@
 	 	</li>
 	 	<li>Get access token by refresh token (logout before testing it)
 	 		<form action="http://localhost:8080/oauth2/token" method="post" target="getAccessCodeByRefreshTokenTab">
-	 			Refresh token = <input type="text" name="refresh_token" />
+	 			Refresh token = <input type="text" name="refresh_token" size="64" />
 	 			<input type="hidden" name="grant_type" value="refresh_token" />
 	 			<input type="hidden" name="client_id" value="78fa6a41-aec6-4690-9237-7cd6bb6e1a84" />
 	 			<input type="hidden" name="client_secret" value="7cd6bb6e1a84" />

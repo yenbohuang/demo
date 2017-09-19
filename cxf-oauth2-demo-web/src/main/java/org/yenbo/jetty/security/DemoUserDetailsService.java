@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +24,7 @@ public class DemoUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("Username not found: " + username);
 		}
 		
-		User user = new User(username, new StandardPasswordEncoder().encode("password"),
+		User user = new User(username, new StupidPasswordEncoder().encode("password"),
 				new ArrayList<>());
 		
 		try {

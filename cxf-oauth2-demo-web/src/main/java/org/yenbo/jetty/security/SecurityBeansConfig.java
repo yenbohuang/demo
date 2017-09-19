@@ -25,7 +25,6 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 				.regexMatchers(
 						"/api/.*",
 						"/index.html$",
-						// TODO Revise CXFServlet and see if static contents work
 						"/static/.*"
 					).permitAll()
 				.regexMatchers(

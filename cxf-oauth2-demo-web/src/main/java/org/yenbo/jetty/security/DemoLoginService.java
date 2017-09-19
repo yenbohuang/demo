@@ -21,15 +21,12 @@ public class DemoLoginService {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response login(
-			@QueryParam("error") String error,
-			@QueryParam("logout") String logout) {
+			@QueryParam("error") String error) {
 		
-		log.debug("Generate customized login form: error={}, logout={}", error, logout);
+		log.debug("Generate customized login form: error={}", error);
 		
 		OAuth2LoginView view = new OAuth2LoginView();
-		// TODO handle error and logout
 		view.setError(error != null);
-		view.setLogout(logout != null);
 		return Response.ok().entity(view).build();
 	}
 }

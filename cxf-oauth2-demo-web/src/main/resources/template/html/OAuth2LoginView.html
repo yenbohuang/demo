@@ -5,6 +5,9 @@
 		<title th:text="#{headline}"></title>
 	</head>
 	<body onload="document.frmLogin.username.focus();">
+	
+		<span th:if="${isError}" th:text="#{login.error}" style="color:red"></span>
+		
 		<form name="frmLogin" action="/oauth2/login" method="POST">
 			<span th:text="#{login.username}"></span><input type="text" name="username" value=""><br />
 			<span th:text="#{login.password}"></span><input type="password" name="password" /><br />

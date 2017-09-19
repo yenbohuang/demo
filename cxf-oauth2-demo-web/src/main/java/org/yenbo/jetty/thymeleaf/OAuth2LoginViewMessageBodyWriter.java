@@ -24,6 +24,7 @@ public class OAuth2LoginViewMessageBodyWriter extends AbstractThymeleafMessageBo
 	protected Context createContext(OAuth2LoginView data, Locale locale) {
 		
 		Context context = new Context(locale);
+		context.setVariable("isError", data.isError());
 		return context;
 	}
 

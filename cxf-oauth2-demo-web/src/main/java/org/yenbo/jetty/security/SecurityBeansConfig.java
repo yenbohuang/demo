@@ -19,6 +19,8 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 			.formLogin()
 				.loginPage("/oauth2/login").permitAll()
+			.and().logout()
+				.logoutUrl("/oauth2/logout")
 			.and().authorizeRequests()
 				.regexMatchers(
 						"/api/.*",

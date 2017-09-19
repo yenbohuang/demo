@@ -30,7 +30,8 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 					).permitAll()
 				.regexMatchers(
 						// Prevent user from knowing access token and refresh token.
-						"/oauth2/token$"
+						"/oauth2/token$",
+						"/oauth2resx/resx"
 						).anonymous()
 				.anyRequest().authenticated();
 	}

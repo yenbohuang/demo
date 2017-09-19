@@ -32,7 +32,9 @@ public class ClientRepository {
 		client.setClientId("78fa6a41-aec6-4690-9237-7cd6bb6e1a84");
 		client.setClientSecret("7cd6bb6e1a84");
 		client.setRedirectUris(Arrays.<String>asList(
-				"http://localhost/unknown"));
+				"http://localhost/unknown",
+				// For testing by PostMan
+				"https://www.getpostman.com/oauth2/callback"));
 		client.setRegisteredScopes(Arrays.<String>asList(
 				"demo1", "demo2", "demo3"));
 		client.setApplicationDescription("This is application description");

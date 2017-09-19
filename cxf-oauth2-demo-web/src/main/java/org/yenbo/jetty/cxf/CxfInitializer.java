@@ -31,7 +31,7 @@ public class CxfInitializer implements WebApplicationInitializer {
 		ServletRegistration.Dynamic cxfServlet =
 				servletContext.addServlet("CXFServlet", CXFServlet.class);
 		cxfServlet.setInitParameter("static-welcome-file", "/index.html");
-		cxfServlet.setInitParameter("static-resources-list", "/index.html");
+		cxfServlet.setInitParameter("static-resources-list", "/index.html /static/.*");
 		cxfServlet.setLoadOnStartup(1);
 		cxfServlet.addMapping("/*");
 	}

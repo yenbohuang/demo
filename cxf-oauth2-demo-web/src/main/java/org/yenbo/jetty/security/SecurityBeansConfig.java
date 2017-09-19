@@ -24,10 +24,13 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 				.regexMatchers(
 						"/api/.*",
 						"/index.html$",
-						"/oauth2/token$",
 						// TODO Revise CXFServlet and see if static contents work
 						"/static/.*"
 					).permitAll()
+				.regexMatchers(
+						// Prevent user from knowing access token and refresh token.
+						"/oauth2/token$"
+						).anonymous()
 				.anyRequest().authenticated();
 	}
 	

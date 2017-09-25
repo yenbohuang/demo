@@ -30,7 +30,6 @@ public class CxfConfiguration {
 		
 		JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(
 				application, JAXRSServerFactoryBean.class);
-        factory.setAddress(factory.getAddress());
         factory.setProviders(providers);
         factory.setServiceBeans(serviceBeans);
         

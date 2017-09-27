@@ -5,6 +5,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 import org.apache.cxf.transport.servlet.CXFServlet;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -35,5 +37,9 @@ public class CxfInitializer implements WebApplicationInitializer {
 		cxfServlet.setInitParameter("static-resources-list", "/index.html /static/.*");
 		cxfServlet.setLoadOnStartup(1);
 		cxfServlet.addMapping("/*");
+		
+		ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
+		errorHandler.addErrorPage(500, "/api/demo/error");
+		ContextHandler.getContextHandler(servletContext).setErrorHandler(errorHandler);
 	}
 }

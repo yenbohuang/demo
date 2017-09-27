@@ -49,10 +49,13 @@ public class CxfConfiguration {
     }
 	
 	@Bean
-    public Server demoServer(JacksonJsonProvider jsonProvider) {
+    public Server demoServer(JacksonJsonProvider jsonProvider,
+    		DemoExceptionMapper exceptionMapper) {
 		
         return createServerFactory(new DemoApplication(),
-        		Arrays.<Object>asList(jsonProvider),
+        		Arrays.<Object>asList(
+        				jsonProvider,
+        				exceptionMapper),
         		Arrays.<Object>asList(new DemoService()));
     }
 	
@@ -63,4 +66,9 @@ public class CxfConfiguration {
         		Arrays.<Object>asList(jsonProvider),
         		Arrays.<Object>asList(new SecretService()));
     }
+	
+	@Bean
+	public DemoExceptionMapper exceptionMapper() {		
+		return new DemoExceptionMapper();
+	}
 }

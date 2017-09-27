@@ -20,4 +20,11 @@ public class DemoService {
 		json.setMessage("I am a public information.");
 		return Response.ok().entity(json).build();
 	}
+	
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/error")
+	public Response error() {
+		return Response.serverError().entity("This is handled by ErrorPageErrorHandler").build();
+	}
 }

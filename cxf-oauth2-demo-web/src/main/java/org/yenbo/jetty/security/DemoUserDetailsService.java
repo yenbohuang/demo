@@ -24,8 +24,17 @@ public class DemoUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("Username not found: " + username);
 		}
 		
-		User user = new User(username, new StupidPasswordEncoder().encode("password"),
-				new ArrayList<>());
+		// carry required information and hash it in PasswordEncoder
+		PasswordInfo passwordInfo = new PasswordInfo("abcd", "1234", "password");
+		String json = null;
+		
+		try {
+			json = OBJECT_MAPPER.writeValueAsString(passwordInfo);
+		} catch (JsonProcessingException ex) {
+			throw new UsernameNotFoundException("Parsing json error", ex);
+		}
+		
+		User user = new User(username, json, new ArrayList<>());
 		
 		try {
 			// Do not log password in production environment. This is only for demo.

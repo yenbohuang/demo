@@ -1,8 +1,13 @@
 package org.yenbo.jetty.security;
 
+import java.io.IOException;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Do not use this class since it is only for demo.
@@ -11,18 +16,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class StupidPasswordEncoder implements PasswordEncoder {
 
 	private static final Logger log = LoggerFactory.getLogger(StupidPasswordEncoder.class);
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	@Override
 	public String encode(CharSequence rawPassword) {
-		String encrypted = String.format("1234-%s-abcd", rawPassword);
-		log.debug(encrypted);
-		return encrypted;
+		// return a random password which never matches.
+		String randomPassword = UUID.randomUUID().toString();
+		log.debug("random password = {}", randomPassword);
+		return randomPassword;
 	}
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
+		
 		log.debug("rawPassword={}, encodedPassword={}", rawPassword, encodedPassword);
-		return encodedPassword.equals(encode(rawPassword));
+		
+		// carry required information and hash it in PasswordEncoder
+		PasswordInfo passwordInfo = null;
+		
+		try {
+			passwordInfo = OBJECT_MAPPER.readValue(encodedPassword, PasswordInfo.class);
+		} catch (IOException ex) {
+			log.error("Parsing PasswordInfo error", ex);
+			return false;
+		}
+		
+		String actual = PasswordInfo.stupidHash(
+				passwordInfo.getPrefix(), (String) rawPassword, passwordInfo.getPostfix());
+		String expected = passwordInfo.hash();
+		
+		log.debug("expected = {}, actual = {}", expected, actual);
+		return expected.equals(actual);
 	}
 
 }

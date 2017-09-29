@@ -5,3 +5,4 @@ Follow the following documents for how it works:
 * Spring security + embedded Jetty <https://dzone.com/articles/embedded-jetty-and-apache-cxf>
 * Servlet Transport <http://cxf.apache.org/docs/servlet-transport.html>
 * Using Thymeleaf template engine <http://www.thymeleaf.org/doc/articles/springmail.html>
+* Authenticate with extra user information <https://docs.spring.io/spring-security/site/docs/4.2.3.RELEASE/reference/htmlsingle/#appendix-faq-extra-login-fields>

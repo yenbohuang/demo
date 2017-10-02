@@ -27,6 +27,11 @@ public class Oauth2Configuration {
 	private static final boolean PARTIAL_MATCH_SCOPE_VALIDATION = true;
 	private static final boolean CAN_SUPPORT_PUBLIC_CLIENTS = false;
 	private static final long GRANT_LIFE_TIME = 360L;
+
+	@Bean
+	public DemoLoginService demoLoginService() {
+		return new DemoLoginService();
+	}
 	
 	@Bean
 	public InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider() {
@@ -84,7 +89,8 @@ public class Oauth2Configuration {
     		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
     		OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter,
     		AuthorizationCodeGrantService authorizationCodeGrantService,
-    		AccessTokenService accessTokenService) {
+    		AccessTokenService accessTokenService,
+    		DemoLoginService demoLoginService) {
 		
         return CxfConfiguration.createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
@@ -96,7 +102,7 @@ public class Oauth2Configuration {
         		Arrays.<Object>asList(
                 		authorizationCodeGrantService,
                 		accessTokenService,
-                		new DemoLoginService()
+                		demoLoginService
                 		)
         		);
     }

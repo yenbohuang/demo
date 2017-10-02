@@ -12,17 +12,21 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 
+	private static final String LOGIN_FORM_URL = "/oauth2/login";
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		// TODO the hidden "_csrf" field is not added automatically for "th:action"
 		http.csrf().disable()
-			.formLogin()
-				.loginPage("/oauth2/login").permitAll()
+			.exceptionHandling()
+				.authenticationEntryPoint(new DemoLoginUrlAuthenticationEntryPoint(LOGIN_FORM_URL))
+			.and().formLogin().loginPage(LOGIN_FORM_URL).permitAll()
 			.and().logout()
 				.logoutUrl("/oauth2/logout")
 			.and().authorizeRequests()
 				.regexMatchers(
+						LOGIN_FORM_URL + ".*",
 						"/api/.*",
 						"/index.html$",
 						"/static/.*"

@@ -25,6 +25,7 @@ public class OAuth2LoginViewMessageBodyWriter extends AbstractThymeleafMessageBo
 		
 		Context context = new Context(locale);
 		context.setVariable("isError", data.isError());
+		context.setVariable("appName", data.getAppName());
 		return context;
 	}
 

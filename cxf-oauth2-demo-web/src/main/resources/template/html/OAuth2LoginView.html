@@ -6,6 +6,7 @@
 	</head>
 	<body onload="document.frmLogin.username.focus();">
 	
+		<h1 th:text="${appName}"></h1>
 		<span th:if="${isError}" th:text="#{login.error}" style="color:red"></span>
 		
 		<form name="frmLogin" action="/oauth2/login" method="POST">

@@ -36,26 +36,30 @@ public class DemoLoginService {
 	@Produces(MediaType.TEXT_HTML)
 	public Response login(
 			@QueryParam("error") String error,
+			@QueryParam("logout") String logout,
 			@QueryParam(OAuthConstants.CLIENT_ID) String clientIdFromQueryString,
 			@Context MessageContext messageContext) {
+
+		log.debug("Generate customized login form: error={}, logout={}", error, logout);
+		
+		String clientId = clientIdFromQueryString;
 		
 		SavedRequest savedRequest = new HttpSessionRequestCache()
 				.getRequest(messageContext.getHttpServletRequest(), messageContext.getHttpServletResponse());
 
-		String clientIdFromSavedRequest = UriComponentsBuilder
-				.fromUriString(savedRequest.getRedirectUrl()).build()
-				.getQueryParams().getFirst(OAuthConstants.CLIENT_ID);
-	    
-		log.debug(
-				"Generate customized login form: error={}, clientIdFromQueryString={}, clientIdFromSavedRequest={}",
-				error, clientIdFromQueryString, clientIdFromSavedRequest);
+		if (null != savedRequest) {
+			clientId = UriComponentsBuilder
+					.fromUriString(savedRequest.getRedirectUrl()).build()
+					.getQueryParams().getFirst(OAuthConstants.CLIENT_ID);
+		}
 		
 		OAuth2LoginView view = new OAuth2LoginView();
 		view.setError(error != null);
+		view.setLogout(logout != null);
 		
-		if (null != clientIdFromSavedRequest) {
+		if (null != clientId) {
 			
-			Client client = clientRepository.getClient(UUID.fromString(clientIdFromSavedRequest));
+			Client client = clientRepository.getClient(UUID.fromString(clientId));
 			
 			if (null != client) {
 				view.setAppName(client.getApplicationName());

@@ -1,8 +1,8 @@
 package org.yenbo.jetty.security;
 
 import java.io.IOException;
-import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,16 +20,18 @@ public class StupidPasswordEncoder implements PasswordEncoder {
 	
 	@Override
 	public String encode(CharSequence rawPassword) {
-		// return a random password which never matches.
-		String randomPassword = UUID.randomUUID().toString();
-		log.debug("random password = {}", randomPassword);
-		return randomPassword;
+		// don't need this function for now.
+		return null;
 	}
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
 		
 		log.debug("rawPassword={}, encodedPassword={}", rawPassword, encodedPassword);
+		
+		if (StringUtils.isBlank(rawPassword)) {
+			return false;
+		}
 		
 		// carry required information and hash it in PasswordEncoder
 		PasswordInfo passwordInfo = null;

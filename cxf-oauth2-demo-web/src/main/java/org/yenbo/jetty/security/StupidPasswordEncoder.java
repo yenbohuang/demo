@@ -21,6 +21,7 @@ public class StupidPasswordEncoder implements PasswordEncoder {
 	@Override
 	public String encode(CharSequence rawPassword) {
 		// don't need this function for now.
+		log.debug("Always return null");
 		return null;
 	}
 
@@ -29,7 +30,7 @@ public class StupidPasswordEncoder implements PasswordEncoder {
 		
 		log.debug("rawPassword={}, encodedPassword={}", rawPassword, encodedPassword);
 		
-		if (StringUtils.isBlank(rawPassword)) {
+		if (StringUtils.isBlank(rawPassword) || StringUtils.isBlank(encodedPassword)) {
 			return false;
 		}
 		

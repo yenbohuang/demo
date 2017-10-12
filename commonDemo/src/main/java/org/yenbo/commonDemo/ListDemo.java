@@ -1,6 +1,5 @@
 package org.yenbo.commonDemo;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -30,6 +29,7 @@ public class ListDemo {
 		list[0] = "string 1";
 		list[1] = "string 2";
 		
-		log.info(new ArrayList<String>(Arrays.asList(list)).toString());
+		log.info(Arrays.asList(list).toString());
+		log.info(Arrays.<String>asList("string A", "string B").toString());
 	}
 }

@@ -1,12 +1,12 @@
 package org.yenbo.jetty.oauth2.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class InMemoryAuthorizationCode {
 
-	private List<String> approvedScopes = new ArrayList<>();
+	private Set<String> scopes = new HashSet<>();
 	private UUID clientId;
 	private String code;
 	private long expiresIn;
@@ -15,8 +15,8 @@ public class InMemoryAuthorizationCode {
 	private String username;
 	private String remoteAddress;
 	
-	public List<String> getApprovedScopes() {
-		return approvedScopes;
+	public Set<String> getScopes() {
+		return scopes;
 	}
 	
 	public UUID getClientId() {

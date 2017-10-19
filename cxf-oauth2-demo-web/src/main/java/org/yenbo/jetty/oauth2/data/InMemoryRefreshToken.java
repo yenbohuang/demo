@@ -1,7 +1,7 @@
 package org.yenbo.jetty.oauth2.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class InMemoryRefreshToken {
@@ -10,7 +10,7 @@ public class InMemoryRefreshToken {
 	private String token;
 	private long expiresIn;
 	private long issueAt;
-	private List<String> scopes = new ArrayList<>();
+	private Set<String> scopes = new HashSet<>();
 	private String authorizationCode;
 	private String accessToken;
 	
@@ -46,7 +46,7 @@ public class InMemoryRefreshToken {
 		this.issueAt = issueAt;
 	}
 	
-	public List<String> getScopes() {
+	public Set<String> getScopes() {
 		return scopes;
 	}
 	

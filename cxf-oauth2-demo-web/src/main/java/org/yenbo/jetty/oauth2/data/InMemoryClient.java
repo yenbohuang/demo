@@ -1,15 +1,15 @@
 package org.yenbo.jetty.oauth2.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class InMemoryClient {
 
 	private UUID clientId;
 	private String clientSecret;
-	private List<String> redirectUris = new ArrayList<>();
-	private List<String> scopes = new ArrayList<>();
+	private Set<String> redirectUris = new HashSet<>();
+	private Set<String> scopes = new HashSet<>();
 	private String description;
 	private String name;
 	
@@ -29,11 +29,11 @@ public class InMemoryClient {
 		this.clientSecret = clientSecret;
 	}
 	
-	public List<String> getRedirectUris() {
+	public Set<String> getRedirectUris() {
 		return redirectUris;
 	}
 	
-	public List<String> getScopes() {
+	public Set<String> getScopes() {
 		return scopes;
 	}
 	

@@ -38,7 +38,7 @@ public class Oauth2Factory {
 		}
 		
 		InMemoryAuthorizationCode authorizationCode = new InMemoryAuthorizationCode();
-		authorizationCode.getApprovedScopes().addAll(grant.getApprovedScopes());
+		authorizationCode.getScopes().addAll(grant.getApprovedScopes());
 		authorizationCode.setClientId(UUID.fromString(grant.getClient().getClientId()));
 		authorizationCode.setCode(grant.getCode());
 		authorizationCode.setExpiresIn(grant.getExpiresIn());
@@ -65,7 +65,7 @@ public class Oauth2Factory {
 		}
 		
 		ServerAuthorizationCodeGrant grant = new ServerAuthorizationCodeGrant();
-		grant.getApprovedScopes().addAll(inMemoryAuthorizationCode.getApprovedScopes());
+		grant.getApprovedScopes().addAll(inMemoryAuthorizationCode.getScopes());
 		grant.setClient(client);
 		grant.setCode(inMemoryAuthorizationCode.getCode());
 		grant.setExpiresIn(inMemoryAuthorizationCode.getExpiresIn());
@@ -115,6 +115,8 @@ public class Oauth2Factory {
 		BearerAccessToken accessToken = new BearerAccessToken(client, inMemoryAccessToken.getToken(),
 				inMemoryAccessToken.getExpiresIn(), inMemoryAccessToken.getIssueAt());
 		
+		accessToken.setGrantCode(inMemoryAccessToken.getAuthorizationCode());
+		
 		for (String scope: inMemoryAccessToken.getScopes()) {
 			accessToken.getScopes().add(new OAuthPermission(scope));
 		}
@@ -130,6 +132,7 @@ public class Oauth2Factory {
 		
 		InMemoryAccessToken inMemoryAccessToken = new InMemoryAccessToken();
 		
+		inMemoryAccessToken.setAuthorizationCode(serverAccessToken.getGrantCode());
 		inMemoryAccessToken.setClientId(UUID.fromString(serverAccessToken.getClient().getClientId()));
 		inMemoryAccessToken.setExpiresIn(serverAccessToken.getExpiresIn());
 		inMemoryAccessToken.setIssueAt(serverAccessToken.getIssuedAt());

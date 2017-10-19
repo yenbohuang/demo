@@ -12,6 +12,8 @@ public class InMemoryAccessToken {
 	private long issueAt;
 	private String authorizationCode;
 	private Set<String> scopes = new HashSet<>();
+	private String username;
+	private String userRemoteAddress;
 	
 	public String getToken() {
 		return token;
@@ -55,5 +57,21 @@ public class InMemoryAccessToken {
 	
 	public void setAuthorizationCode(String authorizationCode) {
 		this.authorizationCode = authorizationCode;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUserRemoteAddress() {
+		return userRemoteAddress;
+	}
+	
+	public void setUserRemoteAddress(String userRemoteAddress) {
+		this.userRemoteAddress = userRemoteAddress;
 	}
 }

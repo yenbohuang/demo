@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,24 +17,29 @@ public class DemoUserDetailsService implements UserDetailsService {
 	private static final Logger log = LoggerFactory.getLogger(DemoUserDetailsService.class);
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		if (false == "user".equals(username)) {
+		InMemoryUser inMemoryUser = userRepository.get(username);
+		
+		if (null == inMemoryUser) {
 			throw new UsernameNotFoundException("Username not found: " + username);
 		}
 		
 		// carry required information and hash it in PasswordEncoder
-		PasswordInfo passwordInfo = new PasswordInfo("abcd", "1234", "password");
 		String json = null;
 		
 		try {
-			json = OBJECT_MAPPER.writeValueAsString(passwordInfo);
+			json = OBJECT_MAPPER.writeValueAsString(inMemoryUser.getPasswordInfo());
 		} catch (JsonProcessingException ex) {
 			throw new UsernameNotFoundException("Parsing json error", ex);
 		}
 		
-		User user = new User(username, json, new ArrayList<>());
+		DemoUserDetails user = new DemoUserDetails(username, json, new ArrayList<>());
+		user.setInMemoryUser(inMemoryUser);
 		
 		try {
 			// Do not log password in production environment. This is only for demo.

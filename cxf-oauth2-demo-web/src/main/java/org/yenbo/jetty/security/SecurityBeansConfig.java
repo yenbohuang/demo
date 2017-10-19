@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.ws.rs.HttpMethod;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,6 +24,26 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String LOGIN_FORM_URL = "/oauth2/login";
+
+	@Autowired
+	private DemoUserDetailsService demoUserDetailsService;
+	@Autowired
+	private StupidPasswordEncoder stupidPasswordEncoder;
+	
+	@Bean
+	public UserRepository userRepository() {
+		return new UserRepository();
+	}
+	
+	@Bean
+	public DemoUserDetailsService demoUserDetailsService() {
+		return new DemoUserDetailsService();
+	}
+	
+	@Bean
+	public StupidPasswordEncoder stupidPasswordEncoder() {
+		return new StupidPasswordEncoder();
+	}
 	
 	private RequestMatcher requireCsrfProtectionMatcher() {
 	    
@@ -62,8 +84,6 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		
-		auth.userDetailsService(new DemoUserDetailsService())
-			.passwordEncoder(new StupidPasswordEncoder());
+		auth.userDetailsService(demoUserDetailsService).passwordEncoder(stupidPasswordEncoder);
 	}	
 }

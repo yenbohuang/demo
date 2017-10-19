@@ -21,6 +21,8 @@ import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
 import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.oauth2.data.InMemoryClient;
 import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
+import org.yenbo.jetty.security.InMemoryUser;
+import org.yenbo.jetty.security.UserRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,15 +34,14 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Autowired
 	private ClientRepository clientRepository;
-	
 	@Autowired
 	private AuthorizationCodeRepository authorizationCodeRepository;
-	
 	@Autowired
 	private AccessTokenRepository accessTokenRepository;
-	
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		
@@ -123,7 +124,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		
 		if (log.isDebugEnabled()) {
 			try {
-				log.debug("RefreshToken={}", OBJECT_MAPPER.writeValueAsString(oldRefreshToken));
+				log.debug("Old RefreshToken={}", OBJECT_MAPPER.writeValueAsString(oldRefreshToken));
 				log.debug("ServerAccessToken={}", OBJECT_MAPPER.writeValueAsString(accessToken));
 			} catch (JsonProcessingException e) {
 				log.error(e.getMessage(), e);
@@ -167,7 +168,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 			InMemoryClient inMemoryClient = clientRepository.get(
 					inMemoryAuthorizationCode.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			grant = Oauth2Factory.create(inMemoryAuthorizationCode, client);
+			InMemoryUser inMemoryUser = userRepository.get(inMemoryAuthorizationCode.getUsername());
+			grant = Oauth2Factory.create(client, inMemoryAuthorizationCode, inMemoryUser);
 			
 			if (log.isDebugEnabled()) {
 				try {
@@ -222,7 +224,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryAccessToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryAccessToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken);
+			InMemoryUser user = userRepository.get(inMemoryAccessToken.getUsername());
+			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken, user);
 			
 			if (log.isDebugEnabled()) {
 				try {
@@ -343,7 +346,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryRefreshToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryRefreshToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken);
+			InMemoryUser user = userRepository.get(inMemoryRefreshToken.getUsername());
+			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken, user);
 			
 			if (log.isDebugEnabled()) {
 				try {

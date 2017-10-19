@@ -1,7 +1,11 @@
 package org.yenbo.jetty.security;
 
-public class PasswordInfo {
+import java.io.Serializable;
 
+public class PasswordInfo implements Serializable {
+
+	private static final long serialVersionUID = -4576409686848091947L;
+	
 	private String prefix;
 	private String postfix;
 	private String rawPassword;

@@ -13,6 +13,8 @@ public class InMemoryRefreshToken {
 	private Set<String> scopes = new HashSet<>();
 	private String authorizationCode;
 	private String accessToken;
+	private String username;
+	private String userRemoteAddress;
 	
 	public String getToken() {
 		return token;
@@ -64,5 +66,21 @@ public class InMemoryRefreshToken {
 	
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUserRemoteAddress() {
+		return userRemoteAddress;
+	}
+	
+	public void setUserRemoteAddress(String userRemoteAddress) {
+		this.userRemoteAddress = userRemoteAddress;
 	}
 }

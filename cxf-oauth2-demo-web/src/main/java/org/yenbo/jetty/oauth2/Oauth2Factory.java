@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
+import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
@@ -16,12 +17,15 @@ import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
 import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.oauth2.data.InMemoryClient;
 import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
+import org.yenbo.jetty.security.InMemoryUser;
 import org.yenbo.jetty.security.SpringSecurityUtils;
 
 public class Oauth2Factory {
 
 	public static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	public static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
+	
+	public static final String KEY_USER_REMOTE_ADDRESS = "USER_REMOTE_ADDRESS";
 	
 	private Oauth2Factory() {
 	}
@@ -44,8 +48,9 @@ public class Oauth2Factory {
 		authorizationCode.setExpiresIn(grant.getExpiresIn());
 		authorizationCode.setIssueAt(grant.getIssuedAt());
 		authorizationCode.setRedirectUri(grant.getRedirectUri());
-		authorizationCode.setUsername(grant.getSubject().getLogin());
 		
+		// UserSubject
+		authorizationCode.setUsername(grant.getSubject().getLogin());
 		WebAuthenticationDetails webAuthenticationDetails =
 				SpringSecurityUtils.getWebAuthenticationDetails(userPrincipal);
 		authorizationCode.setRemoteAddress(webAuthenticationDetails.getRemoteAddress());
@@ -53,8 +58,9 @@ public class Oauth2Factory {
 		return authorizationCode;
 	}
 	
-	public static ServerAuthorizationCodeGrant create(
-			InMemoryAuthorizationCode inMemoryAuthorizationCode, Client client) {
+	public static ServerAuthorizationCodeGrant create(Client client,
+			InMemoryAuthorizationCode inMemoryAuthorizationCode,
+			InMemoryUser inMemoryUser) {
 		
 		if (null == inMemoryAuthorizationCode) {
 			throw new IllegalArgumentException("inMemoryAuthorizationCode is null.");
@@ -64,6 +70,10 @@ public class Oauth2Factory {
 			throw new IllegalArgumentException("client is null.");
 		}
 		
+		if (null == inMemoryUser) {
+			throw new IllegalArgumentException("inMemoryUser is null.");
+		}
+		
 		ServerAuthorizationCodeGrant grant = new ServerAuthorizationCodeGrant();
 		grant.getApprovedScopes().addAll(inMemoryAuthorizationCode.getScopes());
 		grant.setClient(client);
@@ -71,6 +81,12 @@ public class Oauth2Factory {
 		grant.setExpiresIn(inMemoryAuthorizationCode.getExpiresIn());
 		grant.setIssuedAt(inMemoryAuthorizationCode.getIssueAt());
 		grant.setRedirectUri(inMemoryAuthorizationCode.getRedirectUri());
+		
+		// UserSubject
+		UserSubject subject = new UserSubject();
+		subject.setLogin(inMemoryAuthorizationCode.getUsername());
+		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryAuthorizationCode.getRemoteAddress());
+		grant.setSubject(subject);
 		
 		return grant;
 	}
@@ -102,7 +118,8 @@ public class Oauth2Factory {
     	return client;
 	}
 	
-	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken) {
+	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken,
+			InMemoryUser inMemoryUser) {
 		
 		if (null == client) {
 			throw new IllegalArgumentException("client is null.");
@@ -110,6 +127,10 @@ public class Oauth2Factory {
 		
 		if (null == inMemoryAccessToken) {
 			throw new IllegalArgumentException("inMemoryAccessToken is null.");
+		}
+		
+		if (null == inMemoryUser) {
+			throw new IllegalArgumentException("inMemoryUser is null.");
 		}
 		
 		BearerAccessToken accessToken = new BearerAccessToken(client, inMemoryAccessToken.getToken(),
@@ -120,6 +141,12 @@ public class Oauth2Factory {
 		for (String scope: inMemoryAccessToken.getScopes()) {
 			accessToken.getScopes().add(new OAuthPermission(scope));
 		}
+		
+		// UserSubject
+		UserSubject subject = new UserSubject();
+		subject.setLogin(inMemoryAccessToken.getUsername());
+		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryAccessToken.getUserRemoteAddress());
+		accessToken.setSubject(subject);
 		
 		return accessToken;
 	}
@@ -143,10 +170,16 @@ public class Oauth2Factory {
 		
 		inMemoryAccessToken.setToken(serverAccessToken.getTokenKey());
 		
+		// UserSubject
+		inMemoryAccessToken.setUsername(serverAccessToken.getSubject().getLogin());
+		inMemoryAccessToken.setUserRemoteAddress(
+				serverAccessToken.getSubject().getProperties().get(KEY_USER_REMOTE_ADDRESS));
+		
 		return inMemoryAccessToken;
 	}
 	
-	public static RefreshToken create(Client client, InMemoryRefreshToken inMemoryRefreshToken) {
+	public static RefreshToken create(Client client, InMemoryRefreshToken inMemoryRefreshToken,
+			InMemoryUser inMemoryUser) {
 		
 		if (null == inMemoryRefreshToken) {
 			throw new IllegalArgumentException("inMemoryRefreshToken is null.");
@@ -154,6 +187,10 @@ public class Oauth2Factory {
 		
 		if (null == client) {
 			throw new IllegalArgumentException("client is null.");
+		}
+		
+		if (null == inMemoryUser) {
+			throw new IllegalArgumentException("inMemoryUser is null");
 		}
 		
 		RefreshToken refreshToken = new RefreshToken(client,
@@ -170,6 +207,12 @@ public class Oauth2Factory {
 		if (null != inMemoryRefreshToken.getAccessToken()) {
 			refreshToken.getAccessTokens().add(inMemoryRefreshToken.getAccessToken());
 		}
+		
+		// UserSubject
+		UserSubject subject = new UserSubject();
+		subject.setLogin(inMemoryRefreshToken.getUsername());
+		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryRefreshToken.getUserRemoteAddress());
+		refreshToken.setSubject(subject);
 		
 		return refreshToken;
 	}
@@ -196,6 +239,11 @@ public class Oauth2Factory {
 		}
 		
 		inMemoryRefreshToken.setToken(refreshToken.getTokenKey());
+		
+		// UserSubject
+		inMemoryRefreshToken.setUsername(refreshToken.getSubject().getLogin());
+		inMemoryRefreshToken.setUserRemoteAddress(
+				refreshToken.getSubject().getProperties().get(KEY_USER_REMOTE_ADDRESS));
 		
 		return inMemoryRefreshToken;
 	}

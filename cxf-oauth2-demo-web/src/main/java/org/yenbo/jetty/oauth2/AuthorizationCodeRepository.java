@@ -1,60 +1,47 @@
 package org.yenbo.jetty.oauth2;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
 
 public class AuthorizationCodeRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthorizationCodeRepository.class);
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
-	private Set<ServerAuthorizationCodeGrant> grantSet = new HashSet<>();
+	private Map<String, InMemoryAuthorizationCode> grantMap = new HashMap<>();
 	
-	public void saveAuthorizationCode(ServerAuthorizationCodeGrant grant) {
+	public void save(InMemoryAuthorizationCode inMemoryAuthorizationCode) {
 		
-		grantSet.add(grant);
-		
-		try {
-			log.debug("{}", OBJECT_MAPPER.writeValueAsString(grant));
-		} catch (JsonProcessingException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-	
-	public ServerAuthorizationCodeGrant getAuthorizationCode(String authorizationCode) {
-		
-		for (ServerAuthorizationCodeGrant grant: grantSet) {
-			if (grant.getCode().equals(authorizationCode)) {
-				try {
-					log.debug("{}", OBJECT_MAPPER.writeValueAsString(grant));
-				} catch (JsonProcessingException e) {
-					log.error(e.getMessage(), e);
-				}
-				return grant;
-			}
+		if (null == inMemoryAuthorizationCode) {
+			throw new IllegalArgumentException("inMemoryAuthorizationCode is null.");
 		}
 		
-		log.debug("Not found: {}", authorizationCode);
-		return null;
+		grantMap.put(inMemoryAuthorizationCode.getCode(), inMemoryAuthorizationCode);
 	}
 	
-	public void deleteAuthorizationCode(ServerAuthorizationCodeGrant grant) {
+	public InMemoryAuthorizationCode get(String authorizationCode) {
 		
-		if (grantSet.remove(grant)) {
-			try {
-				log.debug("{}", OBJECT_MAPPER.writeValueAsString(grant));
-			} catch (JsonProcessingException e) {
-				log.error(e.getMessage(), e);
-			}
-		} else {
-			log.debug("Not found: {}", grant.getCode());
+		if (StringUtils.isBlank(authorizationCode)) {
+			throw new IllegalArgumentException("authorizationCode is blank");
+		}
+		
+		InMemoryAuthorizationCode inMemoryAuthorizationCode = grantMap.get(authorizationCode);
+		
+		if (null == inMemoryAuthorizationCode) {
+			log.debug("Not found: {}", authorizationCode);
+		}
+		
+		return inMemoryAuthorizationCode;
+	}
+	
+	public void delete(String code) {
+		
+		if (null == grantMap.remove(code)) {
+			log.debug("Not found: {}", code);
 		}
 	}
 }

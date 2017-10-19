@@ -11,16 +11,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
-import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.yenbo.jetty.oauth2.ClientRepository;
+import org.yenbo.jetty.oauth2.data.InMemoryClient;
 import org.yenbo.jetty.view.OAuth2LoginView;
 
 @Component
@@ -44,8 +43,7 @@ public class DemoLoginService {
 		
 		String clientId = clientIdFromQueryString;
 		
-		SavedRequest savedRequest = new HttpSessionRequestCache()
-				.getRequest(messageContext.getHttpServletRequest(), messageContext.getHttpServletResponse());
+		SavedRequest savedRequest = SpringSecurityUtils.getSavedRequest(messageContext);
 
 		if (null != savedRequest) {
 			clientId = UriComponentsBuilder
@@ -59,10 +57,10 @@ public class DemoLoginService {
 		
 		if (null != clientId) {
 			
-			Client client = clientRepository.getClient(UUID.fromString(clientId));
+			InMemoryClient client = clientRepository.get(UUID.fromString(clientId));
 			
 			if (null != client) {
-				view.setAppName(client.getApplicationName());
+				view.setAppName(client.getName());
 			}
 		}
 		

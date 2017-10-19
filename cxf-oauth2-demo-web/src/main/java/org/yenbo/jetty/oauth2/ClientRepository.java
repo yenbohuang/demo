@@ -2,43 +2,30 @@ package org.yenbo.jetty.oauth2;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.UUID;
 
-import org.apache.cxf.rs.security.oauth2.common.Client;
-import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yenbo.jetty.oauth2.data.InMemoryClient;
 
 public class ClientRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(ClientRepository.class);
 	
-	private Client client;
+	private InMemoryClient client;
 	
 	public ClientRepository() {
 		
-		client = new Client();
-		
-		// set default values
-		client.setConfidential(true);
-		client.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
-		client.setAllowedGrantTypes(Arrays.<String>asList(
-				OAuthConstants.AUTHORIZATION_CODE_GRANT,
-				OAuthConstants.REFRESH_TOKEN
-				));
-		
-		// set customized fields
-		client.setClientId("78fa6a41-aec6-4690-9237-7cd6bb6e1a84");
+		client = new InMemoryClient();
+		client.setClientId(UUID.fromString("78fa6a41-aec6-4690-9237-7cd6bb6e1a84"));
 		client.setClientSecret("7cd6bb6e1a84");
-		client.setRedirectUris(Arrays.<String>asList(
-				"http://localhost/unknown",
-				// For testing by PostMan
-				"https://www.getpostman.com/oauth2/callback"));
-		client.setRegisteredScopes(Arrays.<String>asList(
-				"demo1", "demo2", "demo3"));
-		client.setApplicationDescription("This is application description");
-		client.setApplicationName("This is application name");
+		client.getRedirectUris().add("http://localhost/unknown");
+		client.getRedirectUris().add("https://www.getpostman.com/oauth2/callback"); // For testing by PostMan
+		client.getScopes().add("demo1");
+		client.getScopes().add("demo2");
+		client.getScopes().add("demo3");
+		client.setDescription("This is application description");
+		client.setName("This is application name");
 		
 		// copy this line from log file and proceed with other tests
     	log.debug("client_id={}, client_secret={}", client.getClientId(), client.getClientSecret());
@@ -52,8 +39,8 @@ public class ClientRepository {
     	}
 	}
 	
-	public Client getClient(UUID clientId) {
-		if (null != clientId && client.getClientId().equals(clientId.toString())) {
+	public InMemoryClient get(UUID clientId) {
+		if (null != clientId && client.getClientId().equals(clientId)) {
 			log.debug("Found: {}", clientId);
 			return client;
 		} else {

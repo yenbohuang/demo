@@ -1,6 +1,5 @@
 package org.yenbo.jetty.oauth2;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -12,33 +11,26 @@ import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGran
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
 import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.oauth2.data.InMemoryClient;
 import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
 import org.yenbo.jetty.security.InMemoryUser;
-import org.yenbo.jetty.security.SpringSecurityUtils;
 
 public class Oauth2Factory {
 
 	public static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	public static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
 	
-	public static final String KEY_USER_REMOTE_ADDRESS = "USER_REMOTE_ADDRESS";
+	public static final String KEY_USER_PROPERTY = "USER_PROPERTY";
 	
 	private Oauth2Factory() {
 	}
 
-	public static InMemoryAuthorizationCode create(ServerAuthorizationCodeGrant grant,
-			Principal userPrincipal) {
+	public static InMemoryAuthorizationCode create(ServerAuthorizationCodeGrant grant) {
 		
 		if (null == grant) {
 			throw new IllegalArgumentException("grant is null");
-		}
-		
-		if (null == userPrincipal) {
-			throw new IllegalArgumentException("userPrincipal is null");
 		}
 		
 		InMemoryAuthorizationCode authorizationCode = new InMemoryAuthorizationCode();
@@ -51,9 +43,7 @@ public class Oauth2Factory {
 		
 		// UserSubject
 		authorizationCode.setUsername(grant.getSubject().getLogin());
-		WebAuthenticationDetails webAuthenticationDetails =
-				SpringSecurityUtils.getWebAuthenticationDetails(userPrincipal);
-		authorizationCode.setRemoteAddress(webAuthenticationDetails.getRemoteAddress());
+		authorizationCode.setUserProperty(grant.getSubject().getProperties().get(KEY_USER_PROPERTY));
 		
 		return authorizationCode;
 	}
@@ -85,7 +75,7 @@ public class Oauth2Factory {
 		// UserSubject
 		UserSubject subject = new UserSubject();
 		subject.setLogin(inMemoryAuthorizationCode.getUsername());
-		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryAuthorizationCode.getRemoteAddress());
+		subject.getProperties().put(KEY_USER_PROPERTY, inMemoryAuthorizationCode.getUserProperty());
 		grant.setSubject(subject);
 		
 		return grant;
@@ -145,7 +135,7 @@ public class Oauth2Factory {
 		// UserSubject
 		UserSubject subject = new UserSubject();
 		subject.setLogin(inMemoryAccessToken.getUsername());
-		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryAccessToken.getUserRemoteAddress());
+		subject.getProperties().put(KEY_USER_PROPERTY, inMemoryAccessToken.getUserProperty());
 		accessToken.setSubject(subject);
 		
 		return accessToken;
@@ -172,8 +162,8 @@ public class Oauth2Factory {
 		
 		// UserSubject
 		inMemoryAccessToken.setUsername(serverAccessToken.getSubject().getLogin());
-		inMemoryAccessToken.setUserRemoteAddress(
-				serverAccessToken.getSubject().getProperties().get(KEY_USER_REMOTE_ADDRESS));
+		inMemoryAccessToken.setUserProperty(
+				serverAccessToken.getSubject().getProperties().get(KEY_USER_PROPERTY));
 		
 		return inMemoryAccessToken;
 	}
@@ -211,7 +201,7 @@ public class Oauth2Factory {
 		// UserSubject
 		UserSubject subject = new UserSubject();
 		subject.setLogin(inMemoryRefreshToken.getUsername());
-		subject.getProperties().put(KEY_USER_REMOTE_ADDRESS, inMemoryRefreshToken.getUserRemoteAddress());
+		subject.getProperties().put(KEY_USER_PROPERTY, inMemoryRefreshToken.getUserProperty());
 		refreshToken.setSubject(subject);
 		
 		return refreshToken;
@@ -242,8 +232,8 @@ public class Oauth2Factory {
 		
 		// UserSubject
 		inMemoryRefreshToken.setUsername(refreshToken.getSubject().getLogin());
-		inMemoryRefreshToken.setUserRemoteAddress(
-				refreshToken.getSubject().getProperties().get(KEY_USER_REMOTE_ADDRESS));
+		inMemoryRefreshToken.setUserProperty(
+				refreshToken.getSubject().getProperties().get(KEY_USER_PROPERTY));
 		
 		return inMemoryRefreshToken;
 	}

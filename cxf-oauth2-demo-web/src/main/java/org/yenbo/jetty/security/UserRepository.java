@@ -8,6 +8,7 @@ public class UserRepository {
 		user = new InMemoryUser();
 		user.setPasswordInfo(new PasswordInfo("abcd", "1234", "password"));
 		user.setUsername("yenbo");
+		user.setProperty("property to be attached");
 	}
 	
 	public InMemoryUser get(String username) {

@@ -13,7 +13,7 @@ public class InMemoryAuthorizationCode {
 	private long issueAt;
 	private String redirectUri;
 	private String username;
-	private String remoteAddress;
+	private String userProperty;
 	
 	public Set<String> getScopes() {
 		return scopes;
@@ -67,11 +67,11 @@ public class InMemoryAuthorizationCode {
 		this.username = username;
 	}
 	
-	public String getRemoteAddress() {
-		return remoteAddress;
+	public String getUserProperty() {
+		return userProperty;
 	}
 	
-	public void setRemoteAddress(String remoteAddress) {
-		this.remoteAddress = remoteAddress;
+	public void setUserProperty(String userProperty) {
+		this.userProperty = userProperty;
 	}
 }

@@ -14,7 +14,7 @@ public class InMemoryRefreshToken {
 	private String authorizationCode;
 	private String accessToken;
 	private String username;
-	private String userRemoteAddress;
+	private String userProperty;
 	
 	public String getToken() {
 		return token;
@@ -76,11 +76,11 @@ public class InMemoryRefreshToken {
 		this.username = username;
 	}
 	
-	public String getUserRemoteAddress() {
-		return userRemoteAddress;
+	public String getUserProperty() {
+		return userProperty;
 	}
 	
-	public void setUserRemoteAddress(String userRemoteAddress) {
-		this.userRemoteAddress = userRemoteAddress;
+	public void setUserProperty(String userProperty) {
+		this.userProperty = userProperty;
 	}
 }

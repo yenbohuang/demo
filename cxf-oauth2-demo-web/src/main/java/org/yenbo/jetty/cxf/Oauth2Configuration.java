@@ -15,6 +15,7 @@ import org.apache.cxf.rs.security.oauth2.services.AccessTokenService;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.yenbo.jetty.oauth2.DemoSubjectCreator;
 import org.yenbo.jetty.oauth2.InMemoryAuthorizationCodeDataProvider;
 import org.yenbo.jetty.security.DemoLoginService;
 import org.yenbo.jetty.thymeleaf.OAuth2LoginViewMessageBodyWriter;
@@ -51,13 +52,15 @@ public class Oauth2Configuration {
 	@Bean
     public AuthorizationCodeGrantService authorizationCodeGrantService(
     		InMemoryAuthorizationCodeDataProvider dataProvider,
-    		ResourceOwnerNameProvider resourceOwnerNameProvider) {
+    		ResourceOwnerNameProvider resourceOwnerNameProvider,
+    		DemoSubjectCreator demoSubjectCreator) {
 		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setCanSupportPublicClients(CAN_SUPPORT_PUBLIC_CLIENTS);
     	service.setDataProvider(dataProvider);
     	service.setResourceOwnerNameProvider(resourceOwnerNameProvider);
     	service.setPartialMatchScopeValidation(PARTIAL_MATCH_SCOPE_VALIDATION);
+    	service.setSubjectCreator(demoSubjectCreator);
     	return service;
     }
 	
@@ -120,5 +123,10 @@ public class Oauth2Configuration {
     @Bean
     public OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter() {
     	return new OAuth2LoginViewMessageBodyWriter();
+    }
+    
+    @Bean
+    public DemoSubjectCreator demoSubjectCreator() {
+    	return new DemoSubjectCreator();
     }
 }

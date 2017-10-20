@@ -13,7 +13,7 @@ public class InMemoryAccessToken {
 	private String authorizationCode;
 	private Set<String> scopes = new HashSet<>();
 	private String username;
-	private String userRemoteAddress;
+	private String userProperty;
 	
 	public String getToken() {
 		return token;
@@ -67,11 +67,11 @@ public class InMemoryAccessToken {
 		this.username = username;
 	}
 	
-	public String getUserRemoteAddress() {
-		return userRemoteAddress;
+	public String getUserProperty() {
+		return userProperty;
 	}
 	
-	public void setUserRemoteAddress(String userRemoteAddress) {
-		this.userRemoteAddress = userRemoteAddress;
+	public void setUserProperty(String userProperty) {
+		this.userProperty = userProperty;
 	}
 }

@@ -139,8 +139,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	        throws OAuthServiceException {
 		
 		ServerAuthorizationCodeGrant grant = super.createCodeGrant(reg);
-		InMemoryAuthorizationCode inMemoryAuthorizationCode = Oauth2Factory.create(grant,
-				getMessageContext().getSecurityContext().getUserPrincipal());
+		InMemoryAuthorizationCode inMemoryAuthorizationCode = Oauth2Factory.create(grant);
 		authorizationCodeRepository.save(inMemoryAuthorizationCode);
 		
 		if (log.isDebugEnabled()) {

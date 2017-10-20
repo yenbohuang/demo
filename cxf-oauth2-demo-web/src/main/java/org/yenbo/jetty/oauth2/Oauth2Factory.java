@@ -15,7 +15,6 @@ import org.yenbo.jetty.data.InMemoryAccessToken;
 import org.yenbo.jetty.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.data.InMemoryClient;
 import org.yenbo.jetty.data.InMemoryRefreshToken;
-import org.yenbo.jetty.data.InMemoryUser;
 
 public class Oauth2Factory {
 
@@ -49,8 +48,7 @@ public class Oauth2Factory {
 	}
 	
 	public static ServerAuthorizationCodeGrant create(Client client,
-			InMemoryAuthorizationCode inMemoryAuthorizationCode,
-			InMemoryUser inMemoryUser) {
+			InMemoryAuthorizationCode inMemoryAuthorizationCode) {
 		
 		if (null == inMemoryAuthorizationCode) {
 			throw new IllegalArgumentException("inMemoryAuthorizationCode is null.");
@@ -58,10 +56,6 @@ public class Oauth2Factory {
 		
 		if (null == client) {
 			throw new IllegalArgumentException("client is null.");
-		}
-		
-		if (null == inMemoryUser) {
-			throw new IllegalArgumentException("inMemoryUser is null.");
 		}
 		
 		ServerAuthorizationCodeGrant grant = new ServerAuthorizationCodeGrant();
@@ -108,8 +102,7 @@ public class Oauth2Factory {
     	return client;
 	}
 	
-	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken,
-			InMemoryUser inMemoryUser) {
+	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken) {
 		
 		if (null == client) {
 			throw new IllegalArgumentException("client is null.");
@@ -117,10 +110,6 @@ public class Oauth2Factory {
 		
 		if (null == inMemoryAccessToken) {
 			throw new IllegalArgumentException("inMemoryAccessToken is null.");
-		}
-		
-		if (null == inMemoryUser) {
-			throw new IllegalArgumentException("inMemoryUser is null.");
 		}
 		
 		BearerAccessToken accessToken = new BearerAccessToken(client, inMemoryAccessToken.getToken(),
@@ -168,8 +157,7 @@ public class Oauth2Factory {
 		return inMemoryAccessToken;
 	}
 	
-	public static RefreshToken create(Client client, InMemoryRefreshToken inMemoryRefreshToken,
-			InMemoryUser inMemoryUser) {
+	public static RefreshToken create(Client client, InMemoryRefreshToken inMemoryRefreshToken) {
 		
 		if (null == inMemoryRefreshToken) {
 			throw new IllegalArgumentException("inMemoryRefreshToken is null.");
@@ -177,10 +165,6 @@ public class Oauth2Factory {
 		
 		if (null == client) {
 			throw new IllegalArgumentException("client is null.");
-		}
-		
-		if (null == inMemoryUser) {
-			throw new IllegalArgumentException("inMemoryUser is null");
 		}
 		
 		RefreshToken refreshToken = new RefreshToken(client,

@@ -21,12 +21,10 @@ import org.yenbo.jetty.data.InMemoryAccessToken;
 import org.yenbo.jetty.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.data.InMemoryClient;
 import org.yenbo.jetty.data.InMemoryRefreshToken;
-import org.yenbo.jetty.data.InMemoryUser;
 import org.yenbo.jetty.repo.AccessTokenRepository;
 import org.yenbo.jetty.repo.AuthorizationCodeRepository;
 import org.yenbo.jetty.repo.ClientRepository;
 import org.yenbo.jetty.repo.RefreshTokenRepository;
-import org.yenbo.jetty.repo.UserRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,8 +42,6 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	private AccessTokenRepository accessTokenRepository;
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
-	@Autowired
-	private UserRepository userRepository;
 
 	public InMemoryAuthorizationCodeDataProvider() {
 		
@@ -160,7 +156,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		return grant;
     }
 	
-	private ServerAuthorizationCodeGrant getCodeGrant(String code) {
+	@Override
+	public ServerAuthorizationCodeGrant removeCodeGrant(String code) throws OAuthServiceException {
 		
 		InMemoryAuthorizationCode inMemoryAuthorizationCode =
 				authorizationCodeRepository.get(code);
@@ -171,8 +168,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 			InMemoryClient inMemoryClient = clientRepository.get(
 					inMemoryAuthorizationCode.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			InMemoryUser inMemoryUser = userRepository.get(inMemoryAuthorizationCode.getUsername());
-			grant = Oauth2Factory.create(client, inMemoryAuthorizationCode, inMemoryUser);
+			grant = Oauth2Factory.create(client, inMemoryAuthorizationCode);
 			
 			if (log.isDebugEnabled()) {
 				try {
@@ -185,14 +181,6 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 				}
 			}
 		}
-		
-		return grant;
-	}
-	
-	@Override
-	public ServerAuthorizationCodeGrant removeCodeGrant(String code) throws OAuthServiceException {
-		
-		ServerAuthorizationCodeGrant grant = getCodeGrant(code);
 		
 		if (null != grant) {
 			authorizationCodeRepository.delete(code);
@@ -227,8 +215,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryAccessToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryAccessToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			InMemoryUser inMemoryUser = userRepository.get(inMemoryAccessToken.getUsername());
-			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken, inMemoryUser);
+			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken);
 			
 			if (log.isDebugEnabled()) {
 				try {
@@ -349,8 +336,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryRefreshToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryRefreshToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			InMemoryUser inMemoryUser = userRepository.get(inMemoryRefreshToken.getUsername());
-			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken, inMemoryUser);
+			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken);
 			
 			if (log.isDebugEnabled()) {
 				try {

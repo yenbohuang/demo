@@ -1,4 +1,4 @@
-package org.yenbo.jetty.security;
+package org.yenbo.jetty.data;
 
 import java.util.Collection;
 

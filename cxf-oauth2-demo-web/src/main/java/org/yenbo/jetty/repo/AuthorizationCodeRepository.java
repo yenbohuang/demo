@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.repo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
+import org.yenbo.jetty.data.InMemoryAuthorizationCode;
 
 public class AuthorizationCodeRepository {
 
@@ -21,6 +21,7 @@ public class AuthorizationCodeRepository {
 		}
 		
 		grantMap.put(inMemoryAuthorizationCode.getCode(), inMemoryAuthorizationCode);
+		log.debug("Save: {}", inMemoryAuthorizationCode.getCode());
 	}
 	
 	public InMemoryAuthorizationCode get(String authorizationCode) {
@@ -33,6 +34,8 @@ public class AuthorizationCodeRepository {
 		
 		if (null == inMemoryAuthorizationCode) {
 			log.debug("Not found: {}", authorizationCode);
+		} else {
+			log.debug("Found: {}", authorizationCode);
 		}
 		
 		return inMemoryAuthorizationCode;
@@ -42,6 +45,8 @@ public class AuthorizationCodeRepository {
 		
 		if (null == grantMap.remove(code)) {
 			log.debug("Not found: {}", code);
+		} else {
+			log.debug("Delete: {}", code);
 		}
 	}
 }

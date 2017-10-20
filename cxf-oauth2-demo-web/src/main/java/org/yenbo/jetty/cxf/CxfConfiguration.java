@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.yenbo.jetty.api.DemoService;
 import org.yenbo.jetty.api.SecretService;
+import org.yenbo.jetty.exception.DemoExceptionMapper;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 

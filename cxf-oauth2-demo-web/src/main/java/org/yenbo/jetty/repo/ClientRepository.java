@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.repo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.jetty.oauth2.data.InMemoryClient;
+import org.yenbo.jetty.data.InMemoryClient;
 
 public class ClientRepository {
 

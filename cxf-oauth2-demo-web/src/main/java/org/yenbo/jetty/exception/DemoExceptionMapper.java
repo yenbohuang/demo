@@ -1,4 +1,4 @@
-package org.yenbo.jetty.cxf;
+package org.yenbo.jetty.exception;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

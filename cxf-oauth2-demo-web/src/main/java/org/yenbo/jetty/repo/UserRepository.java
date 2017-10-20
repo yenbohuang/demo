@@ -1,7 +1,14 @@
-package org.yenbo.jetty.security;
+package org.yenbo.jetty.repo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yenbo.jetty.data.InMemoryUser;
+import org.yenbo.jetty.data.PasswordInfo;
 
 public class UserRepository {
 
+	private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
+	
 	private InMemoryUser user;
 	
 	public UserRepository() {
@@ -13,8 +20,10 @@ public class UserRepository {
 	
 	public InMemoryUser get(String username) {
 		if (user.getUsername().equals(username)) {
+			log.debug("Found: {}", username);
 			return user;
 		} else {
+			log.debug("Not found: {}", username);
 			return null;
 		}
 	}

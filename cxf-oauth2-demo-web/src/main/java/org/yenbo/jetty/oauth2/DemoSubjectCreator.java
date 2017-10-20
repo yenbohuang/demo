@@ -9,7 +9,7 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.yenbo.jetty.security.DemoUserDetails;
+import org.yenbo.jetty.data.DemoUserDetails;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

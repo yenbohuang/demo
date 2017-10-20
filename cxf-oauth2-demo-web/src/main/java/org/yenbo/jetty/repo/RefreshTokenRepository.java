@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.repo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yenbo.jetty.data.InMemoryRefreshToken;
 import org.yenbo.jetty.exception.RefreshTokenExistedException;
-import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
 
 public class RefreshTokenRepository {
 
@@ -29,6 +29,7 @@ public class RefreshTokenRepository {
 		}
 				
 		refreshTokenMap.put(refreshToken.getToken(), refreshToken);
+		log.debug("Save: {}", refreshToken.getToken());
 	}
 
 	public InMemoryRefreshToken get(String refreshTokenKey) {
@@ -41,6 +42,8 @@ public class RefreshTokenRepository {
 		
 		if (null == refreshToken) {
 			log.debug("Not found: {}", refreshTokenKey);
+		} else {
+			log.debug("Found: {}", refreshTokenKey);
 		}
 		
 		return refreshToken;
@@ -54,6 +57,8 @@ public class RefreshTokenRepository {
 		
 		if (null == refreshTokenMap.remove(refreshTokenKey)) {
 			log.warn("Not found: {}", refreshTokenKey);
+		} else {
+			log.debug("Delete: {}", refreshTokenKey);
 		}
 	}
 }

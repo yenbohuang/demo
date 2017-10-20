@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2.data;
+package org.yenbo.jetty.data;
 
 import java.util.HashSet;
 import java.util.Set;

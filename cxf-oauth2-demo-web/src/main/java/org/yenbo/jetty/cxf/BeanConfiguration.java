@@ -2,11 +2,11 @@ package org.yenbo.jetty.cxf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.yenbo.jetty.oauth2.AccessTokenRepository;
-import org.yenbo.jetty.oauth2.AuthorizationCodeRepository;
-import org.yenbo.jetty.oauth2.ClientRepository;
-import org.yenbo.jetty.oauth2.RefreshTokenRepository;
-import org.yenbo.jetty.oauth2.ScopeRepository;
+import org.yenbo.jetty.repo.AccessTokenRepository;
+import org.yenbo.jetty.repo.AuthorizationCodeRepository;
+import org.yenbo.jetty.repo.ClientRepository;
+import org.yenbo.jetty.repo.RefreshTokenRepository;
+import org.yenbo.jetty.repo.ScopeRepository;
 
 @Configuration
 public class BeanConfiguration {

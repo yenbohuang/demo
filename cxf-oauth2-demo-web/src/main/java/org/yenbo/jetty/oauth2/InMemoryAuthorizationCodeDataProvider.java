@@ -17,12 +17,16 @@ import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
-import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
-import org.yenbo.jetty.oauth2.data.InMemoryClient;
-import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
-import org.yenbo.jetty.security.InMemoryUser;
-import org.yenbo.jetty.security.UserRepository;
+import org.yenbo.jetty.data.InMemoryAccessToken;
+import org.yenbo.jetty.data.InMemoryAuthorizationCode;
+import org.yenbo.jetty.data.InMemoryClient;
+import org.yenbo.jetty.data.InMemoryRefreshToken;
+import org.yenbo.jetty.data.InMemoryUser;
+import org.yenbo.jetty.repo.AccessTokenRepository;
+import org.yenbo.jetty.repo.AuthorizationCodeRepository;
+import org.yenbo.jetty.repo.ClientRepository;
+import org.yenbo.jetty.repo.RefreshTokenRepository;
+import org.yenbo.jetty.repo.UserRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -223,8 +227,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryAccessToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryAccessToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			InMemoryUser user = userRepository.get(inMemoryAccessToken.getUsername());
-			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken, user);
+			InMemoryUser inMemoryUser = userRepository.get(inMemoryAccessToken.getUsername());
+			serverAccessToken = Oauth2Factory.create(client, inMemoryAccessToken, inMemoryUser);
 			
 			if (log.isDebugEnabled()) {
 				try {
@@ -345,8 +349,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		if (null != inMemoryRefreshToken) {
 			InMemoryClient inMemoryClient = clientRepository.get(inMemoryRefreshToken.getClientId());
 			Client client = Oauth2Factory.create(inMemoryClient);
-			InMemoryUser user = userRepository.get(inMemoryRefreshToken.getUsername());
-			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken, user);
+			InMemoryUser inMemoryUser = userRepository.get(inMemoryRefreshToken.getUsername());
+			refreshToken = Oauth2Factory.create(client, inMemoryRefreshToken, inMemoryUser);
 			
 			if (log.isDebugEnabled()) {
 				try {

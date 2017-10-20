@@ -14,7 +14,7 @@ import org.apache.cxf.rs.security.oauth2.common.OAuthAuthorizationData;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.context.Context;
-import org.yenbo.jetty.oauth2.ScopeRepository;
+import org.yenbo.jetty.repo.ScopeRepository;
 
 @Provider
 @Produces("text/html")

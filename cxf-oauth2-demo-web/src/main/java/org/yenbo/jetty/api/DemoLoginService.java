@@ -1,4 +1,4 @@
-package org.yenbo.jetty.security;
+package org.yenbo.jetty.api;
 
 import java.util.UUID;
 
@@ -18,8 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.yenbo.jetty.oauth2.ClientRepository;
-import org.yenbo.jetty.oauth2.data.InMemoryClient;
+import org.yenbo.jetty.data.InMemoryClient;
+import org.yenbo.jetty.repo.ClientRepository;
+import org.yenbo.jetty.security.SpringSecurityUtils;
 import org.yenbo.jetty.view.OAuth2LoginView;
 
 @Component

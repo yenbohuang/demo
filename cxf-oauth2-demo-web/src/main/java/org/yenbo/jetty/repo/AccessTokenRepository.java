@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.repo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yenbo.jetty.data.InMemoryAccessToken;
 import org.yenbo.jetty.exception.AccessTokenExistedException;
-import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
 
 public class AccessTokenRepository {
 
@@ -29,6 +29,7 @@ public class AccessTokenRepository {
 		}
 		
 		accessTokenMap.put(accessToken.getToken(), accessToken);
+		log.debug("Save: {}", accessToken.getToken());
 	}
 	
 	public InMemoryAccessToken get(String accessTokenKey) {
@@ -41,6 +42,8 @@ public class AccessTokenRepository {
 		
 		if (null == inMemoryAccessToken) {
 			log.debug("Not found: {}", accessTokenKey);
+		} else {
+			log.debug("Found: {}", accessTokenKey);
 		}
 		
 		return inMemoryAccessToken;
@@ -54,6 +57,8 @@ public class AccessTokenRepository {
 		
 		if (null == accessTokenMap.remove(accessTokenKey)) {
 			log.warn("Not found: {}", accessTokenKey);
+		} else {
+			log.debug("Delete: {}", accessTokenKey);
 		}
 	}
 }

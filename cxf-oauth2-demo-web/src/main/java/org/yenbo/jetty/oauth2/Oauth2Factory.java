@@ -11,11 +11,11 @@ import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGran
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
-import org.yenbo.jetty.oauth2.data.InMemoryAccessToken;
-import org.yenbo.jetty.oauth2.data.InMemoryAuthorizationCode;
-import org.yenbo.jetty.oauth2.data.InMemoryClient;
-import org.yenbo.jetty.oauth2.data.InMemoryRefreshToken;
-import org.yenbo.jetty.security.InMemoryUser;
+import org.yenbo.jetty.data.InMemoryAccessToken;
+import org.yenbo.jetty.data.InMemoryAuthorizationCode;
+import org.yenbo.jetty.data.InMemoryClient;
+import org.yenbo.jetty.data.InMemoryRefreshToken;
+import org.yenbo.jetty.data.InMemoryUser;
 
 public class Oauth2Factory {
 

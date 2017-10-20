@@ -1,4 +1,4 @@
-package org.yenbo.jetty.oauth2;
+package org.yenbo.jetty.repo;
 
 import java.util.Locale;
 

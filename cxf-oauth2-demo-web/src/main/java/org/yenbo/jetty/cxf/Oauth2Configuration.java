@@ -83,6 +83,7 @@ public class Oauth2Configuration {
 		AccessTokenService service = new AccessTokenService();
 		service.setDataProvider(dataProvider);
 		service.setGrantHandlers(handlers);
+		service.setWriteCustomErrors(true);
 		return service;
 	}
     

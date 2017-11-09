@@ -3,7 +3,9 @@ package org.yenbo.jetty.oauth2;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.oauth2.common.Client;
+import org.apache.cxf.rs.security.oauth2.common.OAuthError;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
@@ -13,6 +15,7 @@ import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGran
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
+import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +64,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 					"Unexpected scope: clientId=%s, scope=%s, registeredScopes=%s",
 					client.getClientId(), scope, client.getRegisteredScopes());
 			log.warn(msg);
-			throw new OAuthServiceException(msg);
+			throw new OAuthServiceException(new OAuthError(OAuthConstants.INVALID_SCOPE, msg));
 		}
 	}
 	
@@ -140,7 +143,8 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 		
 		ServerAuthorizationCodeGrant grant = super.createCodeGrant(reg);
 		InMemoryAuthorizationCode inMemoryAuthorizationCode = Oauth2Factory.create(grant);
-		authorizationCodeRepository.save(inMemoryAuthorizationCode);
+		authorizationCodeRepository.save(inMemoryAuthorizationCode,
+				inMemoryAuthorizationCode.getCode());
 		
 		if (log.isDebugEnabled()) {
 			try {
@@ -209,6 +213,11 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	@Override
 	public ServerAccessToken getAccessToken(String accessToken) throws OAuthServiceException {
 		
+		if (StringUtils.isBlank(accessToken)) {
+			throw new OAuthServiceException(new OAuthError(OAuthConstants.INVALID_GRANT,
+					"access token is blank."));
+		}
+		
 		ServerAccessToken serverAccessToken = null;
 		InMemoryAccessToken inMemoryAccessToken = accessTokenRepository.get(accessToken);
 		
@@ -265,7 +274,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	protected void saveAccessToken(ServerAccessToken serverToken) {
 		
 		InMemoryAccessToken inMemoryAccessToken = Oauth2Factory.create(serverToken);
-		accessTokenRepository.save(inMemoryAccessToken);
+		accessTokenRepository.save(inMemoryAccessToken, inMemoryAccessToken.getToken());
 		
 		if (log.isDebugEnabled()) {
 			try {
@@ -283,7 +292,7 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 	protected void saveRefreshToken(RefreshToken refreshToken) {
 		
 		InMemoryRefreshToken inMemoryRefreshToken = Oauth2Factory.create(refreshToken);
-		refreshTokenRepository.save(inMemoryRefreshToken);
+		refreshTokenRepository.save(inMemoryRefreshToken, inMemoryRefreshToken.getToken());
 		
 		if (log.isDebugEnabled()) {
 			try {
@@ -329,6 +338,11 @@ public class InMemoryAuthorizationCodeDataProvider extends AbstractAuthorization
 
 	@Override
 	protected RefreshToken getRefreshToken(String refreshTokenKey) {
+		
+		if (StringUtils.isBlank(refreshTokenKey)) {
+			throw new OAuthServiceException(new OAuthError(OAuthConstants.INVALID_GRANT,
+					"refresh token is blank."));
+		}
 		
 		RefreshToken refreshToken = null;
 		InMemoryRefreshToken inMemoryRefreshToken = refreshTokenRepository.get(refreshTokenKey);

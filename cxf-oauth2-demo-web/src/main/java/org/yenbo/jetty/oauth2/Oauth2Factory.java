@@ -112,8 +112,11 @@ public class Oauth2Factory {
 			throw new IllegalArgumentException("inMemoryAccessToken is null.");
 		}
 		
-		BearerAccessToken accessToken = new BearerAccessToken(client, inMemoryAccessToken.getToken(),
-				inMemoryAccessToken.getExpiresIn(), inMemoryAccessToken.getIssueAt());
+		BearerAccessToken accessToken = new BearerAccessToken(
+				client,
+				inMemoryAccessToken.getToken().toString(),
+				inMemoryAccessToken.getExpiresIn(),
+				inMemoryAccessToken.getIssueAt());
 		
 		accessToken.setGrantCode(inMemoryAccessToken.getAuthorizationCode());
 		
@@ -167,8 +170,9 @@ public class Oauth2Factory {
 			throw new IllegalArgumentException("client is null.");
 		}
 		
-		RefreshToken refreshToken = new RefreshToken(client,
-				inMemoryRefreshToken.getToken(),
+		RefreshToken refreshToken = new RefreshToken(
+				client,
+				inMemoryRefreshToken.getToken().toString(),
 				inMemoryRefreshToken.getExpiresIn(),
 				inMemoryRefreshToken.getIssueAt());
 		
@@ -179,7 +183,7 @@ public class Oauth2Factory {
 		}
 		
 		if (null != inMemoryRefreshToken.getAccessToken()) {
-			refreshToken.getAccessTokens().add(inMemoryRefreshToken.getAccessToken());
+			refreshToken.getAccessTokens().add(inMemoryRefreshToken.getAccessToken().toString());
 		}
 		
 		// UserSubject

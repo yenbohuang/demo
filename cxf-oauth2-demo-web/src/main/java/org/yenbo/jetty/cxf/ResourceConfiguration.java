@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.yenbo.jetty.api.OAuth2ResourceService;
@@ -14,7 +15,9 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class ResourceConfiguration {
 	
-	@Bean
+	private static final String OAUTH_FILTER_BEAN_NAME = "oauthFilter";
+	
+	@Bean(name = OAUTH_FILTER_BEAN_NAME)
 	public OAuthRequestFilter oauthFilter(
 			InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider) {
 		
@@ -34,7 +37,7 @@ public class ResourceConfiguration {
 	@Bean
     public Server resourceServer(
     		JacksonJsonProvider jsonProvider,
-    		OAuthRequestFilter oauthFilter) {
+    		@Qualifier(OAUTH_FILTER_BEAN_NAME) OAuthRequestFilter oauthFilter) {
 		
         return CxfConfiguration.createServerFactory(new ResourceApplication(),
         		Arrays.<Object>asList(

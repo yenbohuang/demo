@@ -1,10 +1,13 @@
 package org.yenbo.jetty.security;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,7 +44,12 @@ public class DemoUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("Parsing json error", ex);
 		}
 		
-		DemoUserDetails user = new DemoUserDetails(username, json, new ArrayList<>());
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		for (String role: inMemoryUser.getRoles()) {
+			authorities.add(new SimpleGrantedAuthority(role));
+		}
+		
+		DemoUserDetails user = new DemoUserDetails(username, json, authorities);
 		user.setInMemoryUser(inMemoryUser);
 		
 		try {

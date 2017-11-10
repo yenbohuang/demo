@@ -9,6 +9,7 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.yenbo.jetty.data.DemoUserDetails;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,6 +50,10 @@ public class DemoSubjectCreator extends DefaultSubjectCreator {
 		
 		subject.getProperties().put(
 				Oauth2Factory.KEY_USER_PROPERTY, userDetails.getInMemoryUser().getProperty());
+		
+		for (GrantedAuthority authority: userDetails.getAuthorities()) {
+			subject.getRoles().add(authority.getAuthority());
+		}
 		
 		if (log.isDebugEnabled()) {
 			try {

@@ -17,6 +17,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.yenbo.jetty.data.InMemoryUser;
+import org.yenbo.jetty.data.PasswordInfo;
 import org.yenbo.jetty.repo.UserRepository;
 
 @Configuration
@@ -33,7 +35,25 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	
 	@Bean
 	public UserRepository userRepository() {
-		return new UserRepository();
+		
+		InMemoryUser admin = new InMemoryUser();
+		admin.setPasswordInfo(new PasswordInfo(
+				InMemoryUser.PASSWORD_PREFIX, InMemoryUser.PASSWORD_POSTFIX, "password"));
+		admin.setUsername(InMemoryUser.USERNAME_ADMIN);
+		admin.setProperty("property to be attached for admin");
+		admin.getRoles().add(InMemoryUser.ROLE_ADMIN);
+		
+		InMemoryUser user = new InMemoryUser();
+		user.setPasswordInfo(new PasswordInfo(
+				InMemoryUser.PASSWORD_PREFIX, InMemoryUser.PASSWORD_POSTFIX, "password"));
+		user.setUsername(InMemoryUser.USERNAME_USER);
+		user.setProperty("property to be attached for user");
+		user.getRoles().add(InMemoryUser.ROLE_USER);
+		
+		UserRepository repository = new UserRepository();
+		repository.save(admin, admin.getUsername());
+		repository.save(user, user.getUsername());
+		return repository;
 	}
 	
 	@Bean
@@ -78,6 +98,7 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 				.regexMatchers(
 						// Prevent user from knowing access token and refresh token.
 						"/oauth2/token$",
+						"/oauth2/drs/.*",
 						"/oauth2resx/resx"
 						).anonymous()
 				.anyRequest().authenticated();

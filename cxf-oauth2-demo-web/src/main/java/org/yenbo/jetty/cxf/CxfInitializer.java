@@ -24,6 +24,7 @@ public class CxfInitializer implements WebApplicationInitializer {
 		context.register(new Class<?>[] {
 			CxfConfiguration.class,
 			Oauth2Configuration.class,
+			Oauth2DynamicRegistrationConfiguration.class,
 			BeanConfiguration.class,
 			ResourceConfiguration.class,
 			ThymeleafConfig.class

@@ -8,6 +8,7 @@ import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
+import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
@@ -224,5 +225,20 @@ public class Oauth2Factory {
 				refreshToken.getSubject().getProperties().get(KEY_USER_PROPERTY));
 		
 		return inMemoryRefreshToken;
+	}
+	
+	public static ClientRegistration createClientRegistration() {
+		
+		ClientRegistration clientRegistration = new ClientRegistration();
+		
+		clientRegistration.setGrantTypes(Arrays.asList(
+				OAuthConstants.AUTHORIZATION_CODE_GRANT,
+				OAuthConstants.REFRESH_TOKEN));
+		clientRegistration.setResponseTypes(Arrays.asList(
+				OAuthConstants.CODE_RESPONSE_TYPE,
+				OAuthConstants.TOKEN_RESPONSE_TYPE));
+		clientRegistration.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
+		
+		return clientRegistration;
 	}
 }

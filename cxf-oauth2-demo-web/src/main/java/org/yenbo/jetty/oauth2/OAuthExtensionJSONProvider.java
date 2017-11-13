@@ -19,6 +19,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObjectReaderWriter;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
@@ -139,6 +140,17 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		}
 	}
 	
+	private void appendStringNode(ClientRegistrationResponse obj, ObjectNode root, String key) {
+		
+		String value = obj.getStringProperty(key);
+		
+		if (StringUtils.isNotBlank(value)) {
+			root.put(key, value);
+		} else {
+			log.warn("Ignore blank value: clientId={}, key={}", obj.getClientId(), key);
+		}
+	}
+	
 	private void writeClientRegistrationResponse(ClientRegistrationResponse obj, OutputStream os)
 			throws IOException {
 
@@ -148,7 +160,9 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		root.put(ClientRegistrationResponse.CLIENT_ID, obj.getClientId());
 		root.put(ClientRegistrationResponse.CLIENT_ID_ISSUED_AT, obj.getClientIdIssuedAt());
 		root.put(ClientRegistrationResponse.CLIENT_SECRET, obj.getClientSecret());
-		root.put(ClientRegistration.SCOPE, obj.getStringProperty(ClientRegistration.SCOPE));
+		
+		appendStringNode(obj, root, ClientRegistration.SCOPE);
+		
 		root.put(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD,
 				obj.getStringProperty(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD));
 		
@@ -160,7 +174,7 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
 		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
 		
-		root.put(ClientRegistration.CLIENT_NAME, obj.getStringProperty(ClientRegistration.CLIENT_NAME));
+		appendStringNode(obj, root, ClientRegistration.CLIENT_NAME);
 		
 		// client_name#<language tag>
 		Map<String, Object> clientNameI18nMap = obj.getMapProperty(
@@ -170,6 +184,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 				root.put(entry.getKey(), (String) entry.getValue());
 			}
 		}
+		
+		appendStringNode(obj, root, OAuthExtensionConstants.CLIENT_DESCRIPTION);
 		
 		os.write(OBJECT_MAPPER.writeValueAsBytes(root));
 		os.flush();

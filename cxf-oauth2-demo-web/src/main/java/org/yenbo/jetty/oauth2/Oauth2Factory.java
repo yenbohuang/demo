@@ -195,6 +195,8 @@ public class Oauth2Factory {
 				client.getRedirectUris());
 		clientRegistrationResponse.setProperty(ClientRegistration.CLIENT_NAME,
 				client.getApplicationName());
+		clientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_DESCRIPTION,
+				client.getApplicationDescription());
 		
 		// There is a bug in "OAuthUtils.convertListOfScopesToString()" that it is not
 		// space separated.

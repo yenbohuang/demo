@@ -32,6 +32,7 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		
 		validateEntity(entity);
 		validateKey(key);
+		log.debug("Before save: {} entities", map.size());
 		
 		if (map.containsKey(key)) {
 			InMemoryEntityException exception = new InMemoryEntityException(
@@ -41,7 +42,7 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		}
 		
 		map.put(key, entity);
-		log.debug("Save: {}", key);
+		log.debug("Save: {}, {} entities", key, map.size());
 	}
 	
 	public T get(K key) {
@@ -62,11 +63,12 @@ public abstract class AbstractInMemoryRepository <T, K> {
 	public void delete(K key) {
 		
 		validateKey(key);
+		log.debug("Before delete: {} entities.", map.size());
 		
 		if (null == map.remove(key)) {
 			log.warn("Not found: {}", key);
 		} else {
-			log.debug("Delete: {}", key);
+			log.debug("Delete: {}, {} entities.", key, map.size());
 		}
 	}
 	

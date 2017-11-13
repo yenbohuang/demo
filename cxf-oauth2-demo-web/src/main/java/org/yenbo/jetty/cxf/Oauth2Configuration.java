@@ -13,6 +13,7 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.provider.ResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.services.AccessTokenService;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.yenbo.jetty.api.DemoLoginService;
@@ -29,6 +30,30 @@ public class Oauth2Configuration {
 	private static final boolean CAN_SUPPORT_PUBLIC_CLIENTS = false;
 	private static final long GRANT_LIFE_TIME = 360L;
 
+	// OAuth 2.0 related
+	@Autowired
+	private InMemoryAuthorizationCodeDataProvider dataProvider;
+	@Autowired
+	private ResourceOwnerNameProvider resourceOwnerNameProvider;
+	@Autowired
+	private DemoSubjectCreator demoSubjectCreator;
+	@Autowired
+	private AuthorizationCodeGrantService authorizationCodeGrantService;
+	@Autowired
+	private AccessTokenService accessTokenService;
+	
+	// spring security related
+	@Autowired
+	private DemoLoginService demoLoginService;
+
+	// writers
+	@Autowired
+	private OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter;
+	@Autowired
+	private OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter;
+	@Autowired
+	private OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter;
+	
 	@Bean
 	public DemoLoginService demoLoginService() {
 		return new DemoLoginService();
@@ -50,10 +75,7 @@ public class Oauth2Configuration {
 	}
 	
 	@Bean
-    public AuthorizationCodeGrantService authorizationCodeGrantService(
-    		InMemoryAuthorizationCodeDataProvider dataProvider,
-    		ResourceOwnerNameProvider resourceOwnerNameProvider,
-    		DemoSubjectCreator demoSubjectCreator) {
+    public AuthorizationCodeGrantService authorizationCodeGrantService() {
 		
     	AuthorizationCodeGrantService service = new AuthorizationCodeGrantService();
     	service.setCanSupportPublicClients(CAN_SUPPORT_PUBLIC_CLIENTS);
@@ -65,7 +87,7 @@ public class Oauth2Configuration {
     }
 	
 	@Bean
-	public AccessTokenService accessTokenService(InMemoryAuthorizationCodeDataProvider dataProvider) {
+	public AccessTokenService accessTokenService() {
 		
 		RefreshTokenGrantHandler refreshTokenGrantHandler = new RefreshTokenGrantHandler();
 		refreshTokenGrantHandler.setDataProvider(dataProvider);
@@ -88,13 +110,7 @@ public class Oauth2Configuration {
 	}
     
 	@Bean
-    public Server oauth2Server(
-    		OAuthAuthorizationDataMessageBodyWriter oAuthAuthorizationDataMessageBodyWriter,
-    		OAuthErrorMessageBodyWriter oAuthErrorMessageBodyWriter,
-    		OAuth2LoginViewMessageBodyWriter oAuth2LoginViewMessageBodyWriter,
-    		AuthorizationCodeGrantService authorizationCodeGrantService,
-    		AccessTokenService accessTokenService,
-    		DemoLoginService demoLoginService) {
+    public Server oauth2Server() {
 		
         return CxfConfiguration.createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(

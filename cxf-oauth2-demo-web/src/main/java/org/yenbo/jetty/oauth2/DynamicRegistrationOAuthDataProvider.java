@@ -24,11 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvider {
 
-	private static final Logger log = LoggerFactory.getLogger(
-			DynamicRegistrationOAuthDataProvider.class);
-	
 	private static final String MANAGEMENT_CLIENT_ID = "6a73a7ea-676a-47ae-99c3-ce9fb41b3972";
 	
+	private static final Logger log = LoggerFactory.getLogger(
+			DynamicRegistrationOAuthDataProvider.class);
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	@Autowired
@@ -39,9 +38,8 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 	}
 
 	private Client getManagementClient() {
-		Client client = new Client();
+		Client client = Oauth2Factory.createClient();
 		client.setClientId(MANAGEMENT_CLIENT_ID);
-		client.setConfidential(true);
 		return client;
 	}
 	
@@ -92,8 +90,18 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 
 	@Override
 	public void setClient(Client client) {
-		// TODO Auto-generated method stub
-		log.warn("setClient is not implemented");
+		
+		InMemoryClient inMemoryClient = Oauth2Factory.create(client);
+		clientRepository.save(inMemoryClient, inMemoryClient.getClientId());
+		
+		if (log.isDebugEnabled()) {
+			try {
+				log.debug("Client={}", OBJECT_MAPPER.writeValueAsString(client));
+				log.debug("InMemoryClient={}", OBJECT_MAPPER.writeValueAsString(inMemoryClient));
+			} catch (JsonProcessingException e) {
+				log.error(e.getMessage(), e);
+			}
+		}
 	}
 
 	@Override

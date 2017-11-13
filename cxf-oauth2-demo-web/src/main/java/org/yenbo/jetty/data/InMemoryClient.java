@@ -1,6 +1,8 @@
 package org.yenbo.jetty.data;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ public class InMemoryClient {
 	private Set<String> scopes = new HashSet<>();
 	private String description;
 	private String name;
+	private Map<String, String> nameI18nMap = new HashMap<>();
 	
 	public UUID getClientId() {
 		return clientId;
@@ -51,5 +54,9 @@ public class InMemoryClient {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Map<String, String> getNameI18nMap() {
+		return nameI18nMap;
 	}
 }

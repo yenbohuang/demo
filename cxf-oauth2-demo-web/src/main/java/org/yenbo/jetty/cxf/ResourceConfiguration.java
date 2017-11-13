@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,16 @@ public class ResourceConfiguration {
 	
 	private static final String OAUTH_FILTER_BEAN_NAME = "oauthFilter";
 	
+	@Autowired
+	private InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider;
+	@Autowired
+	private JacksonJsonProvider jsonProvider;
+	@Autowired
+	@Qualifier(OAUTH_FILTER_BEAN_NAME)
+	private OAuthRequestFilter oauthFilter;
+	
 	@Bean(name = OAUTH_FILTER_BEAN_NAME)
-	public OAuthRequestFilter oauthFilter(
-			InMemoryAuthorizationCodeDataProvider inMemoryAuthorizationCodeDataProvider) {
+	public OAuthRequestFilter oauthFilter() {
 		
 		OAuthRequestFilter filter = new OAuthRequestFilter();
 		filter.setDataProvider(inMemoryAuthorizationCodeDataProvider);
@@ -35,9 +43,7 @@ public class ResourceConfiguration {
 	}
 	
 	@Bean
-    public Server resourceServer(
-    		JacksonJsonProvider jsonProvider,
-    		@Qualifier(OAUTH_FILTER_BEAN_NAME) OAuthRequestFilter oauthFilter) {
+    public Server resourceServer() {
 		
         return CxfConfiguration.createServerFactory(new ResourceApplication(),
         		Arrays.<Object>asList(

@@ -11,6 +11,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,11 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 public class CxfConfiguration {
 
 	private static final Logger log = LoggerFactory.getLogger(CxfConfiguration.class);
+	
+	@Autowired
+	private JacksonJsonProvider jsonProvider;
+	@Autowired
+	private DemoExceptionMapper exceptionMapper;
 	
 	public static Server createServerFactory(Application application,
 			List<Object> providers, List<Object> serviceBeans) {
@@ -50,8 +56,7 @@ public class CxfConfiguration {
     }
 	
 	@Bean
-    public Server demoServer(JacksonJsonProvider jsonProvider,
-    		DemoExceptionMapper exceptionMapper) {
+    public Server demoServer() {
 		
         return createServerFactory(new DemoApplication(),
         		Arrays.<Object>asList(
@@ -61,7 +66,7 @@ public class CxfConfiguration {
     }
 	
 	@Bean
-    public Server secretServer(JacksonJsonProvider jsonProvider) {
+    public Server secretServer() {
 		
         return createServerFactory(new SecuredApplication(),
         		Arrays.<Object>asList(jsonProvider),

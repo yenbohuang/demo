@@ -1,6 +1,11 @@
 package org.yenbo.jetty.oauth2;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.cxf.rs.security.oauth2.common.Client;
@@ -9,6 +14,7 @@ import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
+import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
@@ -23,6 +29,13 @@ public class Oauth2Factory {
 	public static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
 	
 	public static final String KEY_USER_PROPERTY = "USER_PROPERTY";
+	
+	public static final List<String> GRANT_TYPE_LIST = Arrays.<String>asList(
+			OAuthConstants.AUTHORIZATION_CODE_GRANT,
+			OAuthConstants.REFRESH_TOKEN);
+	public static final List<String> RESPONSE_TYPE_LIST = Arrays.<String>asList(
+			OAuthConstants.CODE_RESPONSE_TYPE,
+			OAuthConstants.TOKEN_RESPONSE_TYPE);
 	
 	private Oauth2Factory() {
 	}
@@ -76,31 +89,137 @@ public class Oauth2Factory {
 		return grant;
 	}
 	
+	public static Client createClient() {
+		
+		Client client = new Client();
+		
+		client.setConfidential(true);
+		client.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
+		client.setAllowedGrantTypes(GRANT_TYPE_LIST);
+		
+		return client;
+	}
+	
 	public static Client create(InMemoryClient inMemoryClient) {
 		
 		if (null == inMemoryClient) {
 			throw new IllegalArgumentException("inMemoryClient is null.");
 		}
 		
-		Client client = new Client();
+		Client client = createClient();
 		
-		// set default values
-		client.setConfidential(true);
-		client.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
-		client.setAllowedGrantTypes(Arrays.<String>asList(
-				OAuthConstants.AUTHORIZATION_CODE_GRANT,
-				OAuthConstants.REFRESH_TOKEN
-				));
-		
-		// set customized fields
 		client.setClientId(inMemoryClient.getClientId().toString());
 		client.setClientSecret(inMemoryClient.getClientSecret());
 		client.getRedirectUris().addAll(inMemoryClient.getRedirectUris());
 		client.getRegisteredScopes().addAll(inMemoryClient.getScopes());
 		client.setApplicationDescription(inMemoryClient.getDescription());
 		client.setApplicationName(inMemoryClient.getName());
+		
+		// client_name#<language tag>
+		if (!inMemoryClient.getNameI18nMap().isEmpty()) {
+			for (Entry<String, String> entry: inMemoryClient.getNameI18nMap().entrySet()) {
+				client.getProperties().put(
+						OAuthExtensionConstants.CLIENT_NAME_PREFIX + entry.getKey(),
+						entry.getValue());
+			}
+		}
 		    	
     	return client;
+	}
+	
+	public static InMemoryClient create(Client client) {
+		
+		if (null == client) {
+			throw new IllegalArgumentException("client is null.");
+		}
+		
+		InMemoryClient inMemoryClient = new InMemoryClient();
+		
+		inMemoryClient.setClientId(UUID.fromString(client.getClientId()));
+		inMemoryClient.setClientSecret(client.getClientSecret());
+		inMemoryClient.getRedirectUris().addAll(client.getRedirectUris());
+		inMemoryClient.getScopes().addAll(client.getRegisteredScopes());
+		inMemoryClient.setDescription(client.getApplicationDescription());
+		inMemoryClient.setName(client.getApplicationName());
+		
+		// client_name#<language tag>
+		for (Entry<String, String> entry: client.getProperties().entrySet()) {
+			if (entry.getKey().startsWith(OAuthExtensionConstants.CLIENT_NAME_PREFIX)) {
+				Locale locale = Locale.forLanguageTag(
+						entry.getKey().split(OAuthExtensionConstants.CLIENT_NAME_SPLITTER)[1]);
+				inMemoryClient.getNameI18nMap().put(locale.toLanguageTag(), entry.getValue());
+			}
+		}		
+		
+		return inMemoryClient;
+	}
+	
+	public static Client fill(Client client, ClientRegistration clientRegistration) {
+		
+		if (null == client) {
+			throw new IllegalArgumentException("client is null.");
+		}
+		
+		if (null == clientRegistration) {
+			throw new IllegalArgumentException("clientRegistration is null.");
+		}
+		
+		client.setApplicationDescription(clientRegistration.getStringProperty(
+				OAuthExtensionConstants.CLIENT_DESCRIPTION));
+		
+		// client name L10N
+		Map<String, Object> clientNameMap = clientRegistration.getMapProperty(
+				OAuthExtensionConstants.CLIENT_NAME_I18N);
+		if (null != clientNameMap && !clientNameMap.isEmpty()) {
+			
+			for (Entry<String, Object> entry: clientNameMap.entrySet()) {
+				client.getProperties().put(entry.getKey(), (String) entry.getValue());
+			}
+		}
+		
+		return client;
+	}
+	
+	public static ClientRegistrationResponse fill(
+			ClientRegistrationResponse clientRegistrationResponse, Client client) {
+		
+		if (null == clientRegistrationResponse) {
+			throw new IllegalArgumentException("clientRegistrationResponse is null.");
+		}
+		
+		if (null == client) {
+			throw new IllegalArgumentException("client is null.");
+		}
+		
+		clientRegistrationResponse.setProperty(ClientRegistration.REDIRECT_URIS,
+				client.getRedirectUris());
+		clientRegistrationResponse.setProperty(ClientRegistration.CLIENT_NAME,
+				client.getApplicationName());
+		
+		// There is a bug in "OAuthUtils.convertListOfScopesToString()" that it is not
+		// space separated.
+		clientRegistrationResponse.setProperty(ClientRegistration.SCOPE,
+				convertListOfScopesToString(client.getRegisteredScopes()));
+		
+		clientRegistrationResponse.setProperty(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD,
+				client.getTokenEndpointAuthMethod());
+		clientRegistrationResponse.setProperty(ClientRegistration.GRANT_TYPES,
+				client.getAllowedGrantTypes());
+		
+		clientRegistrationResponse.setProperty(ClientRegistration.RESPONSE_TYPES,
+				RESPONSE_TYPE_LIST);
+		
+		// client_name#<language tag>
+		Map<String, String> clientNameMap = new HashMap<>();
+		for (Entry<String, String> entry: client.getProperties().entrySet()) {
+			if (entry.getKey().startsWith(OAuthExtensionConstants.CLIENT_NAME_PREFIX)) {
+				clientNameMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+		clientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_NAME_I18N,
+				clientNameMap);
+		
+		return clientRegistrationResponse;
 	}
 	
 	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken) {
@@ -231,14 +350,27 @@ public class Oauth2Factory {
 		
 		ClientRegistration clientRegistration = new ClientRegistration();
 		
-		clientRegistration.setGrantTypes(Arrays.asList(
-				OAuthConstants.AUTHORIZATION_CODE_GRANT,
-				OAuthConstants.REFRESH_TOKEN));
-		clientRegistration.setResponseTypes(Arrays.asList(
-				OAuthConstants.CODE_RESPONSE_TYPE,
-				OAuthConstants.TOKEN_RESPONSE_TYPE));
+		clientRegistration.setGrantTypes(GRANT_TYPE_LIST);
+		clientRegistration.setResponseTypes(RESPONSE_TYPE_LIST);
 		clientRegistration.setTokenEndpointAuthMethod(OAuthConstants.TOKEN_ENDPOINT_AUTH_POST);
 		
 		return clientRegistration;
+	}
+	
+	public static String convertListOfScopesToString(List<String> scopeList) {
+		
+		// There is a bug in "OAuthUtils.convertListOfScopesToString()" that it is not
+		// space separated.
+		String scopeString = "";
+		
+		if (null != scopeList && !scopeList.isEmpty()) {
+			StringBuilder builder = new StringBuilder();
+			for (String scope: scopeList) {
+				builder.append(scope).append(" ");
+			}
+			scopeString = builder.toString().trim();
+		}
+		
+		return scopeString;
 	}
 }

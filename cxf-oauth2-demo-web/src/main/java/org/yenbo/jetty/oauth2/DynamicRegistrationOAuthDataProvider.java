@@ -69,6 +69,9 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 			
 			serverAccessToken.setSubject(getManagementUserSubject());
 			serverAccessToken.setTokenKey(accessToken);
+		} else {
+			log.debug("Token not match: expected={}, actual={}",
+					InMemoryUser.ACCESS_TOKEN_ADMIN, accessToken);
 		}
 		
 		return serverAccessToken;

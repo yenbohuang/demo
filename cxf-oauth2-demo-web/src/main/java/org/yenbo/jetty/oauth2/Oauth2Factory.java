@@ -27,6 +27,7 @@ public class Oauth2Factory {
 
 	public static final long ACCESS_TOKEN_EXPIRED_TIME_SECONDS = 12345L;
 	public static final long REFRESH_TOKEN_EXPIRED_TIME_SECONDS = 67890L;
+	public static final long CLIENT_SECRET_EXPIRES_AT_SECONDS = 0L;
 	
 	public static final String KEY_USER_PROPERTY = "USER_PROPERTY";
 	
@@ -108,12 +109,13 @@ public class Oauth2Factory {
 		
 		Client client = createClient();
 		
+		client.setApplicationDescription(inMemoryClient.getDescription());
+		client.setApplicationName(inMemoryClient.getName());
 		client.setClientId(inMemoryClient.getClientId().toString());
 		client.setClientSecret(inMemoryClient.getClientSecret());
 		client.getRedirectUris().addAll(inMemoryClient.getRedirectUris());
+		client.setRegisteredAt(inMemoryClient.getIssuedAt());
 		client.getRegisteredScopes().addAll(inMemoryClient.getScopes());
-		client.setApplicationDescription(inMemoryClient.getDescription());
-		client.setApplicationName(inMemoryClient.getName());
 		
 		// client_name#<language tag>
 		if (!inMemoryClient.getNameI18nMap().isEmpty()) {
@@ -137,10 +139,11 @@ public class Oauth2Factory {
 		
 		inMemoryClient.setClientId(UUID.fromString(client.getClientId()));
 		inMemoryClient.setClientSecret(client.getClientSecret());
+		inMemoryClient.setDescription(client.getApplicationDescription());
+		inMemoryClient.setIssuedAt(client.getRegisteredAt());
+		inMemoryClient.setName(client.getApplicationName());
 		inMemoryClient.getRedirectUris().addAll(client.getRedirectUris());
 		inMemoryClient.getScopes().addAll(client.getRegisteredScopes());
-		inMemoryClient.setDescription(client.getApplicationDescription());
-		inMemoryClient.setName(client.getApplicationName());
 		
 		// client_name#<language tag>
 		for (Entry<String, String> entry: client.getProperties().entrySet()) {
@@ -154,74 +157,101 @@ public class Oauth2Factory {
 		return inMemoryClient;
 	}
 	
-	public static Client fill(Client client, ClientRegistration clientRegistration) {
+	public static Client fill(ClientRegistration fromClientRegistration, Client toClient) {
 		
-		if (null == client) {
-			throw new IllegalArgumentException("client is null.");
+		if (null == fromClientRegistration) {
+			throw new IllegalArgumentException("fromClientRegistration is null.");
 		}
 		
-		if (null == clientRegistration) {
-			throw new IllegalArgumentException("clientRegistration is null.");
+		if (null == toClient) {
+			throw new IllegalArgumentException("toClient is null.");
 		}
 		
-		client.setApplicationDescription(clientRegistration.getStringProperty(
+		toClient.setApplicationDescription(fromClientRegistration.getStringProperty(
 				OAuthExtensionConstants.CLIENT_DESCRIPTION));
 		
 		// client name L10N
-		Map<String, Object> clientNameMap = clientRegistration.getMapProperty(
+		Map<String, Object> clientNameMap = fromClientRegistration.getMapProperty(
 				OAuthExtensionConstants.CLIENT_NAME_I18N);
 		if (null != clientNameMap && !clientNameMap.isEmpty()) {
 			
 			for (Entry<String, Object> entry: clientNameMap.entrySet()) {
-				client.getProperties().put(entry.getKey(), (String) entry.getValue());
+				toClient.getProperties().put(entry.getKey(), (String) entry.getValue());
 			}
 		}
 		
-		return client;
+		return toClient;
 	}
 	
-	public static ClientRegistrationResponse fill(
-			ClientRegistrationResponse clientRegistrationResponse, Client client) {
-		
-		if (null == clientRegistrationResponse) {
-			throw new IllegalArgumentException("clientRegistrationResponse is null.");
-		}
-		
-		if (null == client) {
-			throw new IllegalArgumentException("client is null.");
-		}
-		
-		clientRegistrationResponse.setProperty(ClientRegistration.REDIRECT_URIS,
-				client.getRedirectUris());
-		clientRegistrationResponse.setProperty(ClientRegistration.CLIENT_NAME,
-				client.getApplicationName());
-		clientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_DESCRIPTION,
-				client.getApplicationDescription());
-		
-		// There is a bug in "OAuthUtils.convertListOfScopesToString()" that it is not
-		// space separated.
-		clientRegistrationResponse.setProperty(ClientRegistration.SCOPE,
-				convertListOfScopesToString(client.getRegisteredScopes()));
-		
-		clientRegistrationResponse.setProperty(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD,
-				client.getTokenEndpointAuthMethod());
-		clientRegistrationResponse.setProperty(ClientRegistration.GRANT_TYPES,
-				client.getAllowedGrantTypes());
-		
-		clientRegistrationResponse.setProperty(ClientRegistration.RESPONSE_TYPES,
-				RESPONSE_TYPE_LIST);
+	private static Map<String, String> createClientNameMap(Client fromClient) {
 		
 		// client_name#<language tag>
 		Map<String, String> clientNameMap = new HashMap<>();
-		for (Entry<String, String> entry: client.getProperties().entrySet()) {
+		
+		for (Entry<String, String> entry: fromClient.getProperties().entrySet()) {
 			if (entry.getKey().startsWith(OAuthExtensionConstants.CLIENT_NAME_PREFIX)) {
 				clientNameMap.put(entry.getKey(), entry.getValue());
 			}
 		}
-		clientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_NAME_I18N,
-				clientNameMap);
 		
-		return clientRegistrationResponse;
+		return clientNameMap;
+	}
+	
+	public static ClientRegistration fill(Client fromClient, ClientRegistration toClientRegistration) {
+		
+		if (null == fromClient) {
+			throw new IllegalArgumentException("fromClient is null.");
+		}
+		
+		if (null == toClientRegistration) {
+			throw new IllegalArgumentException("toClientRegistration is null");
+		}
+		
+		toClientRegistration.setProperty(OAuthExtensionConstants.CLIENT_DESCRIPTION,
+				fromClient.getApplicationDescription());
+		toClientRegistration.setProperty(ClientRegistrationResponse.CLIENT_ID,
+				fromClient.getClientId());
+		toClientRegistration.setProperty(ClientRegistrationResponse.CLIENT_ID_ISSUED_AT,
+				fromClient.getRegisteredAt());
+		toClientRegistration.setProperty(OAuthExtensionConstants.CLIENT_NAME_I18N,
+				createClientNameMap(fromClient));
+		toClientRegistration.setProperty(ClientRegistrationResponse.CLIENT_SECRET,
+				fromClient.getClientSecret());
+		toClientRegistration.setScope(convertListOfScopesToString(fromClient.getRegisteredScopes()));
+		toClientRegistration.setResponseTypes(RESPONSE_TYPE_LIST);
+		
+		return toClientRegistration;
+	}
+	
+	public static ClientRegistrationResponse fill(Client fromClient,
+			ClientRegistrationResponse toClientRegistrationResponse) {
+		
+		if (null == fromClient) {
+			throw new IllegalArgumentException("fromClient is null.");
+		}
+		
+		if (null == toClientRegistrationResponse) {
+			throw new IllegalArgumentException("toClientRegistrationResponse is null.");
+		}
+		
+		toClientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_DESCRIPTION,
+				fromClient.getApplicationDescription());
+		toClientRegistrationResponse.setProperty(ClientRegistration.CLIENT_NAME,
+				fromClient.getApplicationName());
+		toClientRegistrationResponse.setProperty(OAuthExtensionConstants.CLIENT_NAME_I18N,
+				createClientNameMap(fromClient));
+		toClientRegistrationResponse.setProperty(ClientRegistration.GRANT_TYPES,
+				fromClient.getAllowedGrantTypes());
+		toClientRegistrationResponse.setProperty(ClientRegistration.REDIRECT_URIS,
+				fromClient.getRedirectUris());
+		toClientRegistrationResponse.setProperty(ClientRegistration.RESPONSE_TYPES,
+				RESPONSE_TYPE_LIST);
+		toClientRegistrationResponse.setProperty(ClientRegistration.SCOPE,
+				convertListOfScopesToString(fromClient.getRegisteredScopes()));
+		toClientRegistrationResponse.setProperty(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD,
+				fromClient.getTokenEndpointAuthMethod());
+		
+		return toClientRegistrationResponse;
 	}
 	
 	public static BearerAccessToken create(Client client, InMemoryAccessToken inMemoryAccessToken) {

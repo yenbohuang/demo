@@ -20,6 +20,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObjectReaderWriter;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
@@ -38,6 +39,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 	MessageBodyReader<Object> {
 
 	private static final Logger log = LoggerFactory.getLogger(OAuthExtensionJSONProvider.class);
+	
+	// TODO how to sort properties automatically?
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	@Override
@@ -53,7 +56,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return ClientRegistrationResponse.class == type;
+		return ClientRegistrationResponse.class == type ||
+				ClientRegistration.class == type;
 	}
 
 	@Override
@@ -123,14 +127,40 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		
 		if (obj instanceof ClientRegistrationResponse) {
 			writeClientRegistrationResponse((ClientRegistrationResponse) obj, entityStream);
+		} else if (obj instanceof ClientRegistration) {
+			writeClientRegistration((ClientRegistration) obj, entityStream);
 		} else {
 			log.error("Unknown type: {}", obj);
 		}
 	}
 	
-	private void appendArrayNode(ClientRegistrationResponse obj, ObjectNode root, String key) {
+	private void appendArrayNode(JsonMapObject obj, ObjectNode root, String key) {
 		
-		List<String> list = obj.getListStringProperty(key);
+		List<String> list = null;
+		
+		if (obj instanceof ClientRegistrationResponse) {
+			
+			list = ((ClientRegistrationResponse) obj).getListStringProperty(key);
+			
+		} else if (obj instanceof ClientRegistration) {
+			
+			ClientRegistration clientRegistration = ((ClientRegistration) obj);
+			
+			switch (key) {
+			case ClientRegistration.GRANT_TYPES:
+				list = clientRegistration.getGrantTypes();
+				break;
+			case ClientRegistration.REDIRECT_URIS:
+				list = clientRegistration.getRedirectUris();
+				break;
+			case ClientRegistration.RESPONSE_TYPES:
+				list = clientRegistration.getResponseTypes();
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown key: " + key);
+			}
+		}
+		
 		if (null != list) {
 			ArrayNode arrayNode = OBJECT_MAPPER.createArrayNode();
 			for (String str: list) {
@@ -139,15 +169,53 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 			root.set(key, arrayNode);
 		}
 	}
+		
+	private void logIgnoredNode(JsonMapObject obj, String key, Object value) {
+		
+		String clientId = null;
+		
+		if (obj instanceof ClientRegistration) {
+			clientId = ((ClientRegistration) obj).getStringProperty(
+					ClientRegistrationResponse.CLIENT_ID);
+		} else if (obj instanceof ClientRegistrationResponse) {
+			clientId = ((ClientRegistrationResponse) obj).getClientId();
+		}
+		
+		log.debug("Ignore value: clientId={}, key={}, value={}", clientId, key, value);
+	}
 	
-	private void appendStringNode(ClientRegistrationResponse obj, ObjectNode root, String key) {
+	private void appendStringNode(JsonMapObject obj, ObjectNode root, String key) {
 		
 		String value = obj.getStringProperty(key);
 		
 		if (StringUtils.isNotBlank(value)) {
 			root.put(key, value);
 		} else {
-			log.warn("Ignore blank value: clientId={}, key={}", obj.getClientId(), key);
+			logIgnoredNode(obj, key, value);
+		}
+	}
+	
+	private void appendLongNode(JsonMapObject obj, ObjectNode root, String key) {
+		
+		Long value = obj.getLongProperty(key);
+		
+		if (null != value) {
+			root.put(key, value);
+		} else {
+			logIgnoredNode(obj, key, value);
+		}
+	}
+	
+	private void appendClientNameMap(JsonMapObject obj, ObjectNode root) {
+		
+		// client_name#<language tag>
+		Map<String, Object> clientNameI18nMap = obj.getMapProperty(
+				OAuthExtensionConstants.CLIENT_NAME_I18N);
+		
+		if (null != clientNameI18nMap && !clientNameI18nMap.isEmpty()) {
+			for (Entry<String, Object> entry: clientNameI18nMap.entrySet()) {
+				root.put(entry.getKey(), (String) entry.getValue());
+			}
 		}
 	}
 	
@@ -159,33 +227,41 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		
 		root.put(ClientRegistrationResponse.CLIENT_ID, obj.getClientId());
 		root.put(ClientRegistrationResponse.CLIENT_ID_ISSUED_AT, obj.getClientIdIssuedAt());
-		root.put(ClientRegistrationResponse.CLIENT_SECRET, obj.getClientSecret());
-		
-		appendStringNode(obj, root, ClientRegistration.SCOPE);
-		
-		root.put(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD,
-				obj.getStringProperty(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD));
-		
-		// There is a bug in cxf library that "obj.getClientSecretExpiresAt()" returns null.
-		// Set as zero and never expire.
-		root.put(ClientRegistrationResponse.CLIENT_SECRET_EXPIRES_AT, 0);
-		
-		appendArrayNode(obj, root, ClientRegistration.REDIRECT_URIS);
-		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
-		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
-		
-		appendStringNode(obj, root, ClientRegistration.CLIENT_NAME);
-		
-		// client_name#<language tag>
-		Map<String, Object> clientNameI18nMap = obj.getMapProperty(
-				OAuthExtensionConstants.CLIENT_NAME_I18N);
-		if (null != clientNameI18nMap && !clientNameI18nMap.isEmpty()) {
-			for (Entry<String, Object> entry: clientNameI18nMap.entrySet()) {
-				root.put(entry.getKey(), (String) entry.getValue());
-			}
-		}
-		
 		appendStringNode(obj, root, OAuthExtensionConstants.CLIENT_DESCRIPTION);
+		appendStringNode(obj, root, ClientRegistration.CLIENT_NAME);
+		appendClientNameMap(obj, root);
+		root.put(ClientRegistrationResponse.CLIENT_SECRET, obj.getClientSecret());
+		root.put(ClientRegistrationResponse.CLIENT_SECRET_EXPIRES_AT,
+				Oauth2Factory.CLIENT_SECRET_EXPIRES_AT_SECONDS);
+		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
+		appendArrayNode(obj, root, ClientRegistration.REDIRECT_URIS);
+		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
+		appendStringNode(obj, root, ClientRegistration.SCOPE);
+		appendStringNode(obj, root, ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD);
+		
+		os.write(OBJECT_MAPPER.writeValueAsBytes(root));
+		os.flush();
+	}
+	
+	private void writeClientRegistration(ClientRegistration obj, OutputStream os)
+			throws IOException {
+		
+		// TODO how to handle "client_name#<language tag>" gracefully?
+		ObjectNode root = OBJECT_MAPPER.createObjectNode();
+		
+		appendStringNode(obj, root, ClientRegistrationResponse.CLIENT_ID);
+		appendLongNode(obj, root, ClientRegistrationResponse.CLIENT_ID_ISSUED_AT);
+		appendStringNode(obj, root, OAuthExtensionConstants.CLIENT_DESCRIPTION);
+		root.put(ClientRegistration.CLIENT_NAME, obj.getClientName());
+		appendClientNameMap(obj, root);
+		appendStringNode(obj, root, ClientRegistrationResponse.CLIENT_SECRET);
+		root.put(ClientRegistrationResponse.CLIENT_SECRET_EXPIRES_AT,
+				Oauth2Factory.CLIENT_SECRET_EXPIRES_AT_SECONDS);
+		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
+		appendArrayNode(obj, root, ClientRegistration.REDIRECT_URIS);
+		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
+		appendStringNode(obj, root, ClientRegistration.SCOPE);
+		appendStringNode(obj, root, ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD);
 		
 		os.write(OBJECT_MAPPER.writeValueAsBytes(root));
 		os.flush();

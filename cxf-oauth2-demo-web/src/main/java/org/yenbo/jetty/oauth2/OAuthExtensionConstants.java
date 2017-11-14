@@ -11,7 +11,7 @@ public class OAuthExtensionConstants {
 	
 	// The followings are only for demo, not from any RFCs.
 	public static final String CLIENT_NAME_I18N = ClientRegistration.CLIENT_NAME + "_i18n";
-	public static final String CLIENT_DESCRIPTION = "x_client_description";
+	public static final String CLIENT_DESCRIPTION = "client_description";
 	
 	private OAuthExtensionConstants() {}
 }

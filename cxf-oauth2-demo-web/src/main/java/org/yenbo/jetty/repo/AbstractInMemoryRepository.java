@@ -32,17 +32,20 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		
 		validateEntity(entity);
 		validateKey(key);
-		log.debug("Before save: {} entities", map.size());
+		
+		int sizeBeforeSave = map.size();
 		
 		if (map.containsKey(key)) {
 			InMemoryEntityException exception = new InMemoryEntityException(
 					"Existing entity found");
 			exception.addContextValue("key", key);
+			exception.addContextValue("entity", entity);
 			throw exception;
 		}
 		
 		map.put(key, entity);
-		log.debug("Save: {}, {} entities", key, map.size());
+		log.debug("Save ({}): key={}, sizeBeforeSave={}, sizeAfterSave={}",
+				entity.getClass(), key, sizeBeforeSave, map.size());
 	}
 	
 	public T get(K key) {
@@ -52,9 +55,9 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		T entity = map.get(key);
 		
 		if (null == entity) {
-			log.debug("Not found: {}", key);
+			log.debug("Not found: key={}", key);
 		} else {
-			log.debug("Found: {}", key);
+			log.debug("Found ({}): key={}", entity.getClass(), key);
 		}
 		
 		return entity;
@@ -63,12 +66,15 @@ public abstract class AbstractInMemoryRepository <T, K> {
 	public void delete(K key) {
 		
 		validateKey(key);
-		log.debug("Before delete: {} entities.", map.size());
 		
-		if (null == map.remove(key)) {
-			log.warn("Not found: {}", key);
+		int sizeBeforeDelete = map.size();
+		T entity = map.remove(key);
+		
+		if (null == entity) {
+			log.warn("Not found: key={}", key);
 		} else {
-			log.debug("Delete: {}, {} entities.", key, map.size());
+			log.debug("Delete ({}): key={}, sizeBeforeDelete={}, sizeAfterDelete={}",
+					entity.getClass(), key, sizeBeforeDelete, map.size());
 		}
 	}
 	
@@ -79,10 +85,12 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		
 		if (map.containsKey(key)) {
 			map.put(key, entity);
+			log.debug("Entity replaced ({}): key={}", entity.getClass(), key);
 		} else {
 			InMemoryEntityException exception = new InMemoryEntityException(
 					"Entity does not exist.");
 			exception.addContextValue("key", key);
+			exception.addContextValue("entity", entity);
 			throw exception;
 		}
 	}

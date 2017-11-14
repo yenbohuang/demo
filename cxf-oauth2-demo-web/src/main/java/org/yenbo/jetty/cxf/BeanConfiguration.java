@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.UUID;
 
+import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,8 @@ public class BeanConfiguration {
 		client.getScopes().add("demo3");
 		client.setDescription("This is application description");
 		client.setName("This is application name");
+		client.getNameI18nMap().put("en-CA", "Customized name for Canada.");
+		client.setIssuedAt(OAuthUtils.getIssuedAt());
 		
 		// copy this line from log file and proceed with other tests
     	log.debug("client_id={}, client_secret={}", client.getClientId(), client.getClientSecret());

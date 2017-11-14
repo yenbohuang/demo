@@ -15,6 +15,7 @@ public class InMemoryClient {
 	private String description;
 	private String name;
 	private Map<String, String> nameI18nMap = new HashMap<>();
+	private long issuedAt;
 	
 	public UUID getClientId() {
 		return clientId;
@@ -58,5 +59,13 @@ public class InMemoryClient {
 	
 	public Map<String, String> getNameI18nMap() {
 		return nameI18nMap;
+	}
+	
+	public long getIssuedAt() {
+		return issuedAt;
+	}
+	
+	public void setIssuedAt(long issuedAt) {
+		this.issuedAt = issuedAt;
 	}
 }

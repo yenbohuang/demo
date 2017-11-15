@@ -3,20 +3,16 @@ package org.yenbo.jetty.oauth2;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.cxf.rs.security.oauth2.common.AuthenticationMethod;
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
 import org.apache.cxf.rs.security.oauth2.provider.AbstractOAuthDataProvider;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
-import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
-import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yenbo.jetty.data.InMemoryClient;
-import org.yenbo.jetty.data.InMemoryUser;
 import org.yenbo.jetty.repo.ClientRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvider {
 
-	private static final String MANAGEMENT_CLIENT_ID = "6a73a7ea-676a-47ae-99c3-ce9fb41b3972";
-	
 	private static final Logger log = LoggerFactory.getLogger(
 			DynamicRegistrationOAuthDataProvider.class);
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -36,45 +30,11 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 	public DynamicRegistrationOAuthDataProvider() {
 		super();
 	}
-
-	private Client getManagementClient() {
-		Client client = Oauth2Factory.createClient();
-		client.setClientId(MANAGEMENT_CLIENT_ID);
-		return client;
-	}
-	
-	private UserSubject getManagementUserSubject() {
-		UserSubject subject = new UserSubject();
-		subject.setAuthenticationMethod(AuthenticationMethod.PASSWORD);
-		subject.setLogin(InMemoryUser.USERNAME_ADMIN);
-		subject.getRoles().add(InMemoryUser.ROLE_ADMIN);
-		return subject;
-	}
 	
 	@Override
 	public ServerAccessToken getAccessToken(String accessToken) throws OAuthServiceException {
-		
-		// Assume that access token is not issued by this demo but from another internal system.
-		
-		BearerAccessToken serverAccessToken = null;
-		
-		if (InMemoryUser.ACCESS_TOKEN_ADMIN.equals(accessToken)) {
-			
-			serverAccessToken = new BearerAccessToken();
-			serverAccessToken.setClient(getManagementClient());
-			serverAccessToken.setExpiresIn(Oauth2Factory.ACCESS_TOKEN_EXPIRED_TIME_SECONDS);
-			
-			// always valid for demo
-			serverAccessToken.setIssuedAt(OAuthUtils.getIssuedAt()); 
-			
-			serverAccessToken.setSubject(getManagementUserSubject());
-			serverAccessToken.setTokenKey(accessToken);
-		} else {
-			log.debug("Token not match: expected={}, actual={}",
-					InMemoryUser.ACCESS_TOKEN_ADMIN, accessToken);
-		}
-		
-		return serverAccessToken;
+		log.warn("getAccessToken() is not implemented");
+		return null;
 	}
 
 	@Override

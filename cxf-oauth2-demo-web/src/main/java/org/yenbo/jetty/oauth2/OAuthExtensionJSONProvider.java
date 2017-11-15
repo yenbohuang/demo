@@ -134,40 +134,24 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		}
 	}
 	
-	private void appendArrayNode(JsonMapObject obj, ObjectNode root, String key) {
+	private void appendArrayNode(ClientRegistrationResponse obj, ObjectNode root, String key) {
 		
-		List<String> list = null;
-		
-		if (obj instanceof ClientRegistrationResponse) {
-			
-			list = ((ClientRegistrationResponse) obj).getListStringProperty(key);
-			
-		} else if (obj instanceof ClientRegistration) {
-			
-			ClientRegistration clientRegistration = ((ClientRegistration) obj);
-			
-			switch (key) {
-			case ClientRegistration.GRANT_TYPES:
-				list = clientRegistration.getGrantTypes();
-				break;
-			case ClientRegistration.REDIRECT_URIS:
-				list = clientRegistration.getRedirectUris();
-				break;
-			case ClientRegistration.RESPONSE_TYPES:
-				list = clientRegistration.getResponseTypes();
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown key: " + key);
-			}
-		}
+		List<String> list = obj.getListStringProperty(key);;
 		
 		if (null != list) {
-			ArrayNode arrayNode = OBJECT_MAPPER.createArrayNode();
-			for (String str: list) {
-				arrayNode.add(str);
-			}
-			root.set(key, arrayNode);
+			root.set(key, createArrayNode(list));
 		}
+	}
+	
+	private ArrayNode createArrayNode(List<String> list) {
+		
+		ArrayNode arrayNode = OBJECT_MAPPER.createArrayNode();
+		
+		for (String str: list) {
+			arrayNode.add(str);
+		}
+		
+		return arrayNode;
 	}
 		
 	private void logIgnoredNode(JsonMapObject obj, String key, Object value) {
@@ -235,6 +219,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 				Oauth2Factory.CLIENT_SECRET_EXPIRES_AT_SECONDS);
 		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
 		appendArrayNode(obj, root, ClientRegistration.REDIRECT_URIS);
+		root.put(ClientRegistrationResponse.REG_ACCESS_TOKEN, obj.getRegistrationAccessToken());
+		root.put(ClientRegistrationResponse.REG_CLIENT_URI, obj.getRegistrationClientUri());
 		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
 		appendStringNode(obj, root, ClientRegistration.SCOPE);
 		appendStringNode(obj, root, ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD);
@@ -257,11 +243,13 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		appendStringNode(obj, root, ClientRegistrationResponse.CLIENT_SECRET);
 		root.put(ClientRegistrationResponse.CLIENT_SECRET_EXPIRES_AT,
 				Oauth2Factory.CLIENT_SECRET_EXPIRES_AT_SECONDS);
-		appendArrayNode(obj, root, ClientRegistration.GRANT_TYPES);
-		appendArrayNode(obj, root, ClientRegistration.REDIRECT_URIS);
-		appendArrayNode(obj, root, ClientRegistration.RESPONSE_TYPES);
-		appendStringNode(obj, root, ClientRegistration.SCOPE);
-		appendStringNode(obj, root, ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD);
+		root.set(ClientRegistration.GRANT_TYPES, createArrayNode(obj.getGrantTypes()));
+		root.set(ClientRegistration.REDIRECT_URIS, createArrayNode(obj.getRedirectUris()));
+		appendStringNode(obj, root, ClientRegistrationResponse.REG_ACCESS_TOKEN);
+		appendStringNode(obj, root, ClientRegistrationResponse.REG_CLIENT_URI);
+		root.set(ClientRegistration.RESPONSE_TYPES, createArrayNode(obj.getResponseTypes()));
+		root.put(ClientRegistration.SCOPE, obj.getScope());
+		root.put(ClientRegistration.TOKEN_ENDPOINT_AUTH_METHOD, obj.getTokenEndpointAuthMethod());
 		
 		os.write(OBJECT_MAPPER.writeValueAsBytes(root));
 		os.flush();

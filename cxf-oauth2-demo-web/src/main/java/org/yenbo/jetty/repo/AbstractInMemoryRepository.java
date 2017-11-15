@@ -85,13 +85,24 @@ public abstract class AbstractInMemoryRepository <T, K> {
 		
 		if (map.containsKey(key)) {
 			map.put(key, entity);
-			log.debug("Entity replaced ({}): key={}", entity.getClass(), key);
+			log.debug("Replace ({}): key={}", entity.getClass(), key);
 		} else {
 			InMemoryEntityException exception = new InMemoryEntityException(
 					"Entity does not exist.");
 			exception.addContextValue("key", key);
 			exception.addContextValue("entity", entity);
 			throw exception;
+		}
+	}
+	
+	public void saveOrUpdate(T entity, K key) {
+		
+		validateKey(key);
+		
+		if (map.containsKey(key)) {
+			update(entity, key);
+		} else {
+			save(entity, key);
 		}
 	}
 }

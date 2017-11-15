@@ -55,7 +55,7 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 	public void setClient(Client client) {
 		
 		InMemoryClient inMemoryClient = Oauth2Factory.create(client);
-		clientRepository.save(inMemoryClient, inMemoryClient.getClientId());
+		clientRepository.saveOrUpdate(inMemoryClient, inMemoryClient.getClientId());
 		
 		if (log.isDebugEnabled()) {
 			try {

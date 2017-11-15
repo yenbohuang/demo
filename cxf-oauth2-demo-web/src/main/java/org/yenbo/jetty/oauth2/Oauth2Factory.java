@@ -8,7 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.oauth2.common.Client;
+import org.apache.cxf.rs.security.oauth2.common.OAuthError;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
@@ -18,6 +24,7 @@ import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthConstants;
+import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.yenbo.jetty.data.InMemoryAccessToken;
 import org.yenbo.jetty.data.InMemoryAuthorizationCode;
 import org.yenbo.jetty.data.InMemoryClient;
@@ -157,6 +164,22 @@ public class Oauth2Factory {
 		return inMemoryClient;
 	}
 	
+	private static void fillClientNameMap(ClientRegistration fromClientRegistration,
+			Client toClient) {
+		
+		Map<String, Object> clientNameMap = fromClientRegistration.getMapProperty(
+				OAuthExtensionConstants.CLIENT_NAME_I18N);
+		
+		if (null != clientNameMap && !clientNameMap.isEmpty()) {
+			
+			for (Entry<String, Object> entry: clientNameMap.entrySet()) {
+				toClient.getProperties().put(entry.getKey(), (String) entry.getValue());
+			}
+		} else {
+			toClient.getProperties().remove(OAuthExtensionConstants.CLIENT_NAME_I18N);
+		}
+	}
+	
 	public static Client fill(ClientRegistration fromClientRegistration, Client toClient) {
 		
 		if (null == fromClientRegistration) {
@@ -168,17 +191,36 @@ public class Oauth2Factory {
 		}
 		
 		toClient.setApplicationDescription(fromClientRegistration.getStringProperty(
-				OAuthExtensionConstants.CLIENT_DESCRIPTION));
+				OAuthExtensionConstants.CLIENT_DESCRIPTION));		
+		fillClientNameMap(fromClientRegistration, toClient);
 		
-		// client name L10N
-		Map<String, Object> clientNameMap = fromClientRegistration.getMapProperty(
-				OAuthExtensionConstants.CLIENT_NAME_I18N);
-		if (null != clientNameMap && !clientNameMap.isEmpty()) {
-			
-			for (Entry<String, Object> entry: clientNameMap.entrySet()) {
-				toClient.getProperties().put(entry.getKey(), (String) entry.getValue());
-			}
+		return toClient;
+	}
+	
+	public static Client updateClient(ClientRegistration fromClientRegistration,
+			Client toClient) {
+		
+		if (null == fromClientRegistration) {
+			throw new IllegalArgumentException("fromClientRegistration is null.");
 		}
+		
+		if (null == toClient) {
+			throw new IllegalArgumentException("toClient is null.");
+		}
+		
+		toClient.setApplicationDescription(fromClientRegistration.getStringProperty(
+				OAuthExtensionConstants.CLIENT_DESCRIPTION));
+		toClient.setApplicationName(fromClientRegistration.getClientName());
+		fillClientNameMap(fromClientRegistration, toClient);
+		toClient.setRedirectUris(fromClientRegistration.getRedirectUris());
+		
+		// This is not compliant with RFC 7592
+		if (fromClientRegistration.containsProperty(ClientRegistrationResponse.CLIENT_SECRET)) {
+			toClient.setClientSecret(fromClientRegistration.getStringProperty(
+					ClientRegistrationResponse.CLIENT_SECRET));
+		}
+		
+		toClient.setRegisteredScopes(OAuthUtils.parseScope(fromClientRegistration.getScope()));
 		
 		return toClient;
 	}
@@ -404,5 +446,22 @@ public class Oauth2Factory {
 		}
 		
 		return scopeString;
+	}
+	
+	public static Response createResponseWithOauthError(Status status, String errorCode,
+			String errorDescription) {
+		
+		if (null == status) {
+			throw new IllegalArgumentException("status is null.");
+		}
+		
+		if (StringUtils.isBlank(errorCode)) {
+			throw new IllegalArgumentException("errorCode is blank");
+		}
+		
+		return Response.status(status)
+				.entity(new OAuthError(errorCode, errorDescription))
+				.type(MediaType.APPLICATION_JSON)
+				.build();
 	}
 }

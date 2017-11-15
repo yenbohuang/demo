@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
@@ -24,7 +25,6 @@ import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObjectReaderWriter;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
-import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,17 +69,25 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 			return fromMapToClientRegistration(entityStream);
 		}
 		
-		throw new WebApplicationException("Unknown type: " + type,
-				HttpStatus.INTERNAL_SERVER_ERROR_500);
+		throw new WebApplicationException("Unknown type: " + type, Status.INTERNAL_SERVER_ERROR);
+	}
+	
+	private Map<String, Object> readFromJson(InputStream is) {
+		try {
+			return new JsonMapObjectReaderWriter().fromJson(is);
+		} catch (Exception ex) {
+			throw new WebApplicationException(ex, Oauth2Factory.createResponseWithOauthError(
+					Status.BAD_REQUEST, OAuthExtensionConstants.INVALID_CLIENT_METADATA,
+					"Invalid request body"));
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ClientRegistration fromMapToClientRegistration(InputStream is) throws IOException {
+	private ClientRegistration fromMapToClientRegistration(InputStream is) {
 		
 		// If we throw OAuthServiceException here, it becomes unhandled.
 		// Validate the data elsewhere and ignore unknown properties.
-		
-		Map<String, Object> params = new JsonMapObjectReaderWriter().fromJson(is);
+		Map<String, Object> params = readFromJson(is);
 		ClientRegistration clientRegistration = Oauth2Factory.createClientRegistration();
 		Map<String, String> clientNameMap = new HashMap<>();
 		
@@ -99,6 +107,16 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 				clientRegistration.setScope((String) entry.getValue());
 				break;
 				
+			case ClientRegistrationResponse.CLIENT_ID:
+				clientRegistration.setProperty(ClientRegistrationResponse.CLIENT_ID,
+						entry.getValue());
+				break;
+				
+			case ClientRegistrationResponse.CLIENT_SECRET:
+				clientRegistration.setProperty(ClientRegistrationResponse.CLIENT_SECRET,
+						entry.getValue());
+				break;
+				
 			// other properties
 			case OAuthExtensionConstants.CLIENT_DESCRIPTION:
 				clientRegistration.setProperty(entry.getKey(), (String) entry.getValue());
@@ -108,6 +126,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 				// client name i18n
 				if (entry.getKey().startsWith(OAuthExtensionConstants.CLIENT_NAME_PREFIX)) {
 					clientNameMap.put(entry.getKey(), (String) entry.getValue());
+				} else {
+					log.debug("Ignore value: key={}, value={}", entry.getKey(), entry.getValue());
 				}
 				break;
 			}
@@ -129,8 +149,6 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 			writeClientRegistrationResponse((ClientRegistrationResponse) obj, entityStream);
 		} else if (obj instanceof ClientRegistration) {
 			writeClientRegistration((ClientRegistration) obj, entityStream);
-		} else {
-			log.error("Unknown type: {}", obj);
 		}
 	}
 	

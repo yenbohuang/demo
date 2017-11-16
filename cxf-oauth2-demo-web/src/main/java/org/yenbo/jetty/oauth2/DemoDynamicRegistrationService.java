@@ -22,7 +22,7 @@ import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
 import org.apache.cxf.rs.security.oauth2.services.DynamicRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yenbo.jetty.cxf.Oauth2DynamicRegistrationConfiguration;
+import org.yenbo.jetty.cxf.Oauth2Configuration;
 import org.yenbo.jetty.data.InMemoryUser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -78,7 +78,7 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 			String clientId, boolean isUpdate) {
 		
 		// both registration access token and uri are either included or excluded
-		if (Oauth2DynamicRegistrationConfiguration.SUPPORT_REGISTRATION_ACCESS_TOKEN) {
+		if (Oauth2Configuration.SUPPORT_REGISTRATION_ACCESS_TOKEN) {
             
         	UriBuilder ub = getMessageContext().getUriInfo().getAbsolutePathBuilder();
         	

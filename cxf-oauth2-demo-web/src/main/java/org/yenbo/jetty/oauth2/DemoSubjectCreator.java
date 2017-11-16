@@ -1,5 +1,8 @@
 package org.yenbo.jetty.oauth2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
@@ -51,9 +54,12 @@ public class DemoSubjectCreator extends DefaultSubjectCreator {
 		subject.getProperties().put(
 				Oauth2Factory.KEY_USER_PROPERTY, userDetails.getInMemoryUser().getProperty());
 		
+		// user roles
+		List<String> roles = new ArrayList<>();
 		for (GrantedAuthority authority: userDetails.getAuthorities()) {
-			subject.getRoles().add(authority.getAuthority());
+			roles.add(authority.getAuthority());
 		}
+		subject.setRoles(roles);
 		
 		if (log.isDebugEnabled()) {
 			try {

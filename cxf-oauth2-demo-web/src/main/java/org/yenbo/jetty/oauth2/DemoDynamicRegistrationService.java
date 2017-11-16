@@ -3,6 +3,7 @@ package org.yenbo.jetty.oauth2;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -146,6 +147,20 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 	}
 	
 	@Override
+	protected Client readClient(String clientId) {
+		
+        String accessToken = getRequestAccessToken();
+        checkRegistrationAccessToken(accessToken);
+                                                 
+        Client c = clientProvider.getClient(clientId);
+        if (c == null) {
+            throw ExceptionUtils.toNotAuthorizedException(null, null);
+        }
+        
+        return c;
+    }
+	
+	@Override
 	protected String createRegAccessToken(Client client) {
 		
 		String accessToken = getRequestAccessToken();
@@ -153,8 +168,7 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 		return accessToken;
 	}
 	
-	@Override
-	protected void checkRegistrationAccessToken(Client c, String accessToken) {
+	private void checkRegistrationAccessToken(String accessToken) {
 		
 		// only check if access token belongs to admin user
 		if (!InMemoryUser.ACCESS_TOKEN_ADMIN.equals(accessToken)) {
@@ -231,5 +245,17 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 		}
 		
 		return Response.status(Status.OK).entity(fromClientToRegistrationResponse(client, true)).build();
+    }
+	
+	@DELETE
+    @Path("{clientId}")
+    public Response deleteClientRegistration(@PathParam("clientId") String clientId) {
+		
+        if (readClient(clientId) != null) {
+            clientProvider.removeClient(clientId);    
+        }
+        
+        // HTTP 204 No Content
+        return Response.noContent().build();
     }
 }

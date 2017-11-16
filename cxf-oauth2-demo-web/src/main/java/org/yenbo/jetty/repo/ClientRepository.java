@@ -4,5 +4,6 @@ import java.util.UUID;
 
 import org.yenbo.jetty.data.InMemoryClient;
 
-public class ClientRepository extends AbstractInMemoryRepository<InMemoryClient, UUID> {
+public class ClientRepository
+	extends AbstractInMemoryOauth2Repository<InMemoryClient, UUID> {
 }

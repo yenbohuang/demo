@@ -59,7 +59,7 @@ public class Oauth2Factory {
 		authorizationCode.setClientId(UUID.fromString(grant.getClient().getClientId()));
 		authorizationCode.setCode(grant.getCode());
 		authorizationCode.setExpiresIn(grant.getExpiresIn());
-		authorizationCode.setIssueAt(grant.getIssuedAt());
+		authorizationCode.setIssuedAt(grant.getIssuedAt());
 		authorizationCode.setRedirectUri(grant.getRedirectUri());
 		
 		// UserSubject
@@ -85,7 +85,7 @@ public class Oauth2Factory {
 		grant.setClient(client);
 		grant.setCode(inMemoryAuthorizationCode.getCode());
 		grant.setExpiresIn(inMemoryAuthorizationCode.getExpiresIn());
-		grant.setIssuedAt(inMemoryAuthorizationCode.getIssueAt());
+		grant.setIssuedAt(inMemoryAuthorizationCode.getIssuedAt());
 		grant.setRedirectUri(inMemoryAuthorizationCode.getRedirectUri());
 		
 		// UserSubject
@@ -310,7 +310,7 @@ public class Oauth2Factory {
 				client,
 				inMemoryAccessToken.getToken().toString(),
 				inMemoryAccessToken.getExpiresIn(),
-				inMemoryAccessToken.getIssueAt());
+				inMemoryAccessToken.getIssuedAt());
 		
 		accessToken.setGrantCode(inMemoryAccessToken.getAuthorizationCode());
 		
@@ -338,7 +338,7 @@ public class Oauth2Factory {
 		inMemoryAccessToken.setAuthorizationCode(serverAccessToken.getGrantCode());
 		inMemoryAccessToken.setClientId(UUID.fromString(serverAccessToken.getClient().getClientId()));
 		inMemoryAccessToken.setExpiresIn(serverAccessToken.getExpiresIn());
-		inMemoryAccessToken.setIssueAt(serverAccessToken.getIssuedAt());
+		inMemoryAccessToken.setIssuedAt(serverAccessToken.getIssuedAt());
 		
 		for (OAuthPermission permission: serverAccessToken.getScopes()) {
 			inMemoryAccessToken.getScopes().add(permission.getPermission());
@@ -368,7 +368,7 @@ public class Oauth2Factory {
 				client,
 				inMemoryRefreshToken.getToken().toString(),
 				inMemoryRefreshToken.getExpiresIn(),
-				inMemoryRefreshToken.getIssueAt());
+				inMemoryRefreshToken.getIssuedAt());
 		
 		refreshToken.setGrantCode(inMemoryRefreshToken.getAuthorizationCode());
 		
@@ -404,7 +404,7 @@ public class Oauth2Factory {
 		inMemoryRefreshToken.setClientId(UUID.fromString(refreshToken.getClient().getClientId()));
 		inMemoryRefreshToken.setExpiresIn(refreshToken.getExpiresIn());
 		inMemoryRefreshToken.setAuthorizationCode(refreshToken.getGrantCode());
-		inMemoryRefreshToken.setIssueAt(refreshToken.getIssuedAt());
+		inMemoryRefreshToken.setIssuedAt(refreshToken.getIssuedAt());
 		
 		for (OAuthPermission permission: refreshToken.getScopes()) {
 			inMemoryRefreshToken.getScopes().add(permission.getPermission());

@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yenbo.jetty.exception.InMemoryEntityException;
 
-public abstract class AbstractInMemoryRepository <T, K> {
+public abstract class AbstractInMemoryRepository<T, K> {
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractInMemoryRepository.class);
 	
-	private Map<K, T> map = new HashMap<>();
+	protected Map<K, T> map = new HashMap<>();
 	
 	private void validateKey(K key) {
 		

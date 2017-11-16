@@ -3,6 +3,7 @@ package org.yenbo.jetty.oauth2;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.cxf.jaxrs.utils.ExceptionUtils;
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.ServerAccessToken;
 import org.apache.cxf.rs.security.oauth2.common.UserSubject;
@@ -13,7 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yenbo.jetty.data.InMemoryClient;
+import org.yenbo.jetty.repo.AccessTokenRepository;
+import org.yenbo.jetty.repo.AuthorizationCodeRepository;
 import org.yenbo.jetty.repo.ClientRepository;
+import org.yenbo.jetty.repo.RefreshTokenRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +30,12 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 	
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private AccessTokenRepository accessTokenRepository;
+	@Autowired
+	private AuthorizationCodeRepository authorizationCodeRepository;
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
 	
 	public DynamicRegistrationOAuthDataProvider() {
 		super();
@@ -134,7 +144,20 @@ public class DynamicRegistrationOAuthDataProvider extends AbstractOAuthDataProvi
 
 	@Override
 	protected void doRemoveClient(Client c) {
-		// TODO
-		log.warn("doRemoveClient is not implemented");
+		
+		// client is retrieved before calling doRemoveClient and it must exist in DB.
+		UUID clientId = UUID.fromString(c.getClientId());
+		
+		if (accessTokenRepository.containsClientId(clientId)
+				|| authorizationCodeRepository.containsClientId(clientId)
+				|| refreshTokenRepository.containsClientId(clientId)) {
+			
+			// do not delete when there are still valid AC/AT/RT.
+			// HTTP 403 Forbidden
+			log.debug("Do not delete when there are still valid AC/AT/RT: clientId={}", clientId);
+			throw ExceptionUtils.toForbiddenException(null, null);
+		} else {
+			clientRepository.delete(clientId);
+		}
 	}
 }

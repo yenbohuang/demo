@@ -9,7 +9,6 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeGrantHandl
 import org.apache.cxf.rs.security.oauth2.grants.refresh.RefreshTokenGrantHandler;
 import org.apache.cxf.rs.security.oauth2.provider.AccessTokenGrantHandler;
 import org.apache.cxf.rs.security.oauth2.provider.DefaultResourceOwnerNameProvider;
-import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.provider.ResourceOwnerNameProvider;
 import org.apache.cxf.rs.security.oauth2.services.AccessTokenService;
 import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
@@ -139,7 +138,6 @@ public class Oauth2Configuration {
 		
         return CxfConfiguration.createServerFactory(new Oauth2Application(),
         		Arrays.<Object>asList(
-        				new OAuthJSONProvider(),
         				new OAuthExtensionJSONProvider(),
         				oAuthAuthorizationDataMessageBodyWriter,
         				oAuthErrorMessageBodyWriter,

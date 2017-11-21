@@ -16,13 +16,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObjectReaderWriter;
+import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistration;
 import org.apache.cxf.rs.security.oauth2.services.ClientRegistrationResponse;
 import org.slf4j.Logger;
@@ -35,8 +34,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Provider
 @Produces("application/json")
 @Consumes("application/json")
-public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
-	MessageBodyReader<Object> {
+public class OAuthExtensionJSONProvider extends OAuthJSONProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(OAuthExtensionJSONProvider.class);
 	
@@ -44,20 +42,16 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	@Override
-	public long getSize(Object obj, Class<?> clt, Type t, Annotation[] anns, MediaType mt) {
-        return -1;
-    }
-	
-	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return Map.class.isAssignableFrom(type)
-				|| ClientRegistration.class.isAssignableFrom(type);
+		return ClientRegistration.class.isAssignableFrom(type)
+				|| super.isReadable(type, genericType, annotations, mediaType);
 	}
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return ClientRegistrationResponse.class == type ||
-				ClientRegistration.class == type;
+		return ClientRegistrationResponse.class == type
+				|| ClientRegistration.class == type
+				|| super.isWriteable(type, genericType, annotations, mediaType);
 	}
 
 	@Override
@@ -67,9 +61,9 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 		
 		if (ClientRegistration.class.isAssignableFrom(type)) {
 			return fromMapToClientRegistration(entityStream);
+		} else {
+			return super.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
 		}
-		
-		throw new WebApplicationException("Unknown type: " + type, Status.INTERNAL_SERVER_ERROR);
 	}
 	
 	private Map<String, Object> readFromJson(InputStream is) {
@@ -149,6 +143,8 @@ public class OAuthExtensionJSONProvider implements MessageBodyWriter<Object>,
 			writeClientRegistrationResponse((ClientRegistrationResponse) obj, entityStream);
 		} else if (obj instanceof ClientRegistration) {
 			writeClientRegistration((ClientRegistration) obj, entityStream);
+		} else {
+			super.writeTo(obj, type, genericType, annotations, mediaType, httpHeaders, entityStream);
 		}
 	}
 	

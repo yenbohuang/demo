@@ -180,25 +180,8 @@ public class Oauth2Factory {
 		}
 	}
 	
-	public static Client fill(ClientRegistration fromClientRegistration, Client toClient) {
-		
-		if (null == fromClientRegistration) {
-			throw new IllegalArgumentException("fromClientRegistration is null.");
-		}
-		
-		if (null == toClient) {
-			throw new IllegalArgumentException("toClient is null.");
-		}
-		
-		toClient.setApplicationDescription(fromClientRegistration.getStringProperty(
-				OAuthExtensionConstants.CLIENT_DESCRIPTION));		
-		fillClientNameMap(fromClientRegistration, toClient);
-		
-		return toClient;
-	}
-	
-	public static Client updateClient(ClientRegistration fromClientRegistration,
-			Client toClient) {
+	public static Client fill(ClientRegistration fromClientRegistration, Client toClient,
+			boolean createNewClient) {
 		
 		if (null == fromClientRegistration) {
 			throw new IllegalArgumentException("fromClientRegistration is null.");
@@ -210,17 +193,23 @@ public class Oauth2Factory {
 		
 		toClient.setApplicationDescription(fromClientRegistration.getStringProperty(
 				OAuthExtensionConstants.CLIENT_DESCRIPTION));
-		toClient.setApplicationName(fromClientRegistration.getClientName());
 		fillClientNameMap(fromClientRegistration, toClient);
-		toClient.setRedirectUris(fromClientRegistration.getRedirectUris());
 		
-		// This is not compliant with RFC 7592
-		if (fromClientRegistration.containsProperty(ClientRegistrationResponse.CLIENT_SECRET)) {
-			toClient.setClientSecret(fromClientRegistration.getStringProperty(
-					ClientRegistrationResponse.CLIENT_SECRET));
+		if (createNewClient) {
+			// for create new client
+		} else {
+			// for update client
+			toClient.setApplicationName(fromClientRegistration.getClientName());
+			toClient.setRedirectUris(fromClientRegistration.getRedirectUris());
+			
+			// This is not compliant with RFC 7592
+			if (fromClientRegistration.containsProperty(ClientRegistrationResponse.CLIENT_SECRET)) {
+				toClient.setClientSecret(fromClientRegistration.getStringProperty(
+						ClientRegistrationResponse.CLIENT_SECRET));
+			}
+			
+			toClient.setRegisteredScopes(OAuthUtils.parseScope(fromClientRegistration.getScope()));
 		}
-		
-		toClient.setRegisteredScopes(OAuthUtils.parseScope(fromClientRegistration.getScope()));
 		
 		return toClient;
 	}

@@ -55,7 +55,7 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 	protected Client createNewClient(ClientRegistration request) {
 		
 		Client client = super.createNewClient(request);
-		Oauth2Factory.fill(request, client);
+		Oauth2Factory.fill(request, client, true);
 		
 		if (log.isDebugEnabled()) {
 			try {
@@ -233,7 +233,7 @@ public class DemoDynamicRegistrationService extends DynamicRegistrationService {
 			}
 		}
 		
-		Oauth2Factory.updateClient(request, client);
+		Oauth2Factory.fill(request, client, false);
 		clientProvider.setClient(client);
 		
 		if (log.isDebugEnabled()) {

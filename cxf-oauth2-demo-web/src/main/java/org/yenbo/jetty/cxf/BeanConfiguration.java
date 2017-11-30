@@ -25,8 +25,8 @@ public class BeanConfiguration {
 	public ClientRepository clientRepository() {
 		
 		InMemoryClient client = new InMemoryClient();
-		client.setClientId(UUID.fromString("78fa6a41-aec6-4690-9237-7cd6bb6e1a84"));
-		client.setClientSecret("7cd6bb6e1a84");
+		client.setClientId(UUID.fromString("ee287bc1-1bd3-4ffd-a11e-9d3c312dfc81"));
+		client.setClientSecret("9d3c312dfc81");
 		client.getRedirectUris().add("http://localhost/unknown");
 		client.getRedirectUris().add("https://www.getpostman.com/oauth2/callback"); // For testing by PostMan
 		client.getScopes().add("demo1");

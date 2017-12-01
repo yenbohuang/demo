@@ -2,7 +2,6 @@ package org.yenbo.jetty.thymeleaf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
@@ -21,9 +20,9 @@ public class OAuth2LoginViewMessageBodyWriter extends AbstractThymeleafMessageBo
 	}
 
 	@Override
-	protected Context createContext(OAuth2LoginView data, Locale locale) {
+	protected Context createContext(OAuth2LoginView data) {
 		
-		Context context = new Context(locale);
+		Context context = new Context(data.getLocale());
 		context.setVariable("isError", data.isError());
 		context.setVariable("isLogout", data.isLogout());
 		context.setVariable("appName", data.getAppName());

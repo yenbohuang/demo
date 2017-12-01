@@ -34,9 +34,10 @@ public class OAuthAuthorizationDataMessageBodyWriter
 	}
 
 	@Override
-	protected Context createContext(OAuthAuthorizationData oAuthAuthorizationData, Locale locale) {
+	protected Context createContext(OAuthAuthorizationData oAuthAuthorizationData) {
 		
-		Context context = new Context(locale);
+		// TODO get Locale from oAuthAuthorizationData
+		Context context = new Context(Locale.ENGLISH);
 		
 		// TODO Form binding does not work on "th:field" with Spring web MVC.
 		

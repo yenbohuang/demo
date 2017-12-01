@@ -14,9 +14,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.yenbo.jetty.data.InMemoryUser;
 import org.yenbo.jetty.data.PasswordInfo;
 import org.yenbo.jetty.repo.UserRepository;
@@ -76,10 +78,19 @@ public class SecurityBeansConfig extends WebSecurityConfigurerAdapter {
 	    return new OrRequestMatcher(requestMatchers);
 	  }
 	
+	private CharacterEncodingFilter characterEncodingFilter() {
+
+		CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+		encodingFilter.setEncoding("UTF-8");
+		encodingFilter.setForceEncoding(true);
+		return encodingFilter;
+	}
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http
+			.addFilterAfter(characterEncodingFilter(), CsrfFilter.class)
 			.csrf()
 				.requireCsrfProtectionMatcher(requireCsrfProtectionMatcher())
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

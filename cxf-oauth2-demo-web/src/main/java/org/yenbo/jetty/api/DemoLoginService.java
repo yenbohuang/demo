@@ -1,5 +1,6 @@
 package org.yenbo.jetty.api;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
@@ -32,6 +33,17 @@ public class DemoLoginService {
 	@Autowired
 	private ClientRepository clientRepository;
 	
+	private String getAppName(InMemoryClient client, String langTag) {
+		
+		String name = client.getName();
+		
+		if (client.getNameI18nMap().containsKey(langTag)) {
+			name = client.getNameI18nMap().get(langTag);
+		}
+		
+		return name;
+	}
+	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response login(
@@ -52,16 +64,19 @@ public class DemoLoginService {
 					.getQueryParams().getFirst(OAuthConstants.CLIENT_ID);
 		}
 		
+		Locale userLocale = messageContext.getHttpServletRequest().getLocale();
+		
 		OAuth2LoginView view = new OAuth2LoginView();
 		view.setError(error != null);
 		view.setLogout(logout != null);
+		view.setLocale(userLocale);
 		
 		if (null != clientId) {
 			
 			InMemoryClient client = clientRepository.get(UUID.fromString(clientId));
 			
 			if (null != client) {
-				view.setAppName(client.getName());
+				view.setAppName(getAppName(client, userLocale.toLanguageTag()));
 			}
 		}
 		

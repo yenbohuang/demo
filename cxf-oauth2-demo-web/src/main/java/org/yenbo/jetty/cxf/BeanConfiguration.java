@@ -34,7 +34,7 @@ public class BeanConfiguration {
 		client.getScopes().add("demo3");
 		client.setDescription("This is application description");
 		client.setName("This is application name");
-		client.getNameI18nMap().put("en-CA", "Customized name for Canada.");
+		client.getNameI18nMap().put("zh-TW", "這是程式名稱.");
 		client.setIssuedAt(OAuthUtils.getIssuedAt());
 		
 		// copy this line from log file and proceed with other tests

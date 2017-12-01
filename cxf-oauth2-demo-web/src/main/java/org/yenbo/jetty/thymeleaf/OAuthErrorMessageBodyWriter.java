@@ -25,9 +25,9 @@ public class OAuthErrorMessageBodyWriter extends AbstractThymeleafMessageBodyWri
 	}
 
 	@Override
-	protected Context createContext(OAuthError data, Locale locale) {
+	protected Context createContext(OAuthError data) {
 		
-		Context context = new Context(locale);
+		Context context = new Context(Locale.ENGLISH);
 		context.setVariable("error", data.getError());
 		context.setVariable("error_description", data.getErrorDescription());
 		context.setVariable("error_uri", data.getErrorUri());

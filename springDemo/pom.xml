@@ -6,7 +6,7 @@
 
 	<parent>
 		<groupId>org.yenbo</groupId>
-		<artifactId>parentPom</artifactId>
+		<artifactId>yenbo-demo</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 

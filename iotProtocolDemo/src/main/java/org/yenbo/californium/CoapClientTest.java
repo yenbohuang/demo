@@ -1,9 +1,12 @@
 package org.yenbo.californium;
 
+import java.io.IOException;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
+import org.eclipse.californium.elements.exception.ConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +66,7 @@ public class CoapClientTest {
 		log.info("sleep ended");
 	}
 	
-	public static void getSync(CoapClient client) {
+	public static void getSync(CoapClient client) throws ConnectorException, IOException {
 		
 		log.info("--- Synchronous GET ----");
 		
@@ -90,7 +93,7 @@ public class CoapClientTest {
 		sleep1s();
 	}
 	
-	public static void discover() {
+	public static void discover() throws ConnectorException, IOException {
 		
 		log.info("--- Discovery ----");
 		

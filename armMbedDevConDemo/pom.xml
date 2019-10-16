@@ -5,22 +5,9 @@
 
 	<parent>
 		<groupId>org.yenbo</groupId>
-		<artifactId>parentPom</artifactId>
+		<artifactId>yenbo-demo</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-	<repositories>
-		<repository>
-			<id>mbed repository</id>
-			<url>http://maven.mbed.com</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -48,4 +35,18 @@
 		</dependency>
 
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>mbed repository</id>
+			<url>http://maven.mbed.com</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
 </project>

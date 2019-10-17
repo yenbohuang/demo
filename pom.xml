@@ -10,6 +10,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
 
 		<akka.version>2.5.25</akka.version>
 		<californium.version>2.0.0-M18</californium.version>
@@ -301,6 +302,10 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
@@ -331,5 +336,6 @@
 		<module>akkaDemo</module>
 
 		<module>awsSdkDemo</module>
+		<module>azureDemo</module>
 	</modules>
 </project>

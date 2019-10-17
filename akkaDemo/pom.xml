@@ -50,12 +50,6 @@
 	</build>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-
 		<!-- start AKKA dependencies -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>

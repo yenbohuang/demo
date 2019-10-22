@@ -2,9 +2,12 @@ package org.yenbo.azure.iot;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,16 +41,18 @@ public class IotHubCloudToDeviceMessageDemo {
 			serviceClient = openServiceClient(iotHubConnectionString);
 			feedbackReceiver = openFeedbackReceiver(serviceClient);
 						
-			Message messageToSend = new Message("hello from yenbo " + Instant.now());
+			Message messageToSend = new Message("C2D hello from yenbo " + Instant.now());
 			messageToSend.setDeliveryAcknowledgementFinal(DeliveryAcknowledgement.Full);
 			messageToSend.setMessageId(UUID.randomUUID().toString());
+			messageToSend.setExpiryTimeUtc(DateUtils.addHours(
+					Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), 1));
 			
 			log.info("messageToSend.getMessageId() = {}", messageToSend.getMessageId());
 			
 			// working
 			serviceClient.send(edgeDeviceId, messageToSend);
 			
-			// FIXME not working
+			// FIXME no feedback
 //			serviceClient.send(edgeDeviceId, edgeModuleId, messageToSend);
 			
 			FeedbackBatch feedbackBatch = feedbackReceiver.receive(30000);

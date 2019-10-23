@@ -14,7 +14,6 @@
 		<dependency>
 			<groupId>com.microsoft.azure.sdk.iot</groupId>
 			<artifactId>iot-service-client</artifactId>
-			<version>1.18.0</version>
 		</dependency>
 	</dependencies>
 </project>

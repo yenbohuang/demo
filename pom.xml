@@ -13,6 +13,7 @@
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
 		<akka.version>2.5.25</akka.version>
+		<azureiotsdk.version>1.18.0</azureiotsdk.version>
 		<californium.version>2.0.0-M18</californium.version>
 		<cxf.version>3.3.3</cxf.version>
 		<jackson.version>2.10.0</jackson.version>
@@ -279,6 +280,19 @@
 				<version>${cxf.version}</version>
 			</dependency>
 			<!-- end -->
+			
+			<!-- start azure sdk iot -->
+			<dependency>
+				<groupId>com.microsoft.azure.sdk.iot</groupId>
+				<artifactId>iot-service-client</artifactId>
+				<version>${azureiotsdk.version}</version>
+			</dependency>
+			<dependency>
+                <groupId>com.microsoft.azure.sdk.iot</groupId>
+                <artifactId>iot-device-client</artifactId>
+                <version>${azureiotsdk.version}</version>
+             </dependency>
+             <!-- end azure sdk iot -->
 
 			<!-- start yenbo's library -->
 			<dependency>

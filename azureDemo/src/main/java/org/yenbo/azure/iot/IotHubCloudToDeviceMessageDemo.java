@@ -40,8 +40,9 @@ public class IotHubCloudToDeviceMessageDemo {
 		try {
 			serviceClient = openServiceClient(iotHubConnectionString);
 			feedbackReceiver = openFeedbackReceiver(serviceClient);
-						
-			Message messageToSend = new Message("C2D hello from yenbo " + Instant.now());
+			
+			Message messageToSend = new Message(
+					"{\"message\":\"C2D hello from yenbo " + Instant.now() + "\"}");
 			messageToSend.setDeliveryAcknowledgementFinal(DeliveryAcknowledgement.Full);
 			messageToSend.setMessageId(UUID.randomUUID().toString());
 			messageToSend.setExpiryTimeUtc(DateUtils.addHours(
@@ -55,7 +56,7 @@ public class IotHubCloudToDeviceMessageDemo {
 			// FIXME no feedback
 //			serviceClient.send(edgeDeviceId, edgeModuleId, messageToSend);
 			
-			FeedbackBatch feedbackBatch = feedbackReceiver.receive(30000);
+			FeedbackBatch feedbackBatch = feedbackReceiver.receive(10000);
 			
 			if (feedbackBatch != null) {
 				

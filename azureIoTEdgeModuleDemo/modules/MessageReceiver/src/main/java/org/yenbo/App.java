@@ -17,15 +17,19 @@ public class App {
     	
     	MyEventCallback eventCallback = new MyEventCallback();
         MyMessageCallback msgCallback = new MyMessageCallback(eventCallback);
+        MyDeviceMethodCallback methodCallback = new MyDeviceMethodCallback();
+        MyIotHubEventCallback methodStatusCallback = new MyIotHubEventCallback();
     	
     	try {
             ModuleClient client = ModuleClient.createFromEnvironment();
             
             client.setMessageCallback(msgCallback, client);
             client.registerConnectionStatusChangeCallback(new MyConnectionStatusChangeCallback(),
-            		null);
+            		client);
             
             client.open();
+            client.subscribeToMethod(methodCallback, client, methodStatusCallback, client);
+            
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

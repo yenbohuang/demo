@@ -1,9 +1,22 @@
 package org.yenbo;
 
-import com.microsoft.azure.sdk.iot.device.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeCallback;
+import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
+import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
+import com.microsoft.azure.sdk.iot.device.IotHubMessageResult;
+import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
+import com.microsoft.azure.sdk.iot.device.Message;
+import com.microsoft.azure.sdk.iot.device.MessageCallback;
+import com.microsoft.azure.sdk.iot.device.ModuleClient;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 
 public class App {
+	
+	private static final Logger logger = LoggerFactory.getLogger(App.class);
+	
     private static MessageCallbackMqtt msgCallback = new MessageCallbackMqtt();
     private static EventCallback eventCallback = new EventCallback();
     private static final String INPUT_NAME = "input1";
@@ -13,9 +26,9 @@ public class App {
         @Override
         public void execute(IotHubStatusCode status, Object context) {
             if (context instanceof Message) {
-                System.out.println("Send message with status: " + status.name());
+                logger.info("Send message with status: {}", status.name());
             } else {
-                System.out.println("Invalid context passed");
+                logger.info("Invalid context passed");
             }
         }
     }
@@ -27,9 +40,8 @@ public class App {
         public IotHubMessageResult execute(Message msg, Object context) {
             this.counter += 1;
 
-            System.out.println(
-                    String.format("Received message %d: %s",
-                            this.counter, new String(msg.getBytes(), Message.DEFAULT_IOTHUB_MESSAGE_CHARSET)));
+            logger.info("Received message {}: {}", counter,
+            		new String(msg.getBytes(), Message.DEFAULT_IOTHUB_MESSAGE_CHARSET));
             if (context instanceof ModuleClient) {
                 ModuleClient client = (ModuleClient) context;
                 client.sendEventAsync(msg, eventCallback, msg, App.OUTPUT_NAME);
@@ -44,20 +56,17 @@ public class App {
         public void execute(IotHubConnectionStatus status,
                             IotHubConnectionStatusChangeReason statusChangeReason,
                             Throwable throwable, Object callbackContext) {
-            String statusStr = "Connection Status: %s";
+        	
             switch (status) {
                 case CONNECTED:
-                    System.out.println(String.format(statusStr, "Connected"));
+                    logger.info("Connection Status: Connected");
                     break;
                 case DISCONNECTED:
-                    System.out.println(String.format(statusStr, "Disconnected"));
-                    if (throwable != null) {
-                        throwable.printStackTrace();
-                    }
+                    logger.warn("Connection Status: Disconnected", throwable);
                     System.exit(1);
                     break;
                 case DISCONNECTED_RETRYING:
-                    System.out.println(String.format(statusStr, "Retrying"));
+                    logger.info("Connection Status: Retrying");
                     break;
                 default:
                     break;
@@ -66,27 +75,17 @@ public class App {
     }
 
     public static void main(String[] args) {
-    	
-    	// IoT edge on K8S (preview) only deploys edge agent "0.1.0-alpha", and it only supports
-    	// docker registry with port number 80. That is fixed by "1.0.8+".
-    	// 
-    	// * https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge-kubernetes
-    	// * https://github.com/Azure/iotedge/issues/1191
-    	//
-    	// A workaround is to bind local docker registry at port 80 as follows:
-    	//
-    	// docker run -d -p 80:5000 --restart=always --name registry registry:2
-    	
         try {
-            IotHubClientProtocol protocol = IotHubClientProtocol.MQTT;
-            System.out.println("Start to create client with MQTT protocol");
-            ModuleClient client = ModuleClient.createFromEnvironment(protocol);
-            System.out.println("Client created");
+        	for (String key: System.getenv().keySet()) {
+        		logger.info("{} = {}", key, System.getenv(key));
+        	}
+        	
+            ModuleClient client = ModuleClient.createFromEnvironment();
             client.setMessageCallback(App.INPUT_NAME, msgCallback, client);
             client.registerConnectionStatusChangeCallback(new ConnectionStatusChangeCallback(), null);
             client.open();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             System.exit(1);
         }
     }

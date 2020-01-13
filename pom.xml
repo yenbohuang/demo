@@ -68,14 +68,6 @@
 			</dependency>
 			<!-- end standard Java libraries -->
 
-			<!-- start AWS -->
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk</artifactId>
-				<version>1.11.653</version>
-			</dependency>
-			<!-- end AWS -->
-
 			<!-- start californium -->
 			<dependency>
 				<groupId>org.eclipse.californium</groupId>
@@ -259,7 +251,5 @@
 		<module>springSocialDemo</module>
 
 		<module>iotProtocolDemo</module>
-
-		<module>awsSdkDemo</module>
 	</modules>
 </project>

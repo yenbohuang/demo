@@ -12,8 +12,6 @@
 		<jdk.version>11</jdk.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
-		<akka.version>2.5.25</akka.version>
-		<azureiotsdk.version>1.18.0</azureiotsdk.version>
 		<californium.version>2.0.0-M18</californium.version>
 		<jackson.version>2.10.0</jackson.version>
 		<slf4j.version>1.7.28</slf4j.version>
@@ -125,14 +123,6 @@
 			</dependency>
 			<!-- end httpclient -->
 
-			<!-- start mbed -->
-			<dependency>
-				<groupId>com.mbed</groupId>
-				<artifactId>mbed-client</artifactId>
-				<version>3.0.0-464</version>
-			</dependency>
-			<!-- end mbed -->
-
 			<!-- start mysql -->
 			<dependency>
 				<groupId>mysql</groupId>
@@ -188,24 +178,6 @@
 				<version>3.0.11.RELEASE</version>
 			</dependency>
 			<!-- end Spring -->
-
-			<!-- start akka -->
-			<dependency>
-				<groupId>com.typesafe.akka</groupId>
-				<artifactId>akka-actor_2.11</artifactId>
-				<version>${akka.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.typesafe.akka</groupId>
-				<artifactId>akka-slf4j_2.11</artifactId>
-				<version>${akka.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.typesafe.akka</groupId>
-				<artifactId>akka-cluster_2.11</artifactId>
-				<version>${akka.version}</version>
-			</dependency>
-			<!-- end akka -->
 
 			<!-- start ibm -->
 			<dependency>
@@ -287,9 +259,6 @@
 		<module>springSocialDemo</module>
 
 		<module>iotProtocolDemo</module>
-		<module>armMbedDevConDemo</module>
-
-		<module>akkaDemo</module>
 
 		<module>awsSdkDemo</module>
 	</modules>

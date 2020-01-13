@@ -15,9 +15,7 @@
 		<akka.version>2.5.25</akka.version>
 		<azureiotsdk.version>1.18.0</azureiotsdk.version>
 		<californium.version>2.0.0-M18</californium.version>
-		<cxf.version>3.3.3</cxf.version>
 		<jackson.version>2.10.0</jackson.version>
-		<jetty.version>9.4.24.v20191120</jetty.version>
 		<slf4j.version>1.7.28</slf4j.version>
 		<spring.version>5.2.0.RELEASE</spring.version>
 	</properties>
@@ -180,16 +178,6 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-config</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-web</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.springframework.social</groupId>
 				<artifactId>spring-social-facebook</artifactId>
 				<version>2.0.3.RELEASE</version>
@@ -247,37 +235,6 @@
 				<groupId>com.fasterxml.jackson.jaxrs</groupId>
 				<artifactId>jackson-jaxrs-json-provider</artifactId>
 				<version>${jackson.version}</version>
-			</dependency>
-			<!-- end -->
-
-			<!-- start jetty -->
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-annotations</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<!-- end -->
-
-			<!-- start cxf -->
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-rs-security-oauth2</artifactId>
-				<version>${cxf.version}</version>
 			</dependency>
 			<!-- end -->
 			

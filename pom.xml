@@ -299,8 +299,6 @@
 		<module>springDemo</module>
 		<module>springSocialDemo</module>
 
-		<module>cxf-oauth2-demo-web</module>
-
 		<module>iotProtocolDemo</module>
 		<module>armMbedDevConDemo</module>
 

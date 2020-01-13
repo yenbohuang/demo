@@ -238,19 +238,6 @@
 			</dependency>
 			<!-- end -->
 			
-			<!-- start azure sdk iot -->
-			<dependency>
-				<groupId>com.microsoft.azure.sdk.iot</groupId>
-				<artifactId>iot-service-client</artifactId>
-				<version>${azureiotsdk.version}</version>
-			</dependency>
-			<dependency>
-                <groupId>com.microsoft.azure.sdk.iot</groupId>
-                <artifactId>iot-device-client</artifactId>
-                <version>${azureiotsdk.version}</version>
-             </dependency>
-             <!-- end azure sdk iot -->
-
 			<!-- start yenbo's library -->
 			<dependency>
 				<groupId>org.yenbo</groupId>
@@ -305,6 +292,5 @@
 		<module>akkaDemo</module>
 
 		<module>awsSdkDemo</module>
-		<module>azureDemo</module>
 	</modules>
 </project>

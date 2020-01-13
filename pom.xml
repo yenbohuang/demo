@@ -12,7 +12,6 @@
 		<jdk.version>11</jdk.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
-		<californium.version>2.0.0-M18</californium.version>
 		<jackson.version>2.10.0</jackson.version>
 		<slf4j.version>1.7.28</slf4j.version>
 		<spring.version>5.2.0.RELEASE</spring.version>
@@ -68,19 +67,6 @@
 			</dependency>
 			<!-- end standard Java libraries -->
 
-			<!-- start californium -->
-			<dependency>
-				<groupId>org.eclipse.californium</groupId>
-				<artifactId>californium-core</artifactId>
-				<version>${californium.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.californium</groupId>
-				<artifactId>scandium</artifactId>
-				<version>${californium.version}</version>
-			</dependency>
-			<!-- end californium -->
-
 			<!-- start commons -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -122,14 +108,6 @@
 				<version>8.0.18</version>
 			</dependency>
 			<!-- end mysql -->
-
-			<!-- start paho -->
-			<dependency>
-				<groupId>org.eclipse.paho</groupId>
-				<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-				<version>1.2.2</version>
-			</dependency>
-			<!-- end paho -->
 
 			<!-- start logging -->
 			<dependency>
@@ -249,7 +227,5 @@
 
 		<module>springDemo</module>
 		<module>springSocialDemo</module>
-
-		<module>iotProtocolDemo</module>
 	</modules>
 </project>

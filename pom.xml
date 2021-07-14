@@ -4,10 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.yenbo</groupId>
 	<artifactId>yenbo-demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 
 	<properties>
+		<!-- https://maven.apache.org/maven-ci-friendly.html -->
+		<revision>0.0.1-SNAPSHOT</revision>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
